@@ -9,6 +9,22 @@ source("R/likelihood.R")
 source("R/tk_read_lux.R")
 source("R/tk_track.R")
 
+speed <- 15
+step <- 1
+
+# scope
+# buffer around prevoius location
+circ <- sf::st_as_sf(
+  x = data.frame(
+    lat = 40,
+    lon = 10
+  ),
+  coords = c("lat","lon"),
+  crs = "epsg:4326"
+) |>
+  sf::st_buffer(
+    dist = speed * 60 * 60 * 24 * step
+  )
 
 # set parameter ranges
 # lat/lon

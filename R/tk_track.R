@@ -9,25 +9,35 @@
 #' @return Vegetation greenness values
 #' @export
 
-tk_track<- function(par, data, par_prev, floor = 0.32) {
+tk_track<- function(par, data, buffer, land_mask) {
 
   # split out model parameters
   lat <- par[1]
   lon <- par[2]
 
-  illuminance <- skylight(
-    longitude = lon,
-    latitude = lat,
-    date = data$date_time
-  )$total_illuminance
+  # combine buffer with land mask
 
-  # set logger baseline
-  #illuminance[illuminance <= floor] <- floor
+  # check if not exceeding reasonable buffer
+  circ <- sf::st_as_sf(
+    x = data.frame(
+      lat = 40,
+      lon = 10
+    ),
+    coords = c("lat","lon"),
+    crs = "epsg:4326"
+  )
 
-  log(illuminance)
+  if(st_intersects(circ, buffer)){
+
+    illuminance <- skylight(
+      longitude = lon,
+      latitude = lat,
+      date = data$date_time
+    )$total_illuminance
+
+    log(illuminance)
+  }
 }
-
-
 
 # parameters for final function:
 #
@@ -37,13 +47,31 @@ tk_track<- function(par, data, par_prev, floor = 0.32) {
 # - land mask TRUE/FALSE
 # - start position (lat / lon)
 
-
 fit_parameters <- function(
   data,
-  start_position,
-  iterations,
+  start_position, # start location
+  previous_position, # previous position
+  iterations, # mcmc iterations
+  speed = 15, # in m/s
+  step = 1, # nr steps since last good fix
   land_mask = FALSE
   ) {
+
+  # calculate buffer distance
+  buffer <- speed * 60 * 60 * 24 * step
+
+  # scope
+  # buffer around prevoius location
+  circ <- sf::st_as_sf(
+    x = data.frame(
+      lat = 40,
+      lon = 10
+    ),
+    coords = c("lat","lon")
+   ) |>
+    sf::st_buffer(
+      dist = buffer
+      )
 
   # Bayesian optimization routine
   control = list(
