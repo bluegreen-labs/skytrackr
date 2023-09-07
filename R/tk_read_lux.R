@@ -12,9 +12,9 @@ tk_read_lux <- function(file) {
       "%d/%m/%Y %H:%M:%S",
       tz = "GMT"
       ),
-      date = as.Date(date, "%d/%m/%Y")
+      date = as.Date(date, "%d/%m/%Y"),
     ) |>
     dplyr::select(
-      date, date_time, lux
+      date, date_time, time, lux
     )
 }

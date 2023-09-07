@@ -9,34 +9,21 @@
 #' @return Vegetation greenness values
 #' @export
 
-tk_track<- function(par, data, buffer, land_mask) {
+tk_track<- function(
+    par,
+    data
+    #land_mask
+    ) {
 
   # split out model parameters
   lat <- par[1]
   lon <- par[2]
-
-  # combine buffer with land mask
-
-  # check if not exceeding reasonable buffer
-  circ <- sf::st_as_sf(
-    x = data.frame(
-      lat = 40,
-      lon = 10
-    ),
-    coords = c("lat","lon"),
-    crs = "epsg:4326"
-  )
-
-  if(st_intersects(circ, buffer)){
 
     illuminance <- skylight(
       longitude = lon,
       latitude = lat,
       date = data$date_time
     )$total_illuminance
-
-    log(illuminance)
-  }
 }
 
 # parameters for final function:
@@ -49,29 +36,32 @@ tk_track<- function(par, data, buffer, land_mask) {
 
 fit_parameters <- function(
   data,
-  start_position, # start location
-  previous_position, # previous position
-  iterations, # mcmc iterations
-  speed = 15, # in m/s
-  step = 1, # nr steps since last good fix
-  land_mask = FALSE
+  #previous_position,
+  iterations,
+  bbox
   ) {
 
   # calculate buffer distance
-  buffer <- speed * 60 * 60 * 24 * step
+  #buffer <- (speed * 60 * 60 * 24 * step)/(110 * 1000)
 
-  # scope
-  # buffer around prevoius location
-  circ <- sf::st_as_sf(
-    x = data.frame(
-      lat = 40,
-      lon = 10
-    ),
-    coords = c("lat","lon")
-   ) |>
-    sf::st_buffer(
-      dist = buffer
-      )
+  # buffer around previous location
+  # bbox <- sf::st_as_sf(
+  #   x = data.frame(
+  #     lat = previous_position$latitude,
+  #     lon = previous_position$longitude
+  #   ),
+  #   coords = c("lat","lon")
+  #  ) |>
+  #   sf::st_buffer(
+  #     dist = buffer
+  #   ) |>
+  #   st_bbox()
+  #
+  # lower <- c(bbox['ymin'], bbox['xmin'])
+  # upper <- c(bbox['ymax'], bbox['xmax'])
+
+  lower <- c(bbox[2:1])
+  upper <- c(bbox[4:3])
 
   # Bayesian optimization routine
   control = list(
@@ -93,7 +83,7 @@ fit_parameters <- function(
     # include an additional parameter
     # range for data uncertainty
     lower = c(lower, 0),
-    upper = c(upper, 2)
+    upper = c(upper, 0.5)
   )
 
   # calculate the optimization
@@ -119,16 +109,24 @@ fit_parameters <- function(
   # to deal with the date line use circular
   # quantiles to get median and CI for the
   # longitude
-  longitude <- suppressWarnings(
-    circular::quantile.circular(
-      circular::as.circular(
-        samples_par[,2],
-        type = "angles",
-        units ="degrees"
-      ),
-      c(0.05,0.5,0.95),
-      na.rm = TRUE
-    )
+  # longitude <- suppressWarnings(
+  #   as.numeric(
+  #     circular::quantile.circular(
+  #       circular::as.circular(
+  #         samples_par[,2],
+  #         type = "angles",
+  #         units ="degrees"
+  #       ),
+  #       c(0.05,0.5,0.95),
+  #       na.rm = TRUE
+  #     )
+  #   )
+  # )
+
+  longitude <- quantile(
+    samples_par[,2],
+    c(0.05,0.5,0.95),
+    na.rm = TRUE
   )
 
   # use plain quantiles for latitude
@@ -152,13 +150,14 @@ fit_parameters <- function(
   #   to NA?
 
   data.frame(
+    longitude = longitude[2],
     latitude = latitude[2],
     latitude_ci_5 = latitude[1],
     latitude_ci_95 = latitude[3],
-    longitude = longitude[2],
     longitude_ci_5 = longitude[1],
     longitude_ci_95 = longitude[3],
-    grb = grb
+    grb = grb,
+    row.names = NULL
   )
 
 }
