@@ -22,9 +22,12 @@
     <loc>/reference/log_lux.html</loc>
   </url>
   <url>
-    <loc>/reference/skytrack.html</loc>
+    <loc>/reference/skytrackr.html</loc>
   </url>
   <url>
     <loc>/reference/stk_fit.html</loc>
+  </url>
+  <url>
+    <loc>/reference/stk_read_lux.html</loc>
   </url>
 </urlset>
