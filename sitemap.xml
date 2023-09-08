@@ -15,4 +15,16 @@
   <url>
     <loc>/reference/index.html</loc>
   </url>
+  <url>
+    <loc>/reference/likelihood.html</loc>
+  </url>
+  <url>
+    <loc>/reference/log_lux.html</loc>
+  </url>
+  <url>
+    <loc>/reference/skytrack.html</loc>
+  </url>
+  <url>
+    <loc>/reference/stk_fit.html</loc>
+  </url>
 </urlset>
