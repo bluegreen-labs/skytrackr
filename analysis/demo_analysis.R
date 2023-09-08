@@ -2,6 +2,8 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(plotly)
+library(sf)
 library(patchwork)
 library(BayesianTools)
 library(rnaturalearth)
@@ -9,56 +11,32 @@ source("R/likelihood.R")
 source("R/tk_read_lux.R")
 source("R/tk_track.R")
 
-sf_use_s2(FALSE)
-
+#data <- tk_read_lux("~/Dropbox/Research_Projects/code_repository/bitbucket/apus_lunar_synchrony/data-raw/geolocators/Gent_Voorhaven_A_apus/CC874_18Jun22_123407driftadj.lux")
 data <- tk_read_lux("~/Downloads/CH762_11Jun23_040200.lux")
-  # filter(
-  #   date > "2022-10-15"
-  # )
-
-ggplot(
-  data |>
-    filter(
-      lux > 0.32
-    ) |>
-    mutate(
-      lux = log(lux)
-    ) |>
-    filter(
-      lux < 6
-    )
-  ) +
-  geom_tile(
-    aes(
-      as.Date(date),
-      as.numeric(format(date_time, "%H")) + as.numeric(format(date_time, "%M"))/60,
-      fill = lux
-    )
-  ) +
-  scale_fill_viridis_c(
-    option = "B"
+data <- data |>
+  filter(
+    date >= "2021-08-20"
   )
 
 fit_track <- function(
     data,
-    start_position, # start location
-    iterations = 16000, # mcmc iterations
+    start_position,
+    iterations = 16000,
     floor = 0.32,
-    ceiling = 400,
-    bbox = c(-20, -33, 60, 55),
+    ceiling = 150,
+    bbox = c(-20, -40, 60, 55),
+    buffer = 1,
     tolerance = 1500 * 1000
   ) {
 
   # preprocess data
   data <- data |>
     filter(
-      lux > floor
+      lux > floor,
+      lux < ceiling
     ) |>
     mutate(
       lux = log(lux)
-    ) |>
-    filter(
-      lux <= round(log(ceiling))
     )
 
   # unique dates
@@ -67,8 +45,12 @@ fit_track <- function(
   # empty data frame
   locations <- data.frame()
 
+  maps::map(
+    xlim = bbox[c(1,3)],
+    ylim = bbox[c(2,4)]
+  )
+
   for (i in seq_len(length(dates))) {
-  #for (i in 1:100 ) {
 
      # create daily subset
      subs <- data |>
@@ -76,57 +58,19 @@ fit_track <- function(
          date == dates[i]
        )
 
-     # if (i == 1) {
-     #   previous_position <- start_position
-     # } else {
-     #     previous_position <- data.frame(
-     #       latitude = locations$latitude[i-1],
-     #       longitude = locations$longitude[i-1]
-     # }
-
      out <- fit_parameters(
        data = subs,
-       #previous_position = previous_position,
        iterations = iterations,
        bbox = bbox
+       #mask = mask
      )
 
      # set date
      out$date <- dates[i]
 
-    # if (i == 1){
-    #   dist <- geosphere::distGeo(
-    #     p1 = c(out$longitude, out$latitude),
-    #     p2 = c(start_position$longitude, start_position$latitude)
-    #   )
-    #  } else {
-    #   dist <- geosphere::distGeo(
-    #     p1 = c(out$longitude, out$latitude),
-    #     p2 = c(locations$longitude[i-1], locations$latitude[i-1])
-    #   )
-    #  }
-
-    # set distance
-    #out$dist <- dist
-
-    # if (dist > tolerance) {
-    #   if (i == 1) {
-    #     out$longitude <- start_position$longitude
-    #     out$latitude <- start_position$latitude
-    #   } else {
-    #     out$longitude <- locations$longitude[i-1]
-    #     out$latitude <- locations$latitude[i-1]
-    #   }
-    #
-    #   out$latitude_ci_5 <- NA
-    #   out$latitude_ci_95 <- NA
-    #   out$longitude_ci_5 <- NA
-    #   out$longitude_ci_95 <- NA
-    # }
-
      locations <- rbind(locations, out)
      print(locations)
-     maps::map()
+
      points(
        locations[,1:2],
        pch = 19,
@@ -145,3 +89,4 @@ test <- fit_track(
  )
 )
 
+#saveRDS(test, "data/track_demo.rds", compress = "xz")

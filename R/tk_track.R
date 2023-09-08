@@ -11,19 +11,48 @@
 
 tk_track<- function(
     par,
-    data
-    #land_mask
+    data,
+    ...
     ) {
 
   # split out model parameters
   lat <- par[1]
   lon <- par[2]
+  sky <- par[3]
 
-    illuminance <- skylight(
+  # check if location is within
+  # land mask
+  # intersects <- suppressMessages(
+  #   suppressWarnings(
+  #   sf::st_intersects(
+  #     sf::st_as_sf(
+  #       x = data.frame(
+  #         lat = lat,
+  #         lon = lon
+  #       ),
+  #       coords = c("lon","lat"),
+  #       crs = "epsg:4326"
+  #     ),
+  #     mask,
+  #     sparse = FALSE)[[1]]
+  #   )
+  # )
+
+  intersects <- TRUE
+
+  if (intersects){
+    illuminance <- skylight::skylight(
       longitude = lon,
       latitude = lat,
-      date = data$date_time
+      date = data$date_time,
+      sky_condition = sky
     )$total_illuminance
+  } else {
+    illuminance <- rep(1, nrow(data))
+  }
+
+  #illuminance
+  log(illuminance)
 }
 
 # parameters for final function:
@@ -36,9 +65,9 @@ tk_track<- function(
 
 fit_parameters <- function(
   data,
-  #previous_position,
   iterations,
-  bbox
+  bbox,
+  mask
   ) {
 
   # calculate buffer distance
@@ -60,8 +89,8 @@ fit_parameters <- function(
   # lower <- c(bbox['ymin'], bbox['xmin'])
   # upper <- c(bbox['ymax'], bbox['xmax'])
 
-  lower <- c(bbox[2:1])
-  upper <- c(bbox[4:3])
+  lower <- c(bbox[2:1], 1)
+  upper <- c(bbox[4:3], 10)
 
   # Bayesian optimization routine
   control = list(
@@ -79,11 +108,12 @@ fit_parameters <- function(
               list(par = random_par,
                    data = data,
                    model = "tk_track"
+                   #mask = mask
               ))},
     # include an additional parameter
     # range for data uncertainty
     lower = c(lower, 0),
-    upper = c(upper, 0.5)
+    upper = c(upper, 1)
   )
 
   # calculate the optimization
@@ -136,19 +166,10 @@ fit_parameters <- function(
     na.rm = TRUE
   )
 
-  # sanity checks
-  # - distance from previous point can't be further
-  #  than flight speed (m/s) * 60 * 60 * 24 meters
-  #  away
-  #
-  #  - increase search window by the above amount
-  #   times the skipped steps
-  #
-  #  - how to create a circle in {sf}?
-  #  - implement land mask (naturalearth?)
-  #  - propagate last known location or set
-  #   to NA?
+  sky_conditions <- median(samples_par[,3], na.rm = TRUE)
 
+  # return data as a structured
+  # data frame
   data.frame(
     longitude = longitude[2],
     latitude = latitude[2],
@@ -156,6 +177,7 @@ fit_parameters <- function(
     latitude_ci_95 = latitude[3],
     longitude_ci_5 = longitude[1],
     longitude_ci_95 = longitude[3],
+    sky_conditions = sky_conditions,
     grb = grb,
     row.names = NULL
   )
