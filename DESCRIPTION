@@ -1,16 +1,38 @@
-Package: RTemplate
-Title: Your project
-Version: 0.1
-Authors@R: 
-    person(
-      given = "X",
-      family = "Y",
-      email = "x.y@example.com",
-      role = c("aut", "cre"),
-      comment = c(ORCID = "0000-0000-0000-0000")
-    )
-Description: What the package does (one paragraph).
+Package: skytrackr
+Type: Package
+Title: A Sky Illuminance Location Tracker
+Version: 1.0
+Authors@R: c(person(
+               family = "Hufkens",
+               given = "Koen",
+               email = "koen.hufkens@gmail.com",
+               role = c("aut", "cre"),
+               comment = c(ORCID = "0000-0002-5070-8109")),
+             person(given = "BlueGreen Labs",
+              role = c("cph", "fnd"))
+               )
+Maintainer: Koen Hufkens <koen.hufkens@gmail.com>
+Description: A tool to calculate geolocation by light positions using sky illuminance values (in lux). The
+ routine uses model optimization and parameter estimation to determine locations robustly.
+URL: https://github.com/bluegreen-labs/skytrackr
+BugReports: https://github.com/bluegreen-labs/skytrackr/issues
+Depends:
+    R (>= 4.2)
 License: AGPL-3
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
+LazyData: false
+ByteCompile: true
 RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    skylight,
+    BayesianTools,
+    maps
+Suggests:
+    tidyr,
+    rnaturalearth,
+    rmarkdown,
+    covr,
+    testthat,
+    knitr
+VignetteBuilder: knitr
