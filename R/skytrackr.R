@@ -22,19 +22,21 @@
 #' @param offset by default the diurnal cycle around noon is considered (from
 #'  sunrise to sunset), alternatively estimates can be made around  midnight
 #'  considering the profile from sunset to sunrise.
+#' @param verbose given feedback including a progress bar
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
 #' @export
 
-skytrack <- function(
+skytrackr <- function(
     data,
     iterations = 10000,
     floor = 0.32,
     ceiling = 400,
     bbox = c(-180, -90, 180, 90),
     offset = "day",
-    plot = FALSE
+    plot = FALSE,
+    verbose = TRUE
 ) {
 
   # preprocess data
@@ -61,6 +63,22 @@ skytrack <- function(
     )
   }
 
+  # create progress bar
+  if(verbose) {
+  message(
+    sprintf(
+      "- Estimating locations from light (lux) profiles for logger: %s!",
+        data$logger[1])
+  )
+  pb <- progress::progress_bar$new(
+    format = "  processing [:bar] :percent eta: :eta",
+    total = length(dates),
+    clear = FALSE,
+    width= 60
+    )
+  pb$tick(0)
+  }
+
   # loop over all available dates
   for (i in seq_len(length(dates))) {
 
@@ -83,6 +101,11 @@ skytrack <- function(
 
     # append output to data frame
     locations <- rbind(locations, out)
+
+    # increment on progress bar
+    if(verbose) {
+      pb$tick()
+    }
 
     if(plot){
       points(

@@ -2,5 +2,6 @@
 
 export(likelihood)
 export(log_lux)
-export(skytrack)
+export(skytrackr)
 export(stk_fit)
+export(stk_read_lux)

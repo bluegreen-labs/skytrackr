@@ -19,8 +19,8 @@ stk_fit <- function(
 
   # set lower and upper parameter ranges
   # from bounding box settings
-  lower <- c(bbox[2:1], 1)
-  upper <- c(bbox[4:3], 10)
+  lower <- c(bbox[2:1], 0)
+  upper <- c(bbox[4:3], 20)
 
   # Bayesian optimization routine
   control <- list(

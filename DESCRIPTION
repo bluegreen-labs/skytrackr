@@ -27,6 +27,7 @@ Imports:
     dplyr,
     skylight,
     BayesianTools,
+    progress,
     maps
 Suggests:
     tidyr,
