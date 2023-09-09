@@ -17,6 +17,9 @@
 #'  provided in lux c(min, max) or the equivalent if non-calibrated
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
+#' @param scale scale / sky condition factor, by default covering the
+#'  skylight() range of 1-10 but can be extended for more flexibility
+#'  in case of non lux measurements
 #' @param offset by default the diurnal cycle around noon is considered (from
 #'  sunrise to sunset), alternatively estimates can be made around  midnight
 #'  considering the profile from sunset to sunrise.
@@ -47,15 +50,6 @@ skytrackr <- function(
     verbose = TRUE
 ) {
 
-  # preprocess data
-  # data <- data |>
-  #   dplyr::filter(
-  #     lux > range[1],
-  #     lux < range[2]
-  #   ) |>
-  #   mutate(
-  #     lux = log(lux)
-  #   )
   data <- data[which(data$lux > range[1] & data$lux < range[2]),]
   data$lux <- log(data$lux)
 
@@ -92,11 +86,6 @@ skytrackr <- function(
   # loop over all available dates
   for (i in seq_len(length(dates))) {
 
-    # create daily subset
-    # subs <- data |>
-    #   dplyr::filter(
-    #     date == dates[i]
-    #   )
     subs <- data[which(data$date == dates[i]),]
 
     # fit model parameters for a given
@@ -121,7 +110,7 @@ skytrackr <- function(
     }
 
     if(plot){
-      points(
+      graphics::points(
         locations[,1:2],
         pch = 19,
         col = 'red'

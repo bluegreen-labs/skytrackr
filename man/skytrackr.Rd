@@ -28,6 +28,10 @@ provided in lux c(min, max) or the equivalent if non-calibrated}
 \item{bbox}{bounding box of the location search domain given as
 c(xmin, ymin, xmax, ymax)}
 
+\item{scale}{scale / sky condition factor, by default covering the
+skylight() range of 1-10 but can be extended for more flexibility
+in case of non lux measurements}
+
 \item{offset}{by default the diurnal cycle around noon is considered (from
 sunrise to sunset), alternatively estimates can be made around  midnight
 considering the profile from sunset to sunrise.}
