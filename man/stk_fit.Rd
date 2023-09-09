@@ -4,7 +4,14 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, iterations, bbox = c(-180, -90, 180, 90))
+stk_fit(
+  data,
+  iterations,
+  bbox = c(-180, -90, 180, 90),
+  scale = c(1, 10),
+  control = list(sampler = "DEzs", settings = list(burnin = iterations * 0.2, iterations
+    = iterations * 0.8, message = FALSE))
+)
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
@@ -13,6 +20,12 @@ stk_fit(data, iterations, bbox = c(-180, -90, 180, 90))
 
 \item{bbox}{bounding box of the location search domain given as
 c(xmin, ymin, xmax, ymax)}
+
+\item{scale}{scale factor range due to cloudiness to use in optimization,
+when target values are not provided in lux this can be used to effectively
+implement a Hill-Ekstrom template fitting approach}
+
+\item{control}{control settings for the Bayesian optimization}
 }
 \value{
 an estimated illuminance based location (and its uncertainties)

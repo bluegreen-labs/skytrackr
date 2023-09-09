@@ -7,10 +7,12 @@
 skytrackr(
   data,
   iterations = 10000,
-  floor = 0.32,
-  ceiling = 400,
+  range = c(0.32, 400),
   bbox = c(-180, -90, 180, 90),
+  scale = c(1, 10),
   offset = "day",
+  control = list(sampler = "DEzs", settings = list(burnin = iterations * 0.2, iterations
+    = iterations * 0.8, message = FALSE)),
   plot = FALSE,
   verbose = TRUE
 )
@@ -20,11 +22,8 @@ skytrackr(
 
 \item{iterations}{number of optimization iterations}
 
-\item{floor}{lower bound of lux values to consider (values below this
-value are ignored)}
-
-\item{ceiling}{upper bound of lux values to consider (values above this
-value are ignored)}
+\item{range}{range of values to consider during processing, should be
+provided in lux c(min, max) or the equivalent if non-calibrated}
 
 \item{bbox}{bounding box of the location search domain given as
 c(xmin, ymin, xmax, ymax)}
@@ -32,6 +31,9 @@ c(xmin, ymin, xmax, ymax)}
 \item{offset}{by default the diurnal cycle around noon is considered (from
 sunrise to sunset), alternatively estimates can be made around  midnight
 considering the profile from sunset to sunrise.}
+
+\item{control}{control settings for the Bayesian optimization, generally
+should not be altered}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}
