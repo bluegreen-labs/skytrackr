@@ -108,7 +108,7 @@ p <- ggplot() +
     colour = "green"
   ) +
   labs(
-    title = "Total illuminance for 3 days at the start of May 2020",
+    title = "Total illuminance early July 2021",
     y = "log(lux)",
     x = "Date"
   ) +
