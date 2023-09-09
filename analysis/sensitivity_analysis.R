@@ -27,7 +27,7 @@ sensitivity_default <- do.call(
   sensitivity_default
   )
 
-saveRDS(sensitivity_default,"analysis/sensitivity_default.rds")
+saveRDS(sensitivity_default,"inst/extdata/sensitivity_default.rds")
 
 # considering the full series excluding true night
 sensitivity_full <- lapply(0:75, function(i){
@@ -45,4 +45,20 @@ sensitivity_full <- do.call(
   sensitivity_full
   )
 
-saveRDS(sensitivity_full, "analysis/sensitivity_full.rds")
+saveRDS(sensitivity_full, "inst/extdata/sensitivity_full.rds")
+
+# nitghttime pollution
+sensitivity_night <- lapply(0:75, function(i){
+  idx <- sample(1:nrow(cc874), nrow(cc874)*(i/100))
+  cc874_noise <-cc874
+  cc874_noise$lux[idx] <- 250
+  location <- cc874_noise |>
+    skytrackr::skytrackr()
+})
+
+sensitivity_night <- do.call(
+  "rbind",
+  sensitivity_night
+)
+
+saveRDS(sensitivity_night, "inst/extdata/sensitivity_night.rds")
