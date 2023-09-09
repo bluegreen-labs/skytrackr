@@ -32,7 +32,7 @@ Geolocation by light has revolutionised animal behavioural studies since its inc
 
 ## Background
 
-Geolocation by light has been a popular animal tracking method in ornithology. It has been successfully used to track long distance migration and foraging behaviour of swifts [@kearsley_aeroecology_2022, @norevik_windassociated_2020, @hedenstrom_annual_2016, @norevik_highly_2019, @hedenstrom_flight_2019] and other migratory birds (REFERENCES), and has revolutionised our understanding of long distance movements. 
+Geolocation by light has been a popular animal tracking method in ornithology. It has been successfully used to track long distance migration and foraging behaviour of swifts [@kearsley_aeroecology_2022, @norevik_windassociated_2020, @hedenstrom_annual_2016, @norevik_highly_2019, @hedenstrom_flight_2019] and other migratory birds, and has revolutionised our understanding of long distance movements. 
 
 Geolocation by light is a conceptually easy approach. It relies on the shift of sunrise and sunset times to determine longitude and the length of night (or day) between sunrise or sunset to determine latitude deterministically using astronomical equations [@ekstrom_advance_2004].
 
@@ -294,7 +294,7 @@ Sensitivity analysis show that especially nighttime bright moments disrupt the p
 
 ### Limitations
 
-The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. However, sensitivity analysis have shown that these factors might have less effect than nighttime illumination. Regardless, performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season []. Data assimilation by using pressure measurements at stationary moments (REFERENCE) could be implemented but is currently not. Further improvements can be implemented by masking of locations during optimization (based on step distance and or geographic location, such as a land water mask), and are currently not considered.
+The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. However, sensitivity analysis have shown that these factors might have less effect than nighttime illumination. Regardless, performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season []. Data assimilation by using pressure measurements at stationary moments [] could be implemented but is currently not. Further improvements can be implemented by masking of locations during optimization (based on step distance and or geographic location, such as a land water mask), and are currently not considered.
 
 ## Conclusion
 
