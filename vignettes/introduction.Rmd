@@ -133,9 +133,12 @@ remotes::install_github("bluegreen-labs/skytrackr")
 
 ## Discussion
 
-The implementation of masking of location during optimization (based on step distance and or geographic location, such as a land water mask) are currently not considered. The application as presented also does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. Performance of this method will therefore be functioning optimally in species, such as swifts, which continuously fly during their non-breeding season or during long migration stretches. Data assimilation by using pressure measurements at times stationary moments (REFERENCE) could be implemented but is currently not. Sensitive to nighttime values
+To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging near a Common swift nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
 
 ```{r}
+# normally you would first read in the .lux or .glf file using
+# cc874 <- stk_read_lux("cc874.lux")
+
 # load the integrated package data
 print(head(skytrackr::cc874))
 
@@ -143,13 +146,51 @@ print(head(skytrackr::cc874))
 location <- cc874 |>
   skytrackr::skytrackr()
 
+# print the optimized parameters (i.e. the locations)
 print(location)
 ```
 
+Note that the returned location estimates are very close to the original location of the colony (51.8 N/ 3.73 E). These parameters can be fed back into the original (underlying) algorithm to calculate the full diurnal profile. Doing so allows you to compare the modelled (fitted) data to the observed values.
+
+```{r echo = FALSE, fig.cap="Figure showing the fitted model results (full black line) from optimized parameters (latitude, longitude, sky conditions). Default parameters only use a limited twilight set of parameters. From the observed values (coloured dots) only the 'True' values were included in the estimation of the model parameters."}
+# call the underlying model
+cc874$model_results <- skytrackr::log_lux(
+  par = c( location$latitude, location$longitude, location$sky_conditions),
+  cc874
+)
+
+ggplot(data = cc874) +
+  geom_point(
+    aes(
+      hour,
+      log(lux),
+      colour = (lux > 0.32 & lux < 400)
+    )
+  ) +
+  scale_color_discrete() +
+  geom_line(
+    aes(
+      hour,
+      model_results
+    )
+  ) +
+  labs(
+    x = "Hour",
+    y = "log(lux)",
+    colour = "Optimized"
+  ) +
+  theme_bw()
+```
+
+This visually confirms the good fit of the model data with the observed values. Note that only a subset of the data is used in model optimization (as defined by the `range` parameter). You can assess the convergence of the model using the `grb` values (i.e the Gelman-Rubin-Brooks metric, @gelman_inference_1992), which should be lower than 1.1 to indicate the convergence of the 3 chains used in the MCMC DEz algorithm. This is further corroborated by considering the upper and lower quantiles and their spread, which are narrowly defined for both latitude and longitude.
 
 ### Sensitivity analysis
 
 TODY, add noise to existing data and assess the impact on estimates - could use a single demo day - with known reference?
+
+### Limitations
+
+The implementation of masking of location during optimization (based on step distance and or geographic location, such as a land water mask) are currently not considered. The application as presented also does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. Performance of this method will therefore be functioning optimally in species, such as swifts, which continuously fly during their non-breeding season or during long migration stretches. Data assimilation by using pressure measurements at times stationary moments (REFERENCE) could be implemented but is currently not. Sensitive to nighttime values
 
 ## Conclusion
 

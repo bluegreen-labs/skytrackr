@@ -109,10 +109,10 @@ stk_fit <- function(
   data.frame(
     longitude = longitude[2],
     latitude = latitude[2],
-    latitude_ci_5 = latitude[1],
-    latitude_ci_95 = latitude[3],
-    longitude_ci_5 = longitude[1],
-    longitude_ci_95 = longitude[3],
+    latitude_qt_5 = latitude[1],
+    latitude_qt_95 = latitude[3],
+    longitude_qt_5 = longitude[1],
+    longitude_qt_95 = longitude[3],
     sky_conditions = sky_conditions,
     grb = grb,
     row.names = NULL
