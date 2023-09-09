@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/bluegreen-labs/skytrackr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bluegreen-labs/skytrackr)
 ![](https://cranlogs.r-pkg.org/badges/grand-total/skytrackr) 
 ![](https://www.r-pkg.org/badges/version/skytrackr)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8331492.svg)](https://doi.org/10.5281/zenodo.8331492)
 
 A tool to calculate geolocation by light positions using sky illuminance values (in lux). The
  routine uses model optimization and parameter estimation to determine locations robustly.
