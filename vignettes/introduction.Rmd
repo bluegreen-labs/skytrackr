@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center"
 )
-
+set.seed(0)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
