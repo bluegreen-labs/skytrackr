@@ -24,7 +24,6 @@ LazyData: false
 ByteCompile: true
 RoxygenNote: 7.2.3
 Imports:
-    dplyr,
     skylight,
     BayesianTools,
     progress,
