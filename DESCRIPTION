@@ -29,7 +29,8 @@ Imports:
     progress,
     maps
 Suggests:
-    tidyr,
+    ggplot2,
+    patchwork,
     rnaturalearth,
     rmarkdown,
     covr,
