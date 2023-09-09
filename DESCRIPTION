@@ -1,7 +1,7 @@
 Package: skytrackr
 Type: Package
 Title: A Sky Illuminance Location Tracker
-Version: 1.0
+Version: 0.9
 Authors@R: c(person(
                family = "Hufkens",
                given = "Koen",
