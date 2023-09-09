@@ -23,7 +23,7 @@ c(xmin, ymin, xmax, ymax)}
 
 \item{scale}{scale factor range due to cloudiness to use in optimization,
 when target values are not provided in lux this can be used to effectively
-implement a Hill-Ekstrom template fitting approach}
+implement a Hill-Ekstrom template fitting}
 
 \item{control}{control settings for the Bayesian optimization}
 }

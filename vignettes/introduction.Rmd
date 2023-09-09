@@ -24,7 +24,7 @@ library(tidyr)
 library(BayesianTools)
 library(skytrackr)
 
-load(here::here("data/cc874.rda"))
+#load(here::here("data/cc874.rda"))
 ```
 
 ## Abstract
@@ -47,7 +47,7 @@ Here, I present the {skytrackr} R package which provides a Bayesian optimization
 
 ## Implementation
 
-The {skytrackr} R package uses a physical sky illuminance model [@hufkens_skylight_2022, @janiczek_computer_1987] in combination with Bayesian location parameter estimation [@hartig_bayesiantools_2023] approach to maximise the log likelihood between observed (logger) and modelled values. Model parameters are limited to latitude, longitude and a sky condition which scales the sky illuminance response for a known date and time. The approach improves upon the template matching as suggested by @ekstrom_Advance_2004 by including a physical component to the model rather than considering a piecewise regression based approach.
+The {skytrackr} R package uses a physical sky illuminance model [@hufkens_skylight_2022, @janiczek_computer_1987] in combination with Bayesian location parameter estimation [@hartig_bayesiantools_2023] approach to maximise the log likelihood between observed (logger) and modelled values. Model parameters are limited to latitude, longitude and a sky condition which scales the sky illuminance response for the day. The approach improves upon the template matching as suggested by @ekstrom_Advance_2004 by including a physical component to the model rather than considering a piecewise regression based approach.
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.cap="Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line."}
 library(skylight)
@@ -122,7 +122,7 @@ plot(p)
 
 By default, the DEzs MCMC sampler [@ter_braak_differential_2008] implemented in BayesianTools [@hartig_bayesiantools_2023] is used to estimate the posterior distribution of model parameters. For each location I sample the posterior distribution of the parameters (with a thinning factor of 10), and return summary values. I return the median for best estimates of latitude, longitude and sky condition. In addition, the 5-95% quantiles on the geographic position are provided. The package also returns the Gelman-Rubin-Brooks (GRB) metric [@gelman_inference_1992], which can be used to assess the convergence of the optimization. Both the quantile ranges and the GRB metric can be used in post-hoc quality control screening.
 
-The method as proposed should perform equally well, or better than, the  Hill-Ekstrom methodology using template matching [@ekstrom_Advance_2004]. However, some limitations do apply. The measured light intensities should be translated to physical units in lux. Not all sensors return physical units, with some returning an arbitrary number due to data limitations (compression) or hardware choices. In these cases an external calibration to convert arbitrary numbers to lux is necessary. Although performance should improve around the equinoxes, performance will still be poorer than average. However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent.
+The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_Advance_2004]. However, some limitations do apply. The measured light intensities should be translated to physical units in lux to be accurately compared to the physical model. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases an external calibration to convert arbitrary numbers to lux is necessary. Although performance should improve around the equinoxes, performance will remain poorer than average. However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
 
 The package and function descriptions can be found on github at: https://github.com/bluegreen-labs/skytrackr, and can be installed from source using:
 
@@ -135,9 +135,21 @@ remotes::install_github("bluegreen-labs/skytrackr")
 
 The implementation of masking of location during optimization (based on step distance and or geographic location, such as a land water mask) are currently not considered. The application as presented also does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. Performance of this method will therefore be functioning optimally in species, such as swifts, which continuously fly during their non-breeding season or during long migration stretches. Data assimilation by using pressure measurements at times stationary moments (REFERENCE) could be implemented but is currently not. Sensitive to nighttime values
 
+```{r}
+# load the integrated package data
+print(head(skytrackr::cc874))
+
+# skytrackr allows for piped data input
+location <- cc874 |>
+  skytrackr::skytrackr()
+
+print(location)
+```
+
+
 ### Sensitivity analysis
 
-- add noise to clean data and do a run
+TODY, add noise to existing data and assess the impact on estimates - could use a single demo day - with known reference?
 
 ## Conclusion
 

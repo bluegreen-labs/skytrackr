@@ -6,7 +6,7 @@
 \usage{
 skytrackr(
   data,
-  iterations = 10000,
+  iterations = 20000,
   range = c(0.32, 400),
   bbox = c(-180, -90, 180, 90),
   scale = c(1, 10),
