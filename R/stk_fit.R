@@ -9,7 +9,7 @@
 #'  c(xmin, ymin, xmax, ymax)
 #' @param scale scale factor range due to cloudiness to use in optimization,
 #'  when target values are not provided in lux this can be used to effectively
-#'  implement a Hill-Ekstrom template fitting approach
+#'  implement a Hill-Ekstrom template fitting
 #' @param control control settings for the Bayesian optimization
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
