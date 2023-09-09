@@ -300,7 +300,7 @@ The package does not mitigate uncertainty introduced by occlusion of the sensor 
 
 ## Conclusion
 
-The {skytrackr} R package provides an easy 
+The {skytrackr} R package provides an optimization based methodology which leverages the whole or part of the diurnal light profile and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical model of sky illuminance, increases accuracy. The Bayesian framework also provides uncertainty measures for each estimate, allowing for post-hoc quality control.
 
 ## Availability and requirements
 
