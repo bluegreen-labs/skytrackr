@@ -26,9 +26,9 @@ log_lux <- function(
     longitude = lon,
     latitude = lat,
     date = data$date_time,
-    sky_condition = 1
+    sky_condition = sky
   )$total_illuminance
 
   # return log lux
-  log(illuminance) - sky
+  log(illuminance)
 }

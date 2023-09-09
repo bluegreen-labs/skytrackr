@@ -7,6 +7,10 @@
 #' @param iterations number of optimization iterations
 #' @param bbox bounding box of the location search domain given as
 #'  c(xmin, ymin, xmax, ymax)
+#' @param scale scale factor range due to cloudiness to use in optimization,
+#'  when target values are not provided in lux this can be used to effectively
+#'  implement a Hill-Ekstrom template fitting approach
+#' @param control control settings for the Bayesian optimization
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
 #' @export
@@ -14,23 +18,22 @@
 stk_fit <- function(
   data,
   iterations,
-  bbox = c(-180, -90, 180, 90)
+  bbox = c(-180, -90, 180, 90),
+  scale = c(1, 10),
+  control = list(
+      sampler = 'DEzs',
+      settings = list(
+        burnin = iterations * 0.2,
+        iterations = iterations * 0.8,
+        message = FALSE
+      )
+  )
   ) {
 
   # set lower and upper parameter ranges
   # from bounding box settings
   lower <- c(bbox[2:1], 0)
   upper <- c(bbox[4:3], 20)
-
-  # Bayesian optimization routine
-  control <- list(
-    sampler = 'DEzs',
-    settings = list(
-      burnin = iterations * 0.2,
-      iterations = iterations * 0.8,
-      message = FALSE
-    )
-  )
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(

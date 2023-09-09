@@ -13,16 +13,16 @@
 #' @param iterations number of optimization iterations
 #' @param bbox bounding box of the location search domain given as
 #'  c(xmin, ymin, xmax, ymax)
-#' @param floor lower bound of lux values to consider (values below this
-#'  value are ignored)
-#' @param ceiling upper bound of lux values to consider (values above this
-#'  value are ignored)
+#' @param range range of values to consider during processing, should be
+#'  provided in lux c(min, max) or the equivalent if non-calibrated
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param offset by default the diurnal cycle around noon is considered (from
 #'  sunrise to sunset), alternatively estimates can be made around  midnight
 #'  considering the profile from sunset to sunrise.
 #' @param verbose given feedback including a progress bar
+#' @param control control settings for the Bayesian optimization, generally
+#'  should not be altered
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
@@ -30,24 +30,34 @@
 
 skytrackr <- function(
     data,
-    iterations = 10000,
-    floor = 0.32,
-    ceiling = 400,
+    iterations = 20000,
+    range = c(0.32, 400),
     bbox = c(-180, -90, 180, 90),
+    scale = c(1, 10),
     offset = "day",
+    control = list(
+      sampler = 'DEzs',
+      settings = list(
+        burnin = iterations * 0.2,
+        iterations = iterations * 0.8,
+        message = FALSE
+      )
+    ),
     plot = FALSE,
     verbose = TRUE
 ) {
 
   # preprocess data
-  data <- data |>
-    dplyr::filter(
-      lux > floor,
-      lux < ceiling
-    ) |>
-    mutate(
-      lux = log(lux)
-    )
+  # data <- data |>
+  #   dplyr::filter(
+  #     lux > range[1],
+  #     lux < range[2]
+  #   ) |>
+  #   mutate(
+  #     lux = log(lux)
+  #   )
+  data <- data[which(data$lux > range[1] & data$lux < range[2]),]
+  data$lux <- log(data$lux)
 
   # unique dates
   dates <- unique(data$date)
@@ -83,17 +93,20 @@ skytrackr <- function(
   for (i in seq_len(length(dates))) {
 
     # create daily subset
-    subs <- data |>
-      dplyr::filter(
-        date == dates[i]
-      )
+    # subs <- data |>
+    #   dplyr::filter(
+    #     date == dates[i]
+    #   )
+    subs <- data[which(data$date == dates[i]),]
 
     # fit model parameters for a given
     # day to estimate the location
     out <- stk_fit(
       data = subs,
       iterations = iterations,
-      bbox = bbox
+      bbox = bbox,
+      scale = scale,
+      control = control
     )
 
     # set date
