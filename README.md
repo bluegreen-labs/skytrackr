@@ -16,7 +16,7 @@ You can cite this package like this "we obtained location estimates using the
 bibliographic reference to include in your reference list (don't forget
 to update the 'last accessed' date):
 
-> Hufkens, K. (2023). skytrackr: a sky illuminance location tracker. Zenodo. <https://doi.org/10.5281/zenodo.xxxx>.
+> Hufkens, K. (2023). skytrackr: a sky illuminance location tracker. Zenodo. <https://doi.org/10.5281/zenodo.8331492>.
 
 ## Installation
 
