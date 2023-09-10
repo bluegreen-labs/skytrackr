@@ -6,6 +6,8 @@
 \usage{
 skytrackr(
   data,
+  start_location,
+  tolerance = 15,
   iterations = 20000,
   range = c(0.32, 400),
   bbox = c(-180, -90, 180, 90),
@@ -19,6 +21,16 @@ skytrackr(
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
+
+\item{start_location}{start location of logging, required when using a
+tolerance based estimation. When no start_location is used the default
+bounding box (bbox) settings are used.}
+
+\item{tolerance}{tolerance on the search window for optimization, given in
+degrees (to pad left - right, top - bottom). Uses the previous steps
+location to constrain the parameter (location) search space.
+This requires the start_location parameter to be set, as you need a
+start position for a trusted initial location.}
 
 \item{iterations}{number of optimization iterations}
 
