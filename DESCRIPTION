@@ -25,6 +25,7 @@ ByteCompile: true
 RoxygenNote: 7.2.3
 Imports:
     skylight,
+    circular,
     BayesianTools,
     progress,
     maps,
