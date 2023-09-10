@@ -78,4 +78,8 @@ data |>
     )
 ```
 
+## Comparison
 
+Comparison between the SMC (a) and DEzs method (b), with SMC being better constrained.
+
+![](https://github.com/bluegreen-labs/skytrackr/blob/34514016a2468afee75253d2b6fd5e4058798692/smc_dezs_comparison.png)
