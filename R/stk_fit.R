@@ -31,9 +31,10 @@ stk_fit <- function(
   ) {
 
   # set lower and upper parameter ranges
-  # from bounding box settings
-  lower <- c(bbox[2:1], 0)
-  upper <- c(bbox[4:3], 20)
+  # from bounding box settings add scale
+  # factor for sky conditions
+  lower <- c(bbox[2:1], scale[1])
+  upper <- c(bbox[4:3], scale[2])
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(
@@ -57,10 +58,14 @@ stk_fit <- function(
     settings = control$settings
   )
 
-  # GGelman-Brooks-Rubin (GBR) potential
-  # scale factors to check covergence
+  # Gelman-Brooks-Rubin (GBR) potential
+  # scale factors to check convergence
   # convergence between 1.05 and 1.1
-  grb <- BayesianTools::gelmanDiagnostics(out)$mpsrf
+  if (control$sampler == "DEzs") {
+    grb <- suppressWarnings(BayesianTools::gelmanDiagnostics(out)$mpsrf)
+  } else {
+    grb <- NA
+  }
 
   # sample the posterior distribution
   # with thinning factor is 10
@@ -72,25 +77,25 @@ stk_fit <- function(
   # to deal with the date line use circular
   # quantiles to get median and CI for the
   # longitude
-  # longitude <- suppressWarnings(
-  #   as.numeric(
-  #     circular::quantile.circular(
-  #       circular::as.circular(
-  #         samples_par[,2],
-  #         type = "angles",
-  #         units ="degrees"
-  #       ),
-  #       c(0.05,0.5,0.95),
-  #       na.rm = TRUE
-  #     )
-  #   )
-  # )
-
-  longitude <- stats::quantile(
-    samples_par[,2],
-    c(0.05,0.5,0.95),
-    na.rm = TRUE
+  longitude <- suppressWarnings(
+    as.numeric(
+      circular::quantile.circular(
+        circular::as.circular(
+          samples_par[,2],
+          zero = pi,
+          units ="degrees"
+        ),
+        c(0.05,0.5,0.95),
+        na.rm = TRUE
+      )
+    )
   )
+
+  # longitude <- stats::quantile(
+  #   samples_par[,2],
+  #   c(0.05,0.5,0.95),
+  #   na.rm = TRUE
+  # )
 
   # use plain quantiles for latitude
   latitude <- stats::quantile(
@@ -115,6 +120,7 @@ stk_fit <- function(
     longitude_qt_95 = longitude[3],
     sky_conditions = sky_conditions,
     grb = grb,
+    n = nrow(data),
     row.names = NULL
   )
 
