@@ -55,3 +55,27 @@ print(head(skytrackr::cc874))
 location <- cc874 |>
   skytrackr::skytrackr()
 ```
+
+## Advanced model settings
+
+The underlying BayesianTools package used in optimization allows for the specification of other optimization techniques including Sequential Monte Carlo methods, which in effect are particle filters (considering multiple priors during optimization). This method is considerably faster than the default DEzs method while fostering better accuracy during equinox periods.
+
+```r
+data |>
+    skytrackr(
+      start_location = c(51.08, 3.73),
+      tolerance = 13,
+      bbox = c(-20, -40, 60, 60),
+      control = list(
+        sampler = 'SMC',
+        settings = list(
+          initialParticles = 100,
+          iterations= 10,
+          message = FALSE
+          )
+      ),
+      plot = TRUE
+    )
+```
+
+

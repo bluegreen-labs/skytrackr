@@ -21,13 +21,13 @@ stk_fit <- function(
   bbox = c(-180, -90, 180, 90),
   scale = c(1, 10),
   control = list(
-      sampler = 'DEzs',
-      settings = list(
-        burnin = iterations * 0.2,
-        iterations = iterations * 0.8,
-        message = FALSE
+    sampler = 'SMC',
+    settings = list(
+      initialParticles = 100,
+      iterations= 10,
+      message = FALSE
       )
-  )
+    )
   ) {
 
   # set lower and upper parameter ranges
@@ -52,15 +52,24 @@ stk_fit <- function(
 
   # calculate the optimization
   # run and return results
-  out <- BayesianTools::runMCMC(
-    bayesianSetup = setup,
-    sampler = control$sampler,
-    settings = control$settings
+  # [suppress all output]
+  out <- suppressWarnings(
+    suppressMessages(
+      BayesianTools::runMCMC(
+        bayesianSetup = setup,
+        sampler = control$sampler,
+        settings = control$settings
+      )
+    )
   )
+
+
 
   # Gelman-Brooks-Rubin (GBR) potential
   # scale factors to check convergence
   # convergence between 1.05 and 1.1
+  # only applies to DEzs as it has
+  # 3 chains by default
   if (control$sampler == "DEzs") {
     grb <- suppressWarnings(BayesianTools::gelmanDiagnostics(out)$mpsrf)
   } else {

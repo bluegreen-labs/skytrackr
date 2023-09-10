@@ -19,21 +19,20 @@
 #'  This requires the start_location parameter to be set, as you need a
 #'  start position for a trusted initial location.
 #' @param iterations number of optimization iterations
+#' @param particles number of particles when using the default particle filter
+#'  optimization
 #' @param bbox bounding box of the location search domain given as
 #'  c(xmin, ymin, xmax, ymax)
 #' @param range range of values to consider during processing, should be
 #'  provided in lux c(min, max) or the equivalent if non-calibrated
-#' @param plot plot map of incrementally changing determined locations as
-#'  a progress method
 #' @param scale scale / sky condition factor, by default covering the
 #'  skylight() range of 1-10 but can be extended for more flexibility
 #'  in case of non lux measurements
-#' @param offset by default the diurnal cycle around noon is considered (from
-#'  sunrise to sunset), alternatively estimates can be made around  midnight
-#'  considering the profile from sunset to sunrise.
-#' @param verbose given feedback including a progress bar
 #' @param control control settings for the Bayesian optimization, generally
-#'  should not be altered
+#'  should not be altered (defaults to a sequential monte carlo method)
+#' @param plot plot map of incrementally changing determined locations as
+#'  a progress method
+#' @param verbose given feedback including a progress bar
 
 #'
 #' @return data frame with location estimate, their uncertainties, and
@@ -44,16 +43,16 @@ skytrackr <- function(
     data,
     start_location,
     tolerance = 15,
-    iterations = 20000,
+    iterations = 10,
+    particles = 100,
     range = c(0.32, 400),
     bbox = c(-180, -90, 180, 90),
     scale = c(1, 10),
-    offset = "day",
     control = list(
-      sampler = 'DEzs',
+      sampler = 'SMC',
       settings = list(
-        burnin = iterations * 0.2,
-        iterations = iterations * 0.8,
+        initialParticles = 100,
+        iterations= 10,
         message = FALSE
       )
     ),
@@ -112,7 +111,7 @@ skytrackr <- function(
                  start_location[1] + tolerance
         )
       } else {
-        message("No start location proivded, using default bounding box throughout search!")
+        message("  - No start location provided, using default bounding box throughout search!")
       }
     }
 
