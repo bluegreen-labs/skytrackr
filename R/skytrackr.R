@@ -96,7 +96,6 @@ skytrackr <- function(
 
   # loop over all available dates
   for (i in seq_len(length(dates))) {
-
     if (i != 1) {
         bbox <- c(locations$longitude[i-1] - tolerance,
                   locations$latitude[i-1] - tolerance,
