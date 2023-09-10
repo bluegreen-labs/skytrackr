@@ -142,8 +142,17 @@ To demonstrate the functioning of the package a small demo dataset comprised of 
 print(head(skytrackr::cc874))
 
 # skytrackr allows for piped data input
+# when using the default SMC particle filter
+# it is key to specify a known starting location
+# to optimally use this method
 location <- cc874 |>
-  skytrackr::skytrackr()
+  skytrackr::skytrackr(
+      iterations = 100,
+      particles = 10,
+      start_location = c(51.08, 3.73),
+      tolerance = 11,
+      plot = FALSE
+    )
 
 # print the optimized parameters (i.e. the locations)
 print(location)

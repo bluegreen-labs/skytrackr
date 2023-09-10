@@ -9,8 +9,8 @@ stk_fit(
   iterations,
   bbox = c(-180, -90, 180, 90),
   scale = c(1, 10),
-  control = list(sampler = "DEzs", settings = list(burnin = iterations * 0.2, iterations
-    = iterations * 0.8, message = FALSE))
+  control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
+    10, message = FALSE))
 )
 }
 \arguments{

@@ -47,7 +47,7 @@ skytrackr <- function(
     particles = 200,
     range = c(0.32, 400),
     bbox = c(-180, -90, 180, 90),
-    scale = c(1, 10),
+    scale = c(0, 20),
     control = list(
       sampler = 'SMC',
       settings = list(

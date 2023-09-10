@@ -8,13 +8,13 @@ skytrackr(
   data,
   start_location,
   tolerance = 15,
-  iterations = 20000,
+  iterations = 20,
+  particles = 200,
   range = c(0.32, 400),
   bbox = c(-180, -90, 180, 90),
   scale = c(1, 10),
-  offset = "day",
-  control = list(sampler = "DEzs", settings = list(burnin = iterations * 0.2, iterations
-    = iterations * 0.8, message = FALSE)),
+  control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
+    10, message = FALSE)),
   plot = FALSE,
   verbose = TRUE
 )
@@ -34,6 +34,9 @@ start position for a trusted initial location.}
 
 \item{iterations}{number of optimization iterations}
 
+\item{particles}{number of particles when using the default particle filter
+optimization}
+
 \item{range}{range of values to consider during processing, should be
 provided in lux c(min, max) or the equivalent if non-calibrated}
 
@@ -44,12 +47,8 @@ c(xmin, ymin, xmax, ymax)}
 skylight() range of 1-10 but can be extended for more flexibility
 in case of non lux measurements}
 
-\item{offset}{by default the diurnal cycle around noon is considered (from
-sunrise to sunset), alternatively estimates can be made around  midnight
-considering the profile from sunset to sunrise.}
-
 \item{control}{control settings for the Bayesian optimization, generally
-should not be altered}
+should not be altered (defaults to a sequential monte carlo method)}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}
