@@ -10,6 +10,14 @@
 #' longitudinal displacement).
 #'
 #' @param data a data frame containing date time and lux values
+#' @param start_location start location of logging, required when using a
+#'  tolerance based estimation. When no start_location is used the default
+#'  bounding box (bbox) settings are used.
+#' @param tolerance tolerance on the search window for optimization, given in
+#'  degrees (to pad left - right, top - bottom). Uses the previous steps
+#'  location to constrain the parameter (location) search space.
+#'  This requires the start_location parameter to be set, as you need a
+#'  start position for a trusted initial location.
 #' @param iterations number of optimization iterations
 #' @param bbox bounding box of the location search domain given as
 #'  c(xmin, ymin, xmax, ymax)
@@ -26,6 +34,7 @@
 #' @param verbose given feedback including a progress bar
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered
+
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
@@ -33,6 +42,8 @@
 
 skytrackr <- function(
     data,
+    start_location,
+    tolerance = 15,
     iterations = 20000,
     range = c(0.32, 400),
     bbox = c(-180, -90, 180, 90),
@@ -50,6 +61,7 @@ skytrackr <- function(
     verbose = TRUE
 ) {
 
+  # subset data
   data <- data[which(data$lux > range[1] & data$lux < range[2]),]
   data$lux <- log(data$lux)
 
@@ -85,6 +97,24 @@ skytrackr <- function(
 
   # loop over all available dates
   for (i in seq_len(length(dates))) {
+
+    if (i != 1) {
+      bbox <- c(locations$longitude[i-1] - tolerance,
+                locations$latitude[i-1] - tolerance,
+                locations$longitude[i-1] + tolerance,
+                locations$latitude[i-1] + tolerance
+                )
+    } else {
+      if(!missing(start_location)) {
+        bbox <-c(start_location[2] - tolerance,
+                 start_location[1] - tolerance,
+                 start_location[2] + tolerance,
+                 start_location[1] + tolerance
+        )
+      } else {
+        message("No start location proivded, using default bounding box throughout search!")
+      }
+    }
 
     subs <- data[which(data$date == dates[i]),]
 
