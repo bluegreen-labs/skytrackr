@@ -245,13 +245,14 @@ posterior parameter distribution.</p>
 <span><span class="va">location</span> <span class="op">&lt;-</span> <span class="va">cc874</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="../reference/skytrackr.html">skytrackr</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; - Estimating locations from light (lux) profiles for logger: CC874!</span></span>
+<span><span class="co">#&gt; No start location proivded, using default bounding box throughout search!</span></span>
 <span></span>
 <span><span class="co"># print the optimized parameters (i.e. the locations)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   longitude latitude latitude_qt_5 latitude_qt_95 longitude_qt_5</span></span>
-<span><span class="co">#&gt; 1  2.886925 52.06327       50.2875       53.15857       2.384264</span></span>
-<span><span class="co">#&gt;   longitude_qt_95 sky_conditions      grb       date</span></span>
-<span><span class="co">#&gt; 1        3.298247       3.051969 1.069207 2021-07-11</span></span></code></pre></div>
+<span><span class="co">#&gt; 1   2.86144 51.86352      50.61781       53.00176       2.461625</span></span>
+<span><span class="co">#&gt;   longitude_qt_95 sky_conditions      grb  n       date</span></span>
+<span><span class="co">#&gt; 1        3.291681       2.789004 1.066008 22 2021-07-11</span></span></code></pre></div>
 <p>Note that the returned location estimates are very close to the
 original location of the colony (51.8 N/ 3.73 E). These parameters can
 be fed back into the original (underlying) algorithm to calculate the

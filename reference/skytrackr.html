@@ -69,6 +69,8 @@ those modelled by the sky illuminance model of xyz.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">skytrackr</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
+<span>  <span class="va">start_location</span>,</span>
+<span>  tolerance <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>  iterations <span class="op">=</span> <span class="fl">20000</span>,</span>
 <span>  range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">400</span><span class="op">)</span>,</span>
 <span>  bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">180</span>, <span class="op">-</span><span class="fl">90</span>, <span class="fl">180</span>, <span class="fl">90</span><span class="op">)</span>,</span>
@@ -85,6 +87,20 @@ those modelled by the sky illuminance model of xyz.</p>
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>a data frame containing date time and lux values</p></dd>
+
+
+<dt>start_location</dt>
+<dd><p>start location of logging, required when using a
+tolerance based estimation. When no start_location is used the default
+bounding box (bbox) settings are used.</p></dd>
+
+
+<dt>tolerance</dt>
+<dd><p>tolerance on the search window for optimization, given in
+degrees (to pad left - right, top - bottom). Uses the previous steps
+location to constrain the parameter (location) search space.
+This requires the start_location parameter to be set, as you need a
+start position for a trusted initial location.</p></dd>
 
 
 <dt>iterations</dt>
