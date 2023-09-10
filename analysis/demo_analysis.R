@@ -6,25 +6,6 @@ library(rnaturalearth)
 library(sf)
 library(skytrackr)
 
-# files <- list.files(
-#   "~/Dropbox/Research_Projects/code_repository/bitbucket/apus_lunar_synchrony/data-raw/geolocators/Gent_Voorhaven_A_apus/",
-#   glob2rx("*.lux"),
-#   full.names = TRUE
-# )
-#
-# files <- files[grepl("drift", files)]
-#
-# data <- lapply(files, function(file){
-#   stk_read_lux(file)
-# })
-#
-# data <- do.call("rbind", data)
-#
-# data <- data |>
-#   dplyr::filter(
-#     logger == "CC874"
-#   )
-
 data <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
 
 # batch processing via pipe for multiple sites
