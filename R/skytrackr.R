@@ -43,8 +43,8 @@ skytrackr <- function(
     data,
     start_location,
     tolerance = 15,
-    iterations = 10,
-    particles = 100,
+    iterations = 20,
+    particles = 200,
     range = c(0.32, 400),
     bbox = c(-180, -90, 180, 90),
     scale = c(1, 10),
@@ -98,11 +98,11 @@ skytrackr <- function(
   for (i in seq_len(length(dates))) {
 
     if (i != 1) {
-      bbox <- c(locations$longitude[i-1] - tolerance,
-                locations$latitude[i-1] - tolerance,
-                locations$longitude[i-1] + tolerance,
-                locations$latitude[i-1] + tolerance
-                )
+        bbox <- c(locations$longitude[i-1] - tolerance,
+                  locations$latitude[i-1] - tolerance,
+                  locations$longitude[i-1] + tolerance,
+                  locations$latitude[i-1] + tolerance
+        )
     } else {
       if(!missing(start_location)) {
         bbox <-c(start_location[2] - tolerance,
@@ -111,7 +111,11 @@ skytrackr <- function(
                  start_location[1] + tolerance
         )
       } else {
-        message("  - No start location provided, using default bounding box throughout search!")
+message(
+"  - No start location provided,
+     using default bounding box throughout search
+     or the first acquired fix!
+")
       }
     }
 
@@ -139,6 +143,10 @@ skytrackr <- function(
     }
 
     if(plot){
+      graphics::lines(
+        locations[,1:2],
+        col = 'grey'
+      )
       graphics::points(
         locations[,1:2],
         pch = 19,
