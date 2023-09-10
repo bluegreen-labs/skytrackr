@@ -71,13 +71,13 @@ those modelled by the sky illuminance model of xyz.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">start_location</span>,</span>
 <span>  tolerance <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  iterations <span class="op">=</span> <span class="fl">20000</span>,</span>
+<span>  iterations <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  particles <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">400</span><span class="op">)</span>,</span>
 <span>  bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">180</span>, <span class="op">-</span><span class="fl">90</span>, <span class="fl">180</span>, <span class="fl">90</span><span class="op">)</span>,</span>
 <span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  offset <span class="op">=</span> <span class="st">"day"</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burnin <span class="op">=</span> <span class="va">iterations</span> <span class="op">*</span> <span class="fl">0.2</span>, iterations</span>
-<span>    <span class="op">=</span> <span class="va">iterations</span> <span class="op">*</span> <span class="fl">0.8</span>, message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"SMC"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>initialParticles <span class="op">=</span> <span class="fl">100</span>, iterations <span class="op">=</span></span>
+<span>    <span class="fl">10</span>, message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -107,6 +107,11 @@ start position for a trusted initial location.</p></dd>
 <dd><p>number of optimization iterations</p></dd>
 
 
+<dt>particles</dt>
+<dd><p>number of particles when using the default particle filter
+optimization</p></dd>
+
+
 <dt>range</dt>
 <dd><p>range of values to consider during processing, should be
 provided in lux c(min, max) or the equivalent if non-calibrated</p></dd>
@@ -123,15 +128,9 @@ skylight() range of 1-10 but can be extended for more flexibility
 in case of non lux measurements</p></dd>
 
 
-<dt>offset</dt>
-<dd><p>by default the diurnal cycle around noon is considered (from
-sunrise to sunset), alternatively estimates can be made around  midnight
-considering the profile from sunset to sunrise.</p></dd>
-
-
 <dt>control</dt>
 <dd><p>control settings for the Bayesian optimization, generally
-should not be altered</p></dd>
+should not be altered (defaults to a sequential monte carlo method)</p></dd>
 
 
 <dt>plot</dt>

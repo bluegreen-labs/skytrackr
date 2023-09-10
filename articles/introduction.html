@@ -185,6 +185,10 @@ offset data is shown as the blue full line, while latitudinal offset
 modelled data for the same period is shown as a full green line.
 </p>
 </div>
+<p>FIX ME: flipped the optimizer to a Sequential Monte Carlo method
+(i.e. particle filter method), which seems faster and as accurate -
+correct below with ref <span class="citation">(Hartig et al.
+2011)</span>.</p>
 <p>By default, the DEzs MCMC sampler <span class="citation">(Ter Braak
 and Vrugt 2008)</span> implemented in BayesianTools <span class="citation">(Hartig et al. 2023)</span> is used to estimate the
 posterior distribution of model parameters. For each location I sample
@@ -242,17 +246,25 @@ posterior parameter distribution.</p>
 <span><span class="co">#&gt; 6  CC874 2021-07-11 2021-07-11 00:28:09 0.4691667 0.08</span></span>
 <span></span>
 <span><span class="co"># skytrackr allows for piped data input</span></span>
+<span><span class="co"># when using the default SMC particle filter</span></span>
+<span><span class="co"># it is key to specify a known starting location</span></span>
+<span><span class="co"># to optimally use this method</span></span>
 <span><span class="va">location</span> <span class="op">&lt;-</span> <span class="va">cc874</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="../reference/skytrackr.html">skytrackr</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="../reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
+<span>      iterations <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>      particles <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
+<span>      tolerance <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>      plot <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="co">#&gt; - Estimating locations from light (lux) profiles for logger: CC874!</span></span>
-<span><span class="co">#&gt;   - No start location provided, using default bounding box throughout search!</span></span>
 <span></span>
 <span><span class="co"># print the optimized parameters (i.e. the locations)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   longitude latitude latitude_qt_5 latitude_qt_95 longitude_qt_5</span></span>
-<span><span class="co">#&gt; 1  2.148018 65.47733      65.13584       65.60455      -4.283073</span></span>
+<span><span class="co">#&gt; 1  2.836517 52.90565      52.71634       53.34287       2.688571</span></span>
 <span><span class="co">#&gt;   longitude_qt_95 sky_conditions grb  n       date</span></span>
-<span><span class="co">#&gt; 1        4.602855       6.517113  NA 22 2021-07-11</span></span></code></pre></div>
+<span><span class="co">#&gt; 1        2.844491       5.120414  NA 22 2021-07-11</span></span></code></pre></div>
 <p>Note that the returned location estimates are very close to the
 original location of the colony (51.8 N/ 3.73 E). These parameters can
 be fed back into the original (underlying) algorithm to calculate the
@@ -366,6 +378,13 @@ Gelman, Andrew, and Donald B. Rubin. 1992. <span>“Inference from
 <span>Iterative</span> <span>Simulation</span> <span>Using</span>
 <span>Multiple</span> <span>Sequences</span>.”</span> <em>Statistical
 Science</em> 7 (4). <a href="https://doi.org/10.1214/ss/1177011136" class="external-link">https://doi.org/10.1214/ss/1177011136</a>.
+</div>
+<div id="ref-hartig_statistical_2011" class="csl-entry">
+Hartig, Florian, Justin M. Calabrese, Björn Reineking, Thorsten Wiegand,
+and Andreas Huth. 2011. <span>“Statistical Inference for Stochastic
+Simulation Models - Theory and Application: <span>Inference</span> for
+Stochastic Simulation Models.”</span> <em>Ecology Letters</em> 14 (8):
+816–27. <a href="https://doi.org/10.1111/j.1461-0248.2011.01640.x" class="external-link">https://doi.org/10.1111/j.1461-0248.2011.01640.x</a>.
 </div>
 <div id="ref-hartig_bayesiantools_2023" class="csl-entry">
 Hartig, Florian, Francesco Minunno, Stefan Paul, David Cameron, Tankred
