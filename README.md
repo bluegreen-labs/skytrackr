@@ -44,6 +44,10 @@ library("skytrackr")
 
 To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
 
+## Default Sequential Monte Carlo optimization
+
+The underlying BayesianTools package used in optimization allows for the specification of other optimization techniques including Sequential Monte Carlo (SMC) methods, which in effect are particle filters (considering multiple priors during optimization). This method is considerably faster than the default DEzs method while fostering better accuracy during equinox periods. This is the default, but care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight).
+
 ```r
 # normally you would first read in the .lux or .glf file using
 # cc874 <- stk_read_lux("cc874.lux")
@@ -53,28 +57,31 @@ print(head(skytrackr::cc874))
 
 # skytrackr allows for piped data input
 location <- cc874 |>
-  skytrackr::skytrackr()
+  skytrackr::skytrackr(
+      start_location = c(51.08, 3.73),
+      tolerance = 11,
+  )
 ```
 
-## Advanced model settings
+## MCMC DEzs optimization
 
-The underlying BayesianTools package used in optimization allows for the specification of other optimization techniques including Sequential Monte Carlo methods, which in effect are particle filters (considering multiple priors during optimization). This method is considerably faster than the default DEzs method while fostering better accuracy during equinox periods.
+Changing the control parameters allows for switching to a MCMC DEzs methodology.
 
 ```r
 data |>
     skytrackr(
       start_location = c(51.08, 3.73),
-      tolerance = 13,
+      tolerance = 11,
       bbox = c(-20, -40, 60, 60),
       control = list(
-        sampler = 'SMC',
-        settings = list(
-          initialParticles = 100,
-          iterations= 10,
-          message = FALSE
+          sampler = 'DEzs',
+          settings = list(
+              burnin = 2000,
+              iterations = 10000,
+              message = FALSE
           )
-      ),
-      plot = TRUE
+        ),
+      plot = FALSE
     )
 ```
 
