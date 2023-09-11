@@ -85,8 +85,9 @@ data |>
     )
 ```
 
-## Comparison
+## Quick optimzation comparison
 
-Comparison between the SMC (a) and DEzs method (b), with SMC being better constrained.
+Comparison between the SMC (a) and DEzs method (b) seems equally well constrained when using a tolerance setting. When not tolerance is provided the DEzs method shows larger equinox related outliers, although the SMC method isn't free of them either.
 
-![](https://github.com/bluegreen-labs/skytrackr/blob/main/smc_dezs_comparison.png)
+![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/smc_dezs_comparison.png)
+
