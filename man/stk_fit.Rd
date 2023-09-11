@@ -4,14 +4,7 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(
-  data,
-  iterations,
-  bbox = c(-180, -90, 180, 90),
-  scale = c(1, 10),
-  control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
-    10, message = FALSE))
-)
+stk_fit(data, iterations, bbox, scale, control)
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
@@ -25,7 +18,8 @@ c(xmin, ymin, xmax, ymax)}
 when target values are not provided in lux this can be used to effectively
 implement a Hill-Ekstrom template fitting}
 
-\item{control}{control settings for the Bayesian optimization}
+\item{control}{control settings for the Bayesian optimization, forwarded by
+skytrackr()}
 }
 \value{
 an estimated illuminance based location (and its uncertainties)
