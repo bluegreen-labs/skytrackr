@@ -6,18 +6,37 @@ library(patchwork)
 library(sf)
 countries <- ne_countries(returnclass = "sf")
 
-smc <- readRDS("data-raw/gent_locations_SMC.rds")
-dezs <- readRDS("data-raw/gent_locations_DEzs.rds")
+dezs <- readRDS("data-raw/gent_locations_DEzs_tolerance.rds") |>
+  mutate(
+    settings = "tolerance (11)"
+  )
+dezs_no <- readRDS("data-raw/gent_locations_DEzs_no_tolerance.rds") |>
+  mutate(
+    settings = "tolerance (not set)"
+  )
+
+dezs <-bind_rows(dezs, dezs_no)
+
+smc <- readRDS("data-raw/gent_locations_SMC_tolerance.rds") |>
+  mutate(
+    settings = "tolerance (11)"
+  )
+smc_no <- readRDS("data-raw/gent_locations_SMC_no_tolerance.rds") |>
+  mutate(
+    settings = "tolerance (not set)"
+  )
+
+smc <-bind_rows(smc, smc_no)
 
 p_smc <- ggplot(smc) +
   geom_sf(data = countries) +
-  geom_path(
-    aes(
-      longitude,
-      latitude,
-      colour = date
-    )
-  ) +
+  # geom_path(
+  #   aes(
+  #     longitude,
+  #     latitude,
+  #     colour = date
+  #   )
+  # ) +
   geom_segment(
     aes(
       x = longitude_qt_5,
@@ -52,17 +71,17 @@ p_smc <- ggplot(smc) +
     ylim = c(-40, 55)
   ) +
   theme_bw() +
-  facet_wrap(~logger)
+  facet_wrap(settings~logger)
 
 p_dezs <- ggplot(dezs) +
   geom_sf(data = countries) +
-  geom_path(
-    aes(
-      longitude,
-      latitude,
-      colour = date
-    )
-  ) +
+  # geom_path(
+  #   aes(
+  #     longitude,
+  #     latitude,
+  #     colour = date
+  #   )
+  # ) +
   geom_segment(
     aes(
       x = longitude_qt_5,
@@ -97,12 +116,11 @@ p_dezs <- ggplot(dezs) +
     ylim = c(-40, 55)
   ) +
   theme_bw() +
-  facet_wrap(~logger)
-
+  facet_wrap(settings~logger)
 
 final <- (p_smc + p_dezs +
   plot_layout(
-    ncol = 2,
+    nrow = 2,
     guides = "collect"
   )  +
   plot_annotation(
@@ -117,6 +135,7 @@ final <- (p_smc + p_dezs +
   theme(
     panel.spacing.y = unit(0.01, "in"),
     legend.box.margin = margin(t = 1),
+    legend.position = "bottom",
     legend.justification = "left",
     legend.title = element_text(
       family = "Montserrat",
@@ -125,9 +144,12 @@ final <- (p_smc + p_dezs +
   )
 )
 
+plot(final)
+
 ggsave(
   plot = final,
   filename = "./smc_dezs_comparison.png",
-  width = 11,
+  width = 10,
+  height = 13,
   dpi = 150
   )
