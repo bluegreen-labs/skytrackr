@@ -10,7 +10,8 @@
 #' @param scale scale factor range due to cloudiness to use in optimization,
 #'  when target values are not provided in lux this can be used to effectively
 #'  implement a Hill-Ekstrom template fitting
-#' @param control control settings for the Bayesian optimization
+#' @param control control settings for the Bayesian optimization, forwarded by
+#'  skytrackr()
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
 #' @export
@@ -18,16 +19,9 @@
 stk_fit <- function(
   data,
   iterations,
-  bbox = c(-180, -90, 180, 90),
-  scale = c(1, 10),
-  control = list(
-    sampler = 'SMC',
-    settings = list(
-      initialParticles = 100,
-      iterations= 10,
-      message = FALSE
-      )
-    )
+  bbox,
+  scale,
+  control
   ) {
 
   # set lower and upper parameter ranges
@@ -63,8 +57,6 @@ stk_fit <- function(
     )
   )
 
-
-
   # Gelman-Brooks-Rubin (GBR) potential
   # scale factors to check convergence
   # convergence between 1.05 and 1.1
@@ -79,8 +71,7 @@ stk_fit <- function(
   # sample the posterior distribution
   # with thinning factor is 10
   samples_par <- BayesianTools::getSample(
-    out,
-    thin = 10
+    out
   )
 
   # to deal with the date line use circular
@@ -118,16 +109,22 @@ stk_fit <- function(
     na.rm = TRUE
     )
 
+  # return "best" fit parameters
+  bf_par <- BayesianTools::MAP(out)$parametersMAP
+
   # return data as a structured
   # data frame
   data.frame(
-    longitude = longitude[2],
-    latitude = latitude[2],
+    latitude = bf_par[1],
+    longitude = bf_par[2],
+    sky_conditions = bf_par[3],
+    latitude_qt_50 = latitude[2],
+    longitude_qt_50 = longitude[2],
     latitude_qt_5 = latitude[1],
     latitude_qt_95 = latitude[3],
     longitude_qt_5 = longitude[1],
     longitude_qt_95 = longitude[3],
-    sky_conditions = sky_conditions,
+    sky_conditions_qt_50 = sky_conditions,
     grb = grb,
     n = nrow(data),
     row.names = NULL
