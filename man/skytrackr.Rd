@@ -9,10 +9,10 @@ skytrackr(
   start_location,
   tolerance = 15,
   iterations = 20,
-  particles = 200,
+  particles = 100,
   range = c(0.32, 400),
   bbox = c(-180, -90, 180, 90),
-  scale = c(0, 20),
+  scale = c(1, 10),
   control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
     10, message = FALSE)),
   plot = FALSE,
