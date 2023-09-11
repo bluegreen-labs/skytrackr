@@ -44,15 +44,15 @@ skytrackr <- function(
     start_location,
     tolerance = 15,
     iterations = 20,
-    particles = 200,
-    range = c(0.32, 400),
+    particles = 100,
+    range = c(0.32, 150),
     bbox = c(-180, -90, 180, 90),
-    scale = c(0, 20),
+    scale = c(1, 10),
     control = list(
       sampler = 'SMC',
       settings = list(
-        initialParticles = 100,
-        iterations= 10,
+        initialParticles = particles,
+        iterations = iterations,
         message = FALSE
       )
     ),
@@ -97,11 +97,13 @@ skytrackr <- function(
   # loop over all available dates
   for (i in seq_len(length(dates))) {
     if (i != 1) {
-        bbox <- c(locations$longitude[i-1] - tolerance,
-                  locations$latitude[i-1] - tolerance,
-                  locations$longitude[i-1] + tolerance,
-                  locations$latitude[i-1] + tolerance
-        )
+        if(!missing(start_location)){
+          bbox <- c(locations$longitude[i-1] - tolerance,
+                    locations$latitude[i-1] - tolerance,
+                    locations$longitude[i-1] + tolerance,
+                    locations$latitude[i-1] + tolerance
+          )
+        }
     } else {
       if(!missing(start_location)) {
         bbox <-c(start_location[2] - tolerance,
@@ -143,11 +145,11 @@ message(
 
     if(plot){
       graphics::lines(
-        locations[,1:2],
+        locations[,5:4],
         col = 'grey'
       )
       graphics::points(
-        locations[,1:2],
+        locations[,5:4],
         pch = 19,
         col = 'red'
       )
