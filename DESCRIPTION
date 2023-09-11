@@ -31,10 +31,11 @@ Imports:
     maps,
     utils,
     graphics,
-    stats
+    stats,
+    ggplot2,
+    plotly
 Suggests:
     dplyr,
-    ggplot2,
     patchwork,
     rnaturalearth,
     rmarkdown,
