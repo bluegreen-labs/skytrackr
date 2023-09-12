@@ -46,7 +46,7 @@ To demonstrate the functioning of the package a small demo dataset comprised of 
 
 ## Default Sequential Monte Carlo optimization
 
-The underlying BayesianTools package used in optimization allows for the specification of other optimization techniques including Sequential Monte Carlo (SMC) methods, which in effect are particle filters (considering multiple priors during optimization). This method is considerably faster than the default DEzs method while fostering better accuracy during equinox periods, given a clean start position and initial track. This is the default, but care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight). When results are unstable switch to DEzs optimization below.
+The underlying BayesianTools package used in optimization allows for the specification of optimization techniques including Sequential Monte Carlo (SMC) method which is set as the default.This method is considerably faster than the MCMC DEzs method while fostering better accuracy during equinox periods, given a clean start position of the track. Note that care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight). When results are unstable switch to DEzs optimization below.
 
 ```r
 # normally you would first read in the .lux or .glf file using
