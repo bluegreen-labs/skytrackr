@@ -30,6 +30,10 @@
 #'  in case of non lux measurements
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
+#' @param land_mask use a land mask to constrain positions to land, buffered
+#'  by a value set by buffer
+#' @param buffer buffer to pad the land mask with, in degrees, default set
+#'  to 1 or ~110km
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar
@@ -56,6 +60,8 @@ skytrackr <- function(
         message = FALSE
       )
     ),
+    land_mask = FALSE,
+    buffer = 1,
     plot = FALSE,
     verbose = TRUE
 ) {
@@ -69,14 +75,6 @@ skytrackr <- function(
 
   # empty data frame
   locations <- data.frame()
-
-  # plot progress
-  if(plot){
-    maps::map(
-      xlim = bbox[c(1,3)],
-      ylim = bbox[c(2,4)]
-    )
-  }
 
   # create progress bar
   if(verbose) {
@@ -94,23 +92,68 @@ skytrackr <- function(
   pb$tick(0)
   }
 
+  if(plot){
+    maps::map(
+      xlim = bbox[c(1,3)],
+      ylim = bbox[c(2,4)]
+    )
+  }
+
+  # create mask if required
+  if(land_mask){
+    mask <- stk_mask(buffer = buffer)
+  }
+
   # loop over all available dates
   for (i in seq_len(length(dates))) {
     if (i != 1) {
         if(!missing(start_location)){
-          bbox <- c(locations$longitude[i-1] - tolerance,
-                    locations$latitude[i-1] - tolerance,
-                    locations$longitude[i-1] + tolerance,
-                    locations$latitude[i-1] + tolerance
-          )
+
+          # create data point
+          roi <-  sf::st_as_sf(
+            data.frame(
+              lon = locations$longitude[i-1],
+              lat = locations$latitude[i-1]
+              ),
+            coords = c("lon","lat"),
+            crs = "epsg:4326"
+          ) |>
+            sf::st_buffer(tolerance)
+
+          if(land_mask){
+            roi <- sf::st_intersection(
+              roi,
+              mask
+            )
+          }
+
+          bbox <- roi |>
+            sf::st_bbox()
         }
     } else {
       if(!missing(start_location)) {
-        bbox <-c(start_location[2] - tolerance,
-                 start_location[1] - tolerance,
-                 start_location[2] + tolerance,
-                 start_location[1] + tolerance
-        )
+
+        # create data point
+        roi <- sf::st_as_sf(
+          data.frame(
+            lon = start_location[2],
+            lat = start_location[1]
+          ),
+          coords = c("lon","lat"),
+          crs = "epsg:4326"
+        ) |>
+          sf::st_buffer(tolerance)
+
+        if(land_mask){
+          roi <- sf::st_intersection(
+            roi,
+            mask
+          )
+        }
+
+        bbox <- roi |>
+          sf::st_bbox()
+
       } else {
 message(
 "  - No start location provided,
@@ -120,17 +163,18 @@ message(
       }
     }
 
+    # create a subset
     subs <- data[which(data$date == dates[i]),]
 
     # fit model parameters for a given
     # day to estimate the location
-    out <- stk_fit(
-      data = subs,
-      iterations = iterations,
-      bbox = bbox,
-      scale = scale,
-      control = control
-    )
+      out <- stk_fit(
+        data = subs,
+        iterations = iterations,
+        bbox = bbox,
+        scale = scale,
+        control = control
+      )
 
     # set date
     out$date <- dates[i]
@@ -144,6 +188,20 @@ message(
     }
 
     if(plot){
+      if(land_mask){
+        plot(
+          mask,
+          border = "grey",
+          add = TRUE
+        )
+      }
+
+      plot(
+        roi,
+        border = "grey",
+        add = TRUE
+      )
+
       graphics::lines(
         locations[,5:4],
         col = 'grey'

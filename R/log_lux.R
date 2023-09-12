@@ -22,6 +22,7 @@ log_lux <- function(
   lon <- par[2]
   sky <- par[3]
 
+  # run model
   illuminance <- skylight::skylight(
     longitude = lon,
     latitude = lat,
@@ -30,5 +31,5 @@ log_lux <- function(
   )$total_illuminance
 
   # return log lux
-  log(illuminance)
+  return(log(illuminance))
 }

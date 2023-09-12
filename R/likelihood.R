@@ -9,6 +9,7 @@
 #'  on the target values
 #' @param data nested data structure with validation data included
 #' @param model model to run with data and par setings
+#' @param mask mask to use when running the model
 #' @param ... extra arguments to pass to the function
 #' @return single log likelihood
 #' @keywords model, optimization, cost function
@@ -27,9 +28,6 @@ likelihood <- function(
   # split out sd range parameter
   sd_range <- par[length(par)]
 
-  # get observed data
-  observed <- data$lux
-
   # run model
   predicted <- do.call(
     model,
@@ -40,12 +38,9 @@ likelihood <- function(
     )
   )
 
-  # get residuals
-  residuals <- predicted - observed
-
   # singlelikelihood
   singlelikelihoods <- stats::dnorm(
-    residuals,
+    predicted - data$lux,
     sd = sd_range,
     log = TRUE
   )

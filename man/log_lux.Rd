@@ -4,13 +4,15 @@
 \alias{log_lux}
 \title{Simulate illuminance as log(lux) values}
 \usage{
-log_lux(par, data, ...)
+log_lux(par, data, mask, ...)
 }
 \arguments{
 \item{par}{three parameters specifying the cycling model}
 
 \item{data}{data consisting of vegetation greenness (G), mean
 daytime temperature (T) and daylenght (D) as a data frame}
+
+\item{mask}{mask to pass}
 
 \item{...}{optional other parameters to forward}
 }

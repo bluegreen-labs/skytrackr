@@ -4,7 +4,7 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, iterations, bbox, scale, control)
+stk_fit(data, iterations, bbox, scale, mask, control)
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
