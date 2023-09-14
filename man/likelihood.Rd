@@ -4,7 +4,7 @@
 \alias{likelihood}
 \title{Log likelihood cost function for model optimization}
 \usage{
-likelihood(par, data, model, mask, ...)
+likelihood(par, data, model, ...)
 }
 \arguments{
 \item{par}{a vector of parameter values, including one for the uncertainty
@@ -14,9 +14,9 @@ on the target values}
 
 \item{model}{model to run with data and par setings}
 
-\item{mask}{mask to use when running the model}
-
 \item{...}{extra arguments to pass to the function}
+
+\item{mask}{mask to use when running the model}
 }
 \value{
 single log likelihood
