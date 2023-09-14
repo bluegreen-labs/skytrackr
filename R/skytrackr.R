@@ -196,11 +196,11 @@ message(
         )
       }
 
-      plot(
-        roi,
-        border = "grey",
-        add = TRUE
-      )
+      # plot(
+      #   roi,
+      #   border = "grey",
+      #   add = TRUE
+      # )
 
       graphics::lines(
         locations[,5:4],
