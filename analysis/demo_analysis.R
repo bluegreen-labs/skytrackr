@@ -4,9 +4,15 @@ library(dplyr)
 library(ggplot2)
 library(rnaturalearth)
 library(sf)
-library(skytrackr)
+lapply(list.files("R/","*.R", full.names = TRUE), source)
+#library(skytrackr)
 
-data <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
+data <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+
+# |>
+#   filter(
+#     date >= "2021-08-27"
+#   )
 
 # # batch processing via pipe for multiple sites
 # locations <- data |>
@@ -37,13 +43,15 @@ locations <- data |>
       control = list(
           sampler = 'DEzs',
           settings = list(
-              burnin = 2000,
-              iterations = 10000,
+              burnin = 1000,
+              iterations = 2000,
               message = FALSE
           )
         ),
-      plot = FALSE
+      land_mask = TRUE,
+      plot = TRUE
     )
   })
 
 saveRDS(locations, "data-raw/gent_locations_DEzs.rds", compress = "xz")
+

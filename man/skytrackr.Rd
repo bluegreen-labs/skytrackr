@@ -15,6 +15,8 @@ skytrackr(
   scale = c(1, 10),
   control = list(sampler = "SMC", settings = list(initialParticles = particles,
     iterations = iterations, message = FALSE)),
+  land_mask = FALSE,
+  buffer = 1,
   plot = FALSE,
   verbose = TRUE
 )
@@ -49,6 +51,12 @@ in case of non lux measurements}
 
 \item{control}{control settings for the Bayesian optimization, generally
 should not be altered (defaults to a sequential monte carlo method)}
+
+\item{land_mask}{use a land mask to constrain positions to land, buffered
+by a value set by buffer}
+
+\item{buffer}{buffer to pad the land mask with, in degrees, default set
+to 1 or ~110km}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}

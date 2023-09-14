@@ -15,7 +15,10 @@ dezs_no <- readRDS("data-raw/gent_locations_DEzs_no_tolerance.rds") |>
     settings = "tolerance (not set)"
   )
 
-dezs <-bind_rows(dezs, dezs_no)
+dezs <-bind_rows(dezs, dezs_no) |>
+  filter(
+    abs(latitude - latitude_qt_5) - abs(latitude - latitude_qt_95) < 3
+  )
 
 smc <- readRDS("data-raw/gent_locations_SMC_tolerance.rds") |>
   mutate(
@@ -70,6 +73,10 @@ p_smc <- ggplot(smc) +
     xlim = c(-20, 60),
     ylim = c(-40, 55)
   ) +
+  labs(
+    x = "longitude",
+    y = "latitude"
+  ) +
   theme_bw() +
   facet_wrap(settings~logger)
 
@@ -115,6 +122,10 @@ p_dezs <- ggplot(dezs) +
     xlim = c(-20, 60),
     ylim = c(-40, 55)
   ) +
+  labs(
+    x = "longitude",
+    y = "latitude"
+  ) +
   theme_bw() +
   facet_wrap(settings~logger)
 
@@ -153,3 +164,58 @@ ggsave(
   height = 13,
   dpi = 150
   )
+
+
+dezs <- readRDS("data-raw/gent_locations_DEzs.rds")
+
+p_dezs <- ggplot(dezs) +
+  geom_sf(data = countries) +
+  geom_path(
+    aes(
+      longitude,
+      latitude,
+      colour = date
+    )
+  ) +
+  # geom_segment(
+  #   aes(
+  #     x = longitude_qt_5,
+  #     xend = longitude_qt_95,
+  #     y = latitude,
+  #     yend = latitude,
+  #     #colour = site
+  #   ),
+  #   lwd = 0.8,
+  #   alpha = 0.5
+  # ) +
+  # geom_segment(
+  #   aes(
+  #     x = longitude,
+  #     xend = longitude,
+  #     y = latitude_qt_5,
+  #     yend = latitude_qt_95,
+  #     #colour = site
+  #   ),
+  #   lwd = 0.8,
+  #   alpha = 0.5
+  # ) +
+  # geom_point(
+  #   aes(
+  #     longitude,
+  #     latitude,
+  #     colour = date
+  #   )
+  # ) +
+  coord_sf(
+    xlim = c(-20, 60),
+    ylim = c(-40, 75)
+  ) +
+  labs(
+    x = "longitude",
+    y = "latitude"
+  ) +
+  theme_bw() +
+  facet_wrap(~logger)
+
+plot(p_dezs)
+

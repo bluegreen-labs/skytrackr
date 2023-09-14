@@ -129,5 +129,4 @@ stk_fit <- function(
     n = nrow(data),
     row.names = NULL
   )
-
 }
