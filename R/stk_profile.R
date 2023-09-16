@@ -13,12 +13,9 @@
 stk_profile <- function(
     data,
     logger,
-    range = c(0.32, 400),
+    range = c(0, 100000),
     plotly = FALSE
   ) {
-
-  # config
-  plotly::config(fig, displaylogo = FALSE)
 
   # check for multiple logger
   # report first only or requested
@@ -32,12 +29,17 @@ stk_profile <- function(
 
   p <- data |>
     group_by(measurement) |>
-    do(gg = {
+    do(p = {
 
       if(.$measurement[1] == "light.lux.") {
         .data$value[
           which(.data$value < range[1] | .data$value > range[2])] <- NA
         .data$value <- log(.data$value)
+      }
+
+      if(.$measurement[1] == "T..C.") {
+        .data$value[
+          which(.data$value > 50)] <- NA
       }
 
       ggplot2::ggplot(.) +
@@ -55,19 +57,31 @@ stk_profile <- function(
         ggplot2::scale_fill_viridis_c(
           na.value = NA
         ) +
-        ggplot2::theme_bw()
+        ggplot2::theme_bw() +
+        ggplot2::theme(
+          legend.position = "none"
+        )
     })
 
   if (plotly){
 
-    fig <- plotly::ggplotly(p)
+    plots <- lapply(p$p, function(x) {
 
-    print(fig)
+      plotly::ggplotly(x)
+    })
+
+    plotly::subplot(
+      plots,
+      nrows = length(plots),
+      shareX = TRUE,
+      margin = c(0.8, 0.5, 0, 0)
+      )
+
   } else {
 
     # combine plots in ggplot patchwork
     p <- patchwork::wrap_plots(
-      p$gg,
+      p$p,
       nrow = length(unique(data$measurement))
     )
 
