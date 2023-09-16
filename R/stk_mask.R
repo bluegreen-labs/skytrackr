@@ -5,8 +5,8 @@
 #'
 #' @param buffer buffer in degrees
 #'
-#' @return
-#' @export buffered land mask as an sf object
+#' @return buffered land mask as an sf object
+#' @export
 
 stk_mask <- memoise::memoise(function(buffer = 1.5) {
 
