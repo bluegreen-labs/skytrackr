@@ -10,32 +10,50 @@
 #' @return a plotly dynamic graph of light levels for a given logger
 #' @export
 
-stk_profile <- function(data, logger, range = c(0.32, 400)) {
+stk_profile <- function(
+    data,
+    logger,
+    range = c(0.32, 400),
+    plotly = FALSE
+  ) {
 
   # check for multiple logger
   # report first only or requested
-  data <- data[data$logger == logger,]
+  data <- data |>
+    filter(
+      logger == logger
+    )
 
-  # subset data range
+  # subset data range for light measurements
+  data <- data |>
+    mutate(
+     measurement =
+    )
   data$lux[which(data$lux < range[1] | data$lux > range[2])] <- NA
 
-  p <- ggplot(data) +
-    geom_tile(
-      aes(
-        date,
-        hour,
-        fill = log(lux)
+  p <- ggplot2::ggplot(data) +
+    ggplot2::geom_tile(
+      ggplot2::aes(
+        .data$date,
+        .data$hour,
+        fill = log(.data$lux)
       )
     ) +
-    labs(
+    ggplot2::labs(
       x = "Date",
       y = "Hour"
     ) +
-    scale_fill_viridis_c() +
-    theme_bw()
+    ggplot2::scale_fill_viridis_c(
+      na.value = NA
+    ) +
+    ggplot2::theme_bw()
 
-  fig <- plotly::ggplotly(p)
-  plotly::config(fig, displaylogo = FALSE)
-  print(fig)
+  if (plotly){
+    fig <- plotly::ggplotly(p)
+    plotly::config(fig, displaylogo = FALSE)
+    print(fig)
+  }
+
+  return(p)
 }
 

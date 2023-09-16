@@ -148,7 +148,7 @@ print(head(skytrackr::cc874))
 location <- cc874 |>
   skytrackr::skytrackr(
       iterations = 100,
-      particles = 10,
+      particles = 30,
       start_location = c(51.08, 3.73),
       tolerance = 11,
       plot = FALSE
@@ -163,7 +163,10 @@ Note that the returned location estimates are very close to the original locatio
 ```{r echo = FALSE, fig.cap="Figure showing the fitted model results (full black line) from optimized parameters (latitude, longitude, sky conditions). Default parameters only use a limited twilight set of parameters. From the observed values (coloured dots) only the 'True' values were included in the estimation of the model parameters."}
 # call the underlying model
 cc874$model_results <- skytrackr::log_lux(
-  par = c( location$latitude, location$longitude, location$sky_conditions),
+  par = c(
+    location$latitude,
+    location$longitude,
+    location$sky_conditions),
   cc874
 )
 

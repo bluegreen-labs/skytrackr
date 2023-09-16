@@ -9,6 +9,9 @@ stk_mask(buffer = 1.5)
 \arguments{
 \item{buffer}{buffer in degrees}
 }
+\value{
+buffered land mask as an sf object
+}
 \description{
 returns a buffered land mask to constrain potential
 model results

@@ -12,6 +12,41 @@
 
 stk_read_lux <- function(file) {
 
+  # check if there matching logger activity
+  # files to merge with
+  deg_file <- paste0(tools::file_path_sans_ext(file),".deg")
+
+  if (file.exists(deg_file)) {
+    deg <- utils::read.table(
+      deg_file,
+      header = TRUE,
+      skip = 19
+    )
+
+    deg$date_time <- as.POSIXct(paste(
+      deg$'DD.MM.YYYY', deg$'HH.MM.SS'
+    ),
+    "%d/%m/%Y %H:%M:%S",
+    tz = "GMT"
+    )
+
+    deg$date = as.Date(deg$date, "%d/%m/%Y")
+    deg$hour <- as.numeric(format(deg$date_time,"%H")) +
+      as.numeric(format(deg$date_time,"%M"))/60 +
+      as.numeric(format(deg$date_time,"%S"))/3600
+
+    deg <- deg |>
+      dplyr::select(
+        -"DD.MM.YYYY",
+        -"HH.MM.SS"
+      ) |>
+      tidyr::pivot_longer(
+        cols = any_of(c("T..C.","P.Pa.","Xavrg","Zact")),
+        values_to = "value",
+        names_to = "measurement"
+      )
+  }
+
   # read in logger number
   logger <- readLines(file, n = 3)[3]
   logger <- strsplit(logger, ": ")[[1]][2]
@@ -40,6 +75,18 @@ stk_read_lux <- function(file) {
         as.numeric(format(df$date_time,"%S"))/3600
 
   df <- df[,c("logger", "date", "date_time", "hour", "lux")]
+
+  df <- df |>
+    tidyr::pivot_longer(
+    cols = "lux",
+    values_to = "value",
+    names_to = "measurement"
+  )
+
+  # merge with ancillary values if available
+  if (file.exists(deg_file)) {
+    df <- dplyr::bind_rows(df, deg)
+  }
 
   return(df)
 }
