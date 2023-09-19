@@ -53,5 +53,5 @@ locations <- data |>
     )
   })
 
-saveRDS(locations, "data-raw/gent_locations_DEzs.rds", compress = "xz")
+#saveRDS(locations, "data-raw/gent_locations_DEzs.rds", compress = "xz")
 

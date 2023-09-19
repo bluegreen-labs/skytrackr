@@ -4,7 +4,7 @@
 \alias{stk_profile}
 \title{Plot seasonal profiles}
 \usage{
-stk_profile(data, logger, range = c(0.32, 400))
+stk_profile(data, logger, range = c(0, 1e+05), center = "day", plotly = FALSE)
 }
 \arguments{
 \item{data}{skytrackr compatible data frame}

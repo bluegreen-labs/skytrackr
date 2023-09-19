@@ -66,9 +66,26 @@ skytrackr <- function(
     verbose = TRUE
 ) {
 
+  # unravel the data
+  data <- data |>
+    filter(
+      measurement == "lux"
+    ) |>
+    tidyr::pivot_wider(
+      names_from = "measurement",
+      values_from = "value"
+    )
+
   # subset data
-  data <- data[which(data$lux > range[1] & data$lux < range[2]),]
-  data$lux <- log(data$lux)
+  #data <- data[which(data$lux > range[1] & data$lux < range[2]),]
+  #data$lux <- log(data$lux)
+  data <- data |>
+    filter(
+      (lux > range[1] & lux < range[2])
+    ) |>
+    mutate(
+      lux = log(lux)
+    )
 
   # unique dates
   dates <- unique(data$date)

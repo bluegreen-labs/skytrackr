@@ -14,6 +14,7 @@ stk_profile <- function(
     data,
     logger,
     range = c(0, 100000),
+    center = "day",
     plotly = FALSE
   ) {
 
@@ -24,6 +25,18 @@ stk_profile <- function(
       logger == logger
     )
 
+  # center on midnight
+  if (center != "day"){
+    data <- data |>
+      mutate(
+        date_time = date_time - 12*60*60,
+        hour = as.numeric(format(date_time,"%H")) +
+          as.numeric(format(date_time,"%M"))/60 +
+          as.numeric(format(date_time,"%S"))/3600,
+        hour = hour - 12
+        )
+  }
+
   # subset data range for light measurements
   #
 
@@ -31,13 +44,13 @@ stk_profile <- function(
     group_by(measurement) |>
     do(p = {
 
-      if(.$measurement[1] == "light.lux.") {
+      if(.$measurement[1] == "lux") {
         .data$value[
           which(.data$value < range[1] | .data$value > range[2])] <- NA
         .data$value <- log(.data$value)
       }
 
-      if(.$measurement[1] == "T..C.") {
+      if(.$measurement[1] == "temperature") {
         .data$value[
           which(.data$value > 50)] <- NA
       }
@@ -52,7 +65,7 @@ stk_profile <- function(
         ) +
         ggplot2::labs(
           x = "Date",
-          y = "Hour"
+          y = paste0(.data$measurement[1],"\n(Hour)")
         ) +
         ggplot2::scale_fill_viridis_c(
           na.value = NA
@@ -73,8 +86,9 @@ stk_profile <- function(
     plotly::subplot(
       plots,
       nrows = length(plots),
-      shareX = TRUE,
-      margin = c(0.8, 0.5, 0, 0)
+      titleX = TRUE,
+      titleY = TRUE,
+      shareX = TRUE
       )
 
   } else {

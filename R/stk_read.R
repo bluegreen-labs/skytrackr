@@ -28,8 +28,6 @@ stk_read_lux <- function(file) {
     df <- dplyr::bind_rows(df, deg)
   }
 
-  # harmonize measurement names
-
   return(df)
 }
 
@@ -112,5 +110,19 @@ read_deg_lux <- function(file) {
       cols = tidyr::any_of(c("light.lux.", "T..C.","P.Pa.","Xavrg","Zact")),
       values_to = "value",
       names_to = "measurement"
+    )
+
+
+  # harmonize measurement names
+  df <- df |>
+    mutate(
+      measurement = recode(
+        measurement,
+        "light.lux." = "lux",
+        "T..C." = "temperature",
+        "P.Pa." = "pressure",
+        "Xavrg" = "X",
+        "Zact" = "Z"
+      )
     )
 }
