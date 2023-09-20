@@ -29,6 +29,7 @@ Imports:
     BayesianTools,
     progress,
     maps,
+    sf,
     utils,
     graphics,
     stats,
