@@ -8,8 +8,7 @@
 #' @param par a vector of parameter values, including one for the uncertainty
 #'  on the target values
 #' @param data nested data structure with validation data included
-#' @param model model to run with data and par setings
-#' @param mask mask to use when running the model
+#' @param model model to run with data and par settings
 #' @param ... extra arguments to pass to the function
 #' @return single log likelihood
 #' @keywords model, optimization, cost function

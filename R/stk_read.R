@@ -6,6 +6,7 @@
 #'
 #' @param file a .lux file with light level values
 #'
+#' @importFrom rlang .data
 #' @return a skytrackr compatible data frame for use in further location
 #'  estimation
 #' @export
@@ -75,7 +76,17 @@ stk_read_glf <- function(file) {
   return(df)
 }
 
+#' Read lux and deg files
+#'
+#' @param file a lux or deg file
+#'
+#' @return a data frame with logger data
+#' @export
+#' @importFrom rlang .data
+
 read_deg_lux <- function(file) {
+
+  .data <- NULL
 
   # read in logger number
   logger <- readLines(file, n = 3)[3]
@@ -95,10 +106,10 @@ read_deg_lux <- function(file) {
         "%d/%m/%Y %H:%M:%S",
         tz = "GMT"
       ),
-      date = as.Date(date_time, "%d/%m/%Y"),
-      hour = as.numeric(format(date_time,"%H")) +
-        as.numeric(format(date_time,"%M"))/60 +
-        as.numeric(format(date_time,"%S"))/3600
+      date = as.Date(.data$date_time, "%d/%m/%Y"),
+      hour = as.numeric(format(.data$date_time,"%H")) +
+        as.numeric(format(.data$date_time,"%M"))/60 +
+        as.numeric(format(.data$date_time,"%S"))/3600
     ) |>
     dplyr::select(
       -"DD.MM.YYYY",
@@ -115,9 +126,9 @@ read_deg_lux <- function(file) {
 
   # harmonize measurement names
   df <- df |>
-    mutate(
-      measurement = recode(
-        measurement,
+    dplyr::mutate(
+      measurement = dplyr::recode(
+        .data$measurement,
         "light.lux." = "lux",
         "T..C." = "temperature",
         "P.Pa." = "pressure",

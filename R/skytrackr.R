@@ -37,7 +37,8 @@
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar
-
+#'
+#' @importFrom rlang .data
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
@@ -68,8 +69,8 @@ skytrackr <- function(
 
   # unravel the data
   data <- data |>
-    filter(
-      measurement == "lux"
+    dplyr::filter(
+      .data$measurement == "lux"
     ) |>
     tidyr::pivot_wider(
       names_from = "measurement",
@@ -80,11 +81,11 @@ skytrackr <- function(
   #data <- data[which(data$lux > range[1] & data$lux < range[2]),]
   #data$lux <- log(data$lux)
   data <- data |>
-    filter(
-      (lux > range[1] & lux < range[2])
+    dplyr::filter(
+      (.data$lux > range[1] & .data$lux < range[2])
     ) |>
-    mutate(
-      lux = log(lux)
+    dplyr::mutate(
+      lux = log(.data$lux)
     )
 
   # unique dates

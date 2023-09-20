@@ -6,6 +6,10 @@
 #' @param data skytrackr compatible data frame
 #' @param logger the logger to plot
 #' @param range the light range to plot
+#' @param center center data on day or night
+#' @param plotly TRUE or FALSE (convert to dynamic plotly plot or not)
+#'
+#' @importFrom rlang .data
 #'
 #' @return a plotly dynamic graph of light levels for a given logger
 #' @export
@@ -18,22 +22,25 @@ stk_profile <- function(
     plotly = FALSE
   ) {
 
+  # silence spurious note
+  . <- NULL
+
   # check for multiple logger
   # report first only or requested
   data <- data |>
-    filter(
-      logger == logger
+    dplyr::filter(
+      .data$logger == logger
     )
 
   # center on midnight
   if (center != "day"){
     data <- data |>
-      mutate(
-        date_time = date_time - 12*60*60,
-        hour = as.numeric(format(date_time,"%H")) +
-          as.numeric(format(date_time,"%M"))/60 +
-          as.numeric(format(date_time,"%S"))/3600,
-        hour = hour - 12
+      dplyr::mutate(
+        date_time = .data$date_time - 12*60*60,
+        hour = as.numeric(format(.data$date_time,"%H")) +
+          as.numeric(format(.data$date_time,"%M"))/60 +
+          as.numeric(format(.data$date_time,"%S"))/3600,
+        hour = .data$hour - 12
         )
   }
 
@@ -41,8 +48,8 @@ stk_profile <- function(
   #
 
   p <- data |>
-    group_by(measurement) |>
-    do(p = {
+    dplyr::group_by(.data$measurement) |>
+    dplyr::do(p = {
 
       if(.$measurement[1] == "lux") {
         .data$value[
@@ -55,7 +62,7 @@ stk_profile <- function(
           which(.data$value > 50)] <- NA
       }
 
-      ggplot2::ggplot(.) +
+      ggplot2::ggplot(.data) +
         ggplot2::geom_raster(
           ggplot2::aes(
             .data$date,
@@ -79,7 +86,6 @@ stk_profile <- function(
   if (plotly){
 
     plots <- lapply(p$p, function(x) {
-
       plotly::ggplotly(x)
     })
 

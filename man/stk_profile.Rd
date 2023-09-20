@@ -12,6 +12,10 @@ stk_profile(data, logger, range = c(0, 1e+05), center = "day", plotly = FALSE)
 \item{logger}{the logger to plot}
 
 \item{range}{the light range to plot}
+
+\item{center}{center data on day or night}
+
+\item{plotly}{TRUE or FALSE (convert to dynamic plotly plot or not)}
 }
 \value{
 a plotly dynamic graph of light levels for a given logger

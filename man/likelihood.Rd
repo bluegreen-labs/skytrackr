@@ -12,11 +12,9 @@ on the target values}
 
 \item{data}{nested data structure with validation data included}
 
-\item{model}{model to run with data and par setings}
+\item{model}{model to run with data and par settings}
 
 \item{...}{extra arguments to pass to the function}
-
-\item{mask}{mask to use when running the model}
 }
 \value{
 single log likelihood
