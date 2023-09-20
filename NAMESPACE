@@ -2,9 +2,11 @@
 
 export(likelihood)
 export(log_lux)
+export(read_deg_lux)
 export(skytrackr)
 export(stk_fit)
 export(stk_mask)
 export(stk_profile)
 export(stk_read_glf)
 export(stk_read_lux)
+importFrom(rlang,.data)

@@ -49,6 +49,17 @@ The {skytrackr} R package uses a physical sky illuminance model [@hufkens_skylig
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.cap="Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line."}
 library(skylight)
 
+cc874 <- skytrackr::cc874 |>
+  dplyr::filter(
+    measurement == "lux"
+  ) |>
+  tidyr::pivot_wider(
+    names_from = "measurement",
+    values_from = "value"
+  )
+
+print(cc874)
+
 # sequence of hours
 dates <- seq(ISOdate(2021,07,10), ISOdate(2021,07,12), by = "hour")
 
@@ -76,7 +87,7 @@ location_3 <- data.frame(
 
 p <- ggplot() +
   geom_point(
-    data = skytrackr::cc874,
+    data = cc874,
     aes(
       date_time,
       log(lux)
@@ -145,10 +156,10 @@ print(head(skytrackr::cc874))
 # when using the default SMC particle filter
 # it is key to specify a known starting location
 # to optimally use this method
-location <- cc874 |>
+location <- skytrackr::cc874 |>
   skytrackr::skytrackr(
       iterations = 100,
-      particles = 10,
+      particles = 30,
       start_location = c(51.08, 3.73),
       tolerance = 11,
       plot = FALSE
@@ -161,9 +172,13 @@ print(location)
 Note that the returned location estimates are very close to the original location of the colony (51.8 N/ 3.73 E). These parameters can be fed back into the original (underlying) algorithm to calculate the full diurnal profile. Doing so allows you to compare the modelled (fitted) data to the observed values.
 
 ```{r echo = FALSE, fig.cap="Figure showing the fitted model results (full black line) from optimized parameters (latitude, longitude, sky conditions). Default parameters only use a limited twilight set of parameters. From the observed values (coloured dots) only the 'True' values were included in the estimation of the model parameters."}
+
 # call the underlying model
 cc874$model_results <- skytrackr::log_lux(
-  par = c( location$latitude, location$longitude, location$sky_conditions),
+  par = c(
+    location$latitude,
+    location$longitude,
+    location$sky_conditions),
   cc874
 )
 

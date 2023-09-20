@@ -17,11 +17,13 @@ stk_mask <- memoise::memoise(function(buffer = 1.5) {
     returnclass = "sf"
   )
 
-  land <- suppressMessages(suppressWarnings(land |>
-    sf::st_geometry() |>
-    sf::st_union() |>
-    sf::st_buffer(buffer)
-    ))
+  land <- suppressMessages(suppressWarnings(
+    land |>
+      sf::st_geometry() |>
+      sf::st_union() |>
+      sf::st_buffer(buffer)
+    )
+  )
 
   return(land)
 

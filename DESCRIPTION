@@ -34,7 +34,10 @@ Imports:
     graphics,
     stats,
     ggplot2,
-    plotly
+    plotly,
+    rlang,
+    sf,
+    tidyr
 Suggests:
     dplyr,
     patchwork,
