@@ -54,24 +54,30 @@ stk_read_glf <- function(file) {
     header = TRUE,
     sep = "\t",
     skip = 6,
-    col.names = c("date_time","light","1","2","3")
-  )
+    col.names = c("date_time","lux","1","2","3")
+  )[,1:2]
 
-  df$date_time <- as.POSIXct(paste(
-    df$date, df$time
-  ),
-  "%d/%m/%Y %H:%M:%S",
-  tz = "GMT"
-  )
+  df <- df |>
+    dplyr::mutate(
+      logger = logger,
+      date_time = as.POSIXct(
+        .data$date_time,
+      "%d.%m.%Y %H:%M",
+      tz = "GMT"
+      ),
+      date = as.Date(.data$date_time, "%d/%m/%Y"),
+      hour = as.numeric(format(.data$date_time,"%H")) +
+        as.numeric(format(.data$date_time,"%M"))/60 +
+        as.numeric(format(.data$date_time,"%S"))/3600,
+      lux = as.double(.data$lux)
+    )
 
-  df$date = as.Date(df$date_time, "%d/%m/%Y")
-
-  df$logger <- logger
-  df$hour <- as.numeric(format(df$date_time,"%H")) +
-    as.numeric(format(df$date_time,"%M"))/60 +
-    as.numeric(format(df$date_time,"%S"))/3600
-
-  df <- df[,c("logger", "date", "date_time", "hour", "lux")]
+  df <- df |>
+    tidyr::pivot_longer(
+      cols = tidyr::any_of("lux"),
+      values_to = "value",
+      names_to = "measurement"
+    )
 
   return(df)
 }

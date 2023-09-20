@@ -22,7 +22,7 @@ stk_profile <- function(
     plotly = FALSE
   ) {
 
-  # silence spurious note
+  # silence spurious
   . <- NULL
 
   # check for multiple logger
@@ -43,9 +43,6 @@ stk_profile <- function(
         hour = .data$hour - 12
         )
   }
-
-  # subset data range for light measurements
-  #
 
   p <- data |>
     dplyr::group_by(.data$measurement) |>
