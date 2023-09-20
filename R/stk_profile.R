@@ -25,6 +25,8 @@ stk_profile <- function(
   # silence spurious
   . <- NULL
 
+  .data <- NULL
+
   # check for multiple logger
   # report first only or requested
   data <- data |>
