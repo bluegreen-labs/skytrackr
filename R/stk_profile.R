@@ -70,6 +70,7 @@ stk_profile <- function(
           )
         ) +
         ggplot2::labs(
+          title = .data$logger[1],
           x = "Date",
           y = paste0(.data$measurement[1],"\n(Hour)")
         ) +
