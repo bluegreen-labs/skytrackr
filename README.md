@@ -53,7 +53,7 @@ In the package I include the `stk_profile()` function which plots `.lux` files (
 ```r
 # read in the lux file, if a matching .deg
 # file is found it is integrated into one
-# long oritented data format
+# long oriented data format
 df <- stk_read_lux("your_lux_file.lux")
 
 # plot the data using plotly show
@@ -66,6 +66,9 @@ stk_profile(df, plotly = TRUE)
 Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing.
 
 ```r
+# library for data wrangling
+library(dplyr)
+
 start_date <- "2021-09-15"
 end_date <- "2022-05-21"
 
