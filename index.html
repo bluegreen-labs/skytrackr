@@ -123,10 +123,39 @@
 <p>To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|&gt;) commands. Using all default settings you can just pipe the data in to the <code><a href="reference/skytrackr.html">skytrackr()</a></code> function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.</p>
 </div>
 <div class="section level2">
+<h2 id="data-pre-screening">Data pre-screening<a class="anchor" aria-label="anchor" href="#data-pre-screening"></a>
+</h2>
+<p>During the breeding season it is advised to remove data which is affected by time spent on a nest, altering the light signal and position estimates. Both the light patterns and other sensory data can be used to restrict the data to migration and non-breeding movements.</p>
+<p>In the package I include the <code><a href="reference/stk_profile.html">stk_profile()</a></code> function which plots <code>.lux</code> files (and their ancillary <code>.deg</code> data) in an overview plot. The default plot is a static plot, however calling the function using the <code>plotly = TRUE</code> argument will render a dynamic plot on which you can zoom and which provides a tooltip showing the data values (including the date / time).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># read in the lux file, if a matching .deg</span></span>
+<span><span class="co"># file is found it is integrated into one</span></span>
+<span><span class="co"># long oritented data format</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stk_read_lux.html">stk_read_lux</a></span><span class="op">(</span><span class="st">"your_lux_file.lux"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plot the data using plotly show</span></span>
+<span><span class="fu"><a href="reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="va">df</span>, plotly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot.png"></p>
+<p>Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="st">"2021-09-15"</span></span>
+<span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="st">"2022-05-21"</span></span>
+<span></span>
+<span><span class="co"># filter data using the dplyr</span></span>
+<span><span class="co"># tidy logic</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>   <span class="op">(</span><span class="va">date</span> <span class="op">&gt;</span> <span class="va">start_date</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;</span> <span class="va">end_date</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># you can run the stk_profile() command again</span></span>
+<span><span class="co"># to show the trimmed data</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="default-sequential-monte-carlo-optimization">Default Sequential Monte Carlo optimization<a class="anchor" aria-label="anchor" href="#default-sequential-monte-carlo-optimization"></a>
 </h2>
 <p>The underlying BayesianTools package used in optimization allows for the specification of optimization techniques including Sequential Monte Carlo (SMC) method which is set as the default.This method is considerably faster than the MCMC DEzs method while fostering better accuracy during equinox periods, given a clean start position of the track. Note that care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight). When results are unstable switch to DEzs optimization below.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># normally you would first read in the .lux or .glf file using</span></span>
 <span><span class="co"># cc874 &lt;- stk_read_lux("cc874.lux")</span></span>
 <span></span>
@@ -144,7 +173,7 @@
 <h2 id="mcmc-dezs-optimization">MCMC DEzs optimization<a class="anchor" aria-label="anchor" href="#mcmc-dezs-optimization"></a>
 </h2>
 <p>Changing the control parameters allows for switching to a MCMC DEzs methodology.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>

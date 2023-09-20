@@ -65,7 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_profile</span><span class="op">(</span><span class="va">data</span>, <span class="va">logger</span>, range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_profile</span><span class="op">(</span><span class="va">data</span>, <span class="va">logger</span>, range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1e+05</span><span class="op">)</span>, center <span class="op">=</span> <span class="st">"day"</span>, plotly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,6 +80,14 @@
 
 <dt>range</dt>
 <dd><p>the light range to plot</p></dd>
+
+
+<dt>center</dt>
+<dd><p>center data on day or night</p></dd>
+
+
+<dt>plotly</dt>
+<dd><p>TRUE or FALSE (convert to dynamic plotly plot or not)</p></dd>
 
 </dl></div>
     <div id="value">
