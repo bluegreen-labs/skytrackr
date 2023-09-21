@@ -36,11 +36,10 @@ Imports:
     ggplot2,
     plotly,
     rlang,
-    sf,
-    tidyr
-Suggests:
+    tidyr,
     dplyr,
-    patchwork,
+    patchwork
+Suggests:
     rnaturalearth,
     rmarkdown,
     covr,
