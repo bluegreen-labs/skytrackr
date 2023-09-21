@@ -77,6 +77,7 @@ stk_profile <- function(
         ggplot2::scale_fill_viridis_c(
           na.value = NA
         ) +
+        ggplot2::scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
         ggplot2::theme_bw() +
         ggplot2::theme(
           legend.position = "none"
