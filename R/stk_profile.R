@@ -71,7 +71,7 @@ stk_profile <- function(
         ) +
         ggplot2::labs(
           title = .data$logger[1],
-          x = "Date",
+          x = "",
           y = paste0(.data$measurement[1],"\n(Hour)")
         ) +
         ggplot2::scale_fill_viridis_c(
