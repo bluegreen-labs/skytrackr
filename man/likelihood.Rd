@@ -12,7 +12,7 @@ on the target values}
 
 \item{data}{nested data structure with validation data included}
 
-\item{model}{model to run with data and par settings}
+\item{model}{model to run with data and par setings}
 
 \item{...}{extra arguments to pass to the function}
 }

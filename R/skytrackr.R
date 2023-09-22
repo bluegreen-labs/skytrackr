@@ -128,21 +128,25 @@ skytrackr <- function(
         if(!missing(start_location)){
 
           # create data point
-          roi <-  sf::st_as_sf(
-            data.frame(
-              lon = locations$longitude[i-1],
-              lat = locations$latitude[i-1]
+          roi <-  suppressMessages(suppressWarnings(
+            sf::st_as_sf(
+              data.frame(
+                lon = locations$longitude[i-1],
+                lat = locations$latitude[i-1]
               ),
-            coords = c("lon","lat"),
-            crs = "epsg:4326"
-          ) |>
-            sf::st_buffer(tolerance)
+              coords = c("lon","lat"),
+              crs = "epsg:4326"
+            ) |>
+              sf::st_buffer(tolerance)
+          ))
 
           if(land_mask){
-            roi <- sf::st_intersection(
-              roi,
-              mask
-            )
+            roi <- suppressMessages(suppressWarnings(
+              sf::st_intersection(
+                roi,
+                mask
+              )
+            ))
           }
 
           bbox <- roi |>
@@ -152,21 +156,25 @@ skytrackr <- function(
       if(!missing(start_location)) {
 
         # create data point
-        roi <- sf::st_as_sf(
-          data.frame(
-            lon = start_location[2],
-            lat = start_location[1]
-          ),
-          coords = c("lon","lat"),
-          crs = "epsg:4326"
-        ) |>
-          sf::st_buffer(tolerance)
+        roi <- suppressMessages(suppressWarnings(
+          sf::st_as_sf(
+            data.frame(
+              lon = start_location[2],
+              lat = start_location[1]
+            ),
+            coords = c("lon","lat"),
+            crs = "epsg:4326"
+          ) |>
+            sf::st_buffer(tolerance)
+        ))
 
         if(land_mask){
-          roi <- sf::st_intersection(
-            roi,
-            mask
-          )
+          roi <- suppressMessages(suppressWarnings(
+            sf::st_intersection(
+              roi,
+              mask
+            )
+          ))
         }
 
         bbox <- roi |>
