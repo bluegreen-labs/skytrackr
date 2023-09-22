@@ -7,12 +7,12 @@ library(sf)
 lapply(list.files("R/","*.R", full.names = TRUE), source)
 #library(skytrackr)
 
-data <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+df <- stk_read_lux("data-raw/CH760_11Jun23_051213.lux")
 
-# |>
-#   filter(
-#     date >= "2021-08-27"
-#   )
+df <- df |>
+  dplyr::filter(
+    (date >= "2022-08-12" & date <= "2023-04-27")
+  )
 
 # # batch processing via pipe for multiple sites
 # locations <- data |>
@@ -32,7 +32,7 @@ data <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
 
 #---- DEzs MCMC approach ----
 
-locations <- data |>
+locations <- df |>
   group_by(logger) |>
   do({
     skytrackr(
@@ -40,14 +40,6 @@ locations <- data |>
       start_location = c(51.08, 3.73),
       tolerance = 11,
       bbox = c(-20, -40, 60, 60),
-      control = list(
-          sampler = 'DEzs',
-          settings = list(
-              burnin = 1000,
-              iterations = 2000,
-              message = FALSE
-          )
-        ),
       land_mask = TRUE,
       plot = TRUE
     )

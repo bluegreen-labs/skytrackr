@@ -67,6 +67,9 @@ skytrackr <- function(
     verbose = TRUE
 ) {
 
+  # set global bounding box
+  bbox_global <- bbox
+
   # unravel the data
   data <- data |>
     dplyr::filter(
@@ -108,13 +111,6 @@ skytrackr <- function(
     width= 60
     )
   pb$tick(0)
-  }
-
-  if(plot){
-    maps::map(
-      xlim = bbox[c(1,3)],
-      ylim = bbox[c(2,4)]
-    )
   }
 
   # create mask if required
@@ -214,31 +210,40 @@ message(
     }
 
     if(plot){
-      if(land_mask){
-        plot(
-          mask,
-          border = "grey",
-          add = TRUE
+      p <- stk_map(
+        locations,
+        buffer = buffer,
+        bbox = bbox_global
+      ) +
+        ggplot2::labs(
+          title = sprintf(
+            "%s (%s)",
+            data$logger[1],
+            locations$date[nrow(locations)]
+            )
         )
+
+      if(!missing(start_location)){
+        p <- p +
+          ggplot2::geom_point(
+            aes(
+              start_location[2],
+              start_location[1]
+            ),
+            colour = "red"
+          )
       }
 
-      # plot(
-      #   roi,
-      #   border = "grey",
-      #   add = TRUE
-      # )
-
-      graphics::lines(
-        locations[,5:4],
-        col = 'grey'
-      )
-      graphics::points(
-        locations[,5:4],
-        pch = 19,
-        col = 'red'
-      )
+      print(p)
     }
   }
+
+  # add equinox labels, two weeks
+  # before and after equinoxes
+  locations <- locations |>
+    mutate(
+      equinox = ifelse(TRUE, NA,NA)
+    )
 
   # return the data frame with
   # location
