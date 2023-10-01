@@ -124,7 +124,7 @@ data |>
     )
 ```
 
-## Quick optimzation comparison
+## Quick optimization comparison
 
 Comparison between the SMC (a) and DEzs method (b) seems equally well constrained when using a tolerance setting. When no tolerance is provided the DEzs method shows larger equinox related outliers, although the SMC method isn't free of them either.
 
