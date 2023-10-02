@@ -36,7 +36,6 @@ Imports:
     ggplot2,
     plotly,
     rlang,
-    sf,
     tidyr
 Suggests:
     dplyr,
