@@ -264,6 +264,9 @@ posterior parameter distribution.</p>
 <span><span class="co"># it is key to specify a known starting location</span></span>
 <span><span class="co"># to optimally use this method</span></span>
 <span><span class="va">location</span> <span class="op">&lt;-</span> <span class="fu">skytrackr</span><span class="fu">::</span><span class="va"><a href="../reference/cc874.html">cc874</a></span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="op">(</span><span class="va">value</span> <span class="op">&gt;</span> <span class="fl">0.09</span> <span class="op">&amp;</span> <span class="va">value</span> <span class="op">&lt;</span> <span class="fl">400</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="../reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      iterations <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>      particles <span class="op">=</span> <span class="fl">30</span>,</span>
