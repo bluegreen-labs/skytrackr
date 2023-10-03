@@ -16,9 +16,6 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      ADS: ${{secrets.ADS}}
-      CDS: ${{secrets.CDS}}
-      WEBAPI: ${{secrets.WEBAPI}}
 
     steps:
       - uses: actions/checkout@v2
