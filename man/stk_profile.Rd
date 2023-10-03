@@ -22,4 +22,6 @@ a plotly dynamic graph of light levels for a given logger
 }
 \description{
 Uses plotly to provide a seasonal profile plot
+NOTE make this a method class so you can call
+plot(data.frame) or plot(df, plotly = TRUE)
 }
