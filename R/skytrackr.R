@@ -78,8 +78,6 @@ skytrackr <- function(
     )
 
   # subset data
-  #data <- data[which(data$lux > range[1] & data$lux < range[2]),]
-  #data$lux <- log(data$lux)
   data <- data |>
     dplyr::filter(
       (.data$lux > range[1] & .data$lux < range[2])
@@ -213,12 +211,6 @@ message(
           add = TRUE
         )
       }
-
-      # plot(
-      #   roi,
-      #   border = "grey",
-      #   add = TRUE
-      # )
 
       graphics::lines(
         locations[,5:4],
