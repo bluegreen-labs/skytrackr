@@ -216,9 +216,24 @@ As a sensitivity analysis I set values to low (effectively 0) values, for a rang
 
 ```{r echo = FALSE}
 # load sensitiviy analysis
-sensitivity_default <- readRDS(system.file(package = "skytrackr","extdata/sensitivity_default.rds"))
-sensitivity_full <- readRDS(system.file(package = "skytrackr","extdata/sensitivity_full.rds"))
-sensitivity_night <- readRDS(system.file(package = "skytrackr","extdata/sensitivity_night.rds"))
+sensitivity_default <- readRDS(
+  system.file(
+    package = "skytrackr",
+    "extdata/sensitivity_default.rds"
+    )
+  )
+sensitivity_full <- readRDS(
+  system.file(
+    package = "skytrackr",
+    "extdata/sensitivity_full.rds"
+    )
+  )
+sensitivity_night <- readRDS(
+  system.file(
+    package = "skytrackr",
+    "extdata/sensitivity_night.rds"
+    )
+  )
 
 p <- ggplot(sensitivity_default) +
   geom_point(
