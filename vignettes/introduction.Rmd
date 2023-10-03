@@ -157,6 +157,9 @@ print(head(skytrackr::cc874))
 # it is key to specify a known starting location
 # to optimally use this method
 location <- skytrackr::cc874 |>
+  filter(
+    (value > 0.09 & value < 400)
+    ) |>
   skytrackr::skytrackr(
       iterations = 100,
       particles = 30,
@@ -187,7 +190,7 @@ ggplot(data = cc874) +
     aes(
       hour,
       log(lux),
-      colour = (lux > 0.32 & lux < 400)
+      colour = (lux > 0.09 & lux < 400)
     )
   ) +
   scale_color_discrete() +
