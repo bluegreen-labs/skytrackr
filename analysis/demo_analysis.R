@@ -7,8 +7,13 @@ library(sf)
 lapply(list.files("R/","*.R", full.names = TRUE), source)
 #library(skytrackr)
 
-data <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+data <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
 
+stk_profile(data)
+
+
+
+break
 # |>
 #   filter(
 #     date >= "2021-08-27"
