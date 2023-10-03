@@ -239,7 +239,7 @@ message(
   # add equinox labels, two weeks
   # before and after equinoxes
   locations <- locations |>
-    mutate(
+    dplyr::mutate(
       equinox = ifelse(TRUE, NA,NA)
     )
 
