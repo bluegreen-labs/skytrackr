@@ -2,6 +2,8 @@
 #' Plot seasonal profiles
 #'
 #' Uses plotly to provide a seasonal profile plot
+#' NOTE make this a method class so you can call
+#' plot(data.frame) or plot(df, plotly = TRUE)
 #'
 #' @param data skytrackr compatible data frame
 #' @param logger the logger to plot

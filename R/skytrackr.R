@@ -67,6 +67,9 @@ skytrackr <- function(
     verbose = TRUE
 ) {
 
+  # set global bounding box
+  bbox_global <- bbox
+
   # unravel the data
   data <- data |>
     dplyr::filter(
@@ -108,13 +111,6 @@ skytrackr <- function(
   pb$tick(0)
   }
 
-  if(plot){
-    maps::map(
-      xlim = bbox[c(1,3)],
-      ylim = bbox[c(2,4)]
-    )
-  }
-
   # create mask if required
   if(land_mask){
     mask <- stk_mask(buffer = buffer)
@@ -126,21 +122,25 @@ skytrackr <- function(
         if(!missing(start_location)){
 
           # create data point
-          roi <-  sf::st_as_sf(
-            data.frame(
-              lon = locations$longitude[i-1],
-              lat = locations$latitude[i-1]
+          roi <-  suppressMessages(suppressWarnings(
+            sf::st_as_sf(
+              data.frame(
+                lon = locations$longitude[i-1],
+                lat = locations$latitude[i-1]
               ),
-            coords = c("lon","lat"),
-            crs = "epsg:4326"
-          ) |>
-            sf::st_buffer(tolerance)
+              coords = c("lon","lat"),
+              crs = "epsg:4326"
+            ) |>
+              sf::st_buffer(tolerance)
+          ))
 
           if(land_mask){
-            roi <- sf::st_intersection(
-              roi,
-              mask
-            )
+            roi <- suppressMessages(suppressWarnings(
+              sf::st_intersection(
+                roi,
+                mask
+              )
+            ))
           }
 
           bbox <- roi |>
@@ -150,21 +150,25 @@ skytrackr <- function(
       if(!missing(start_location)) {
 
         # create data point
-        roi <- sf::st_as_sf(
-          data.frame(
-            lon = start_location[2],
-            lat = start_location[1]
-          ),
-          coords = c("lon","lat"),
-          crs = "epsg:4326"
-        ) |>
-          sf::st_buffer(tolerance)
+        roi <- suppressMessages(suppressWarnings(
+          sf::st_as_sf(
+            data.frame(
+              lon = start_location[2],
+              lat = start_location[1]
+            ),
+            coords = c("lon","lat"),
+            crs = "epsg:4326"
+          ) |>
+            sf::st_buffer(tolerance)
+        ))
 
         if(land_mask){
-          roi <- sf::st_intersection(
-            roi,
-            mask
-          )
+          roi <- suppressMessages(suppressWarnings(
+            sf::st_intersection(
+              roi,
+              mask
+            )
+          ))
         }
 
         bbox <- roi |>
@@ -204,25 +208,40 @@ message(
     }
 
     if(plot){
-      if(land_mask){
-        plot(
-          mask,
-          border = "grey",
-          add = TRUE
+      p <- stk_map(
+        locations,
+        buffer = buffer,
+        bbox = bbox_global
+      ) +
+        ggplot2::labs(
+          title = sprintf(
+            "%s (%s)",
+            data$logger[1],
+            locations$date[nrow(locations)]
+            )
         )
+
+      if(!missing(start_location)){
+        p <- p +
+          ggplot2::geom_point(
+            aes(
+              start_location[2],
+              start_location[1]
+            ),
+            colour = "red"
+          )
       }
 
-      graphics::lines(
-        locations[,5:4],
-        col = 'grey'
-      )
-      graphics::points(
-        locations[,5:4],
-        pch = 19,
-        col = 'red'
-      )
+      print(p)
     }
   }
+
+  # add equinox labels, two weeks
+  # before and after equinoxes
+  locations <- locations |>
+    mutate(
+      equinox = ifelse(TRUE, NA,NA)
+    )
 
   # return the data frame with
   # location
