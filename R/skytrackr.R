@@ -224,7 +224,7 @@ message(
       if(!missing(start_location)){
         p <- p +
           ggplot2::geom_point(
-            aes(
+            ggplot2::aes(
               start_location[2],
               start_location[1]
             ),

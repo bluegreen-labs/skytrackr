@@ -25,18 +25,18 @@ stk_map <- function(df, buffer, bbox) {
    if(nrow(df) > 1) {
      p <- p +
        ggplot2::geom_path(
-         aes(
-           longitude,
-           latitude
+         ggplot2::aes(
+           "longitude",
+           "latitude"
          )
        )
    }
 
    p <- p +
     ggplot2::geom_point(
-      aes(
-        longitude,
-        latitude
+      ggplot2::aes(
+        "longitude",
+        "latitude"
       )
     ) +
     ggplot2::coord_sf(
