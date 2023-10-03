@@ -33,6 +33,8 @@ test_that("test functions without task ids", {
       land_mask = TRUE,
       plot = TRUE
     )
-
   expect_type(location_mask, "list")
 })
+
+# remove plot
+file.remove("Rplots.pdf")
