@@ -46,11 +46,14 @@ test_that("test clustering + plots", {
     system.file("extdata/cc874.lux", package="skytrackr")
     )
 
-  cl <- stk_cluster(df, k = 2, center = TRUE)
+  cl <- stk_cluster(df, k = 2)
+  clh <- stk_cluster(df, k = 2, method = "hclust")
+
   p <- stk_profile(cl)
   p_night <- stk_profile(cl, center = "night")
 
   expect_type(cl, "list")
+  expect_type(clh, "list")
   expect_type(p, "list")
   expect_type(p_night, "list")
 })

@@ -1,11 +1,11 @@
 #' Cluster geolocator data
 #'
-#' Uses k-means clustering to group geolocator
-#' covariates into consistent groups
+#' Uses k-means and hierarchical clustering to group geolocator
+#' covariates into consistent groups for visual analysis
 #'
 #' @param df a skytrackr data frame
-#' @param k number of k-means clusters to consider
-#' @param center center values or use raw numbers
+#' @param k number of k-means/hierarchical clusters to consider
+#' @param method method to use, kmeans by default, hclust can be set
 #'
 #' @return original data frame with attached cluster labels
 #' @export
@@ -13,7 +13,7 @@
 stk_cluster <- function(
     df,
     k = 2,
-    center = TRUE
+    method = "kmeans"
     ) {
 
   # set seed for reproducibility
@@ -49,23 +49,38 @@ stk_cluster <- function(
       -"date"
     )
 
-  # center values
-  #if(center) {
-    df_wide <- apply(df_wide, 2, scale)
-  #}
+  # center values as based on distance
+  # with widely different absolute values
+  df_wide <- apply(df_wide, 2, scale)
 
-  # calculate kmeans clustering
-  # output
-  output <- data.frame(
-    date = dates,
-    cluster = as.double(
-      stats::kmeans(
-        df_wide,
-        centers = k,
-        nstart = 10
+  if (method == "kmeans") {
+    # calculate kmeans clustering
+    # output
+    output <- data.frame(
+      date = dates,
+      cluster = as.double(
+        stats::kmeans(
+          df_wide,
+          centers = k,
+          nstart = 10
         )$cluster
       )
-  )
+    )
+  } else {
+
+   # calculate cluster tree
+   cl <- stats::hclust(stats::dist(df_wide))
+
+   # format output
+   output <- data.frame(
+       date = dates,
+       cluster =
+         stats::cutree(
+           cl,
+           k = k
+         )
+     )
+  }
 
   # combine with original timing (add hour field)
   # and convert to long format
