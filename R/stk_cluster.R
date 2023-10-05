@@ -4,20 +4,25 @@
 #' covariates into consistent groups
 #'
 #' @param df a skytrackr data frame
-#' @param centers number of k-means clusters to consider
+#' @param k number of k-means clusters to consider
+#' @param center center values or use raw numbers
 #'
 #' @return original data frame with attached cluster labels
 #' @export
 
 stk_cluster <- function(
     df,
-    centers = 2
+    k = 2,
+    center = TRUE
     ) {
+
+  # set seed for reproducibility
+  set.seed(10)
 
   # convert from long to wide format
   df_wide <- df |>
     dplyr::filter(
-      "measurement" != "lux"
+      .data$measurement != "lux"
     ) |>
     dplyr::select(
       "logger",
@@ -45,7 +50,9 @@ stk_cluster <- function(
     )
 
   # center values
-  df_wide <- apply(df_wide, 2, scale)
+  #if(center) {
+    df_wide <- apply(df_wide, 2, scale)
+  #}
 
   # calculate kmeans clustering
   # output
@@ -54,14 +61,27 @@ stk_cluster <- function(
     cluster = as.double(
       stats::kmeans(
         df_wide,
-        centers = centers
+        centers = k,
+        nstart = 10
         )$cluster
       )
   )
 
   # combine with original timing (add hour field)
   # and convert to long format
-  tmp <- dplyr::left_join(df, output, by = "date") |>
+  df_time <- df |>
+    dplyr::filter(
+     .data$measurement == "lux"
+    ) |>
+    dplyr::select(
+      "logger",
+      "date",
+      "hour",
+      "date_time"
+    ) |>
+    unique()
+
+  tmp <- dplyr::left_join(df_time, output, by = "date") |>
     dplyr::select(
       "logger",
       "date",
