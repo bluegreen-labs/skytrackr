@@ -24,7 +24,8 @@ test_that("test functions without task ids", {
 
   expect_type(location, "list")
 
-  location_mask <- skytrackr::cc874 |>
+  location_mask <- skytrackr::stk_read_lux(
+    system.file("extdata/cc874.lux", package="skytrackr")) |>
     skytrackr::skytrackr(
       iterations = 10,
       particles = 3,
@@ -38,3 +39,21 @@ test_that("test functions without task ids", {
 
 # remove plot
 file.remove("Rplots.pdf")
+
+test_that("test clustering + plots", {
+
+  df <- skytrackr::stk_read_lux(
+    system.file("extdata/cc874.lux", package="skytrackr")
+    )
+
+  cl <- stk_cluster(df, k = 2)
+  clh <- stk_cluster(df, k = 2, method = "hclust")
+
+  p <- stk_profile(cl)
+  p_night <- stk_profile(cl, center = "night")
+
+  expect_type(cl, "list")
+  expect_type(clh, "list")
+  expect_type(p, "list")
+  expect_type(p_night, "list")
+})
