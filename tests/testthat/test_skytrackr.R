@@ -38,3 +38,15 @@ test_that("test functions without task ids", {
 
 # remove plot
 file.remove("Rplots.pdf")
+
+test_that("test clustering + plots", {
+
+  df <- skytrackr::stk_read_lux(
+    system.file("extdata/cc874.lux", package="skytrackr")
+    )
+  cl <- stk_cluster(df, k = 2, center = TRUE)
+  p <- stk_profile(cl)
+
+  expect_type(cl, "list")
+  expect_type(p, "list")
+})
