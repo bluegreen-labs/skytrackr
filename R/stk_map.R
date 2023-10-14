@@ -9,7 +9,11 @@
 #' @return a ggplot map of tracked locations
 #' @export
 
-stk_map <- function(df, buffer, bbox) {
+stk_map <- function(
+    df,
+    buffer = 0,
+    bbox
+    ) {
    p <- ggplot2::ggplot(df) +
     ggplot2::geom_sf(
       data = stk_mask(buffer = buffer)
@@ -26,8 +30,8 @@ stk_map <- function(df, buffer, bbox) {
      p <- p +
        ggplot2::geom_path(
          ggplot2::aes(
-           "longitude",
-           "latitude"
+           .data$longitude,
+           .data$latitude
          )
        )
    }
@@ -35,8 +39,8 @@ stk_map <- function(df, buffer, bbox) {
    p <- p +
     ggplot2::geom_point(
       ggplot2::aes(
-        "longitude",
-        "latitude"
+        .data$longitude,
+        .data$latitude
       )
     ) +
     ggplot2::coord_sf(
