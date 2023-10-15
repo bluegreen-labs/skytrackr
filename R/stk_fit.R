@@ -91,12 +91,6 @@ stk_fit <- function(
     )
   )
 
-  # longitude <- stats::quantile(
-  #   samples_par[,2],
-  #   c(0.05,0.5,0.95),
-  #   na.rm = TRUE
-  # )
-
   # use plain quantiles for latitude
   latitude <- stats::quantile(
     samples_par[,1],
