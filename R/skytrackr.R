@@ -207,7 +207,8 @@ message(
       pb$tick()
     }
 
-    if(plot){
+    if(plot & nrow(locations) > 1){
+
       p <- stk_map(
         locations,
         buffer = buffer,
@@ -231,6 +232,69 @@ message(
             colour = "red"
           )
       }
+
+        p <- p +
+          ggplot2::geom_point(
+            ggplot2::aes(
+              longitude[nrow(locations)],
+              latitude[nrow(locations)]
+            ),
+            colour = "green"
+          )
+
+        p_lat <- ggplot2::ggplot(data = locations) +
+          ggplot2::geom_ribbon(
+            ggplot2::aes(
+              y = date,
+              xmin = latitude_qt_5,
+              xmax = latitude_qt_95
+            ),
+            fill = "grey85"
+          ) +
+          ggplot2::geom_path(
+            ggplot2::aes(
+              y = date,
+              x = latitude
+            )
+          ) +
+          ggplot2::geom_point(
+            ggplot2::aes(
+              y = date[nrow(locations)],
+              x = latitude[nrow(locations)]
+            ),
+            colour = "green"
+          ) +
+          ggplot2::theme_bw()
+
+        p_lon <- ggplot2::ggplot(data = locations) +
+          ggplot2::geom_ribbon(
+            ggplot2::aes(
+              y = date,
+              xmin = longitude_qt_5,
+              xmax = longitude_qt_95
+            ),
+            fill = "grey85"
+          ) +
+          ggplot2::geom_path(
+            ggplot2::aes(
+              y = date,
+              x = longitude
+            )
+          ) +
+          ggplot2::geom_point(
+            ggplot2::aes(
+              y = date[nrow(locations)],
+              x = longitude[nrow(locations)]
+            ),
+            colour = "green"
+          ) +
+          ggplot2::theme_bw()
+
+        p <- p + p_lat + p_lon +
+          patchwork::plot_layout(
+            ncol = 3,
+            width = c(4, 1, 1)
+          )
 
       print(p)
     }
