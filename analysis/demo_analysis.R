@@ -7,11 +7,10 @@ library(sf)
 lapply(list.files("R/","*.R", full.names = TRUE), source)
 #library(skytrackr)
 
-df <- stk_read_lux("data-raw/CH760_11Jun23_051213.lux")
-
+df <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
 df <- df |>
   dplyr::filter(
-    (date >= "2022-08-12" & date <= "2023-04-27")
+    (date >= "2021-08-30" & date <= "2022-04-27")
   )
 
 # # batch processing via pipe for multiple sites

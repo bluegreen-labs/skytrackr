@@ -292,8 +292,8 @@ message(
 
         p <- p + p_lat + p_lon +
           patchwork::plot_layout(
-            ncol = 3,
-            width = c(4, 1, 1)
+            nrow = 3,
+            height = c(3, 1, 1)
           )
 
       print(p)

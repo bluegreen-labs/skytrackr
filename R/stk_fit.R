@@ -29,6 +29,21 @@ stk_fit <- function(
   # factor for sky conditions
   lower <- c(bbox[2:1], scale[1])
   upper <- c(bbox[4:3], scale[2])
+  mean_range <- (lower + upper)/2
+
+  # create truncated normal prior with
+  # set bounding boxes, constrains the
+  # other parameters in the same way
+  # create separate sampler / density
+  # functions - as cloud correction
+  # should be uniform not normal (although
+  # this can be argued for)
+  prior <- BayesianTools::createTruncatedNormalPrior(
+    mean = c(mean_range, 0.5),
+    sd = 2,
+    lower = c(lower, 0),
+    upper = c(upper, 1)
+  )
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(
