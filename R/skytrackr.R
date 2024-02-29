@@ -175,11 +175,11 @@ skytrackr <- function(
           sf::st_bbox()
 
       } else {
-message(
-"  - No start location provided,
-     using default bounding box throughout search
-     or the first acquired fix!
-")
+        message("
+        - No start location provided,
+          using default bounding box throughout search
+          or the first acquired fix!
+        ")
       }
     }
 
