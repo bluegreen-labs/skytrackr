@@ -1,48 +1,46 @@
+rm(list = ls())
 # load libraries and functions
 options("dplyr.show_progress" = FALSE)
 library(dplyr)
 library(ggplot2)
 library(rnaturalearth)
+library(BayesianTools)
 library(sf)
+library(patchwork)
 lapply(list.files("R/","*.R", full.names = TRUE), source)
 #library(skytrackr)
 
-df <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
+df <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
 df <- df |>
   dplyr::filter(
-    (date >= "2021-08-30" & date <= "2022-04-27")
+    (date >= "2021-08-01" & date <= "2022-05-09")
   )
 
-# # batch processing via pipe for multiple sites
-# locations <- data |>
-#   group_by(logger) |>
-#   do({
-#     skytrackr(
-#       .,
-#       iterations = 100,
-#       particles = 10,
-#       start_location = c(51.08, 3.73),
-#       tolerance = 11,
-#       plot = FALSE
-#     )
-#   })
-#
-# saveRDS(locations, "data-raw/gent_locations_SMC.rds", compress = "xz")
-
 #---- DEzs MCMC approach ----
+
+bbox <- c(-20, -40, 60, 60)
 
 locations <- df |>
   group_by(logger) |>
   do({
     skytrackr(
       .,
-      start_location = c(51.08, 3.73),
-      tolerance = 11,
-      bbox = c(-20, -40, 60, 60),
+      plot = TRUE,
       land_mask = TRUE,
-      plot = TRUE
+      buffer = 5,
+      start_location = c(51.08, 3.73),
+      tolerance = 15,
+      scale = c(1,12),
+      range = c(0.32, 10),
+      bbox = c(-20, -40, 60, 60),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          iterations = 1000,
+          message = FALSE
+        )
+      )
     )
   })
 
-#saveRDS(locations, "data-raw/gent_locations_DEzs.rds", compress = "xz")
-
+stk_map(locations, buffer = 0, bbox = bbox)

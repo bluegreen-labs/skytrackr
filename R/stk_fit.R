@@ -4,9 +4,7 @@
 #' to estimate locations (parameters).
 #'
 #' @param data a data frame containing date time and lux values
-#' @param iterations number of optimization iterations
-#' @param bbox bounding box of the location search domain given as
-#'  c(xmin, ymin, xmax, ymax)
+#' @param roi region of interest
 #' @param scale scale factor range due to cloudiness to use in optimization,
 #'  when target values are not provided in lux this can be used to effectively
 #'  implement a Hill-Ekstrom template fitting
@@ -18,32 +16,20 @@
 
 stk_fit <- function(
   data,
-  iterations,
-  bbox,
+  roi,
+  loc,
   scale,
   control
   ) {
+
+  # bbox
+  bbox <- roi |> st_bbox()
 
   # set lower and upper parameter ranges
   # from bounding box settings add scale
   # factor for sky conditions
   lower <- c(bbox[2:1], scale[1])
   upper <- c(bbox[4:3], scale[2])
-  mean_range <- (lower + upper)/2
-
-  # create truncated normal prior with
-  # set bounding boxes, constrains the
-  # other parameters in the same way
-  # create separate sampler / density
-  # functions - as cloud correction
-  # should be uniform not normal (although
-  # this can be argued for)
-  prior <- BayesianTools::createTruncatedNormalPrior(
-    mean = c(mean_range, 0.5),
-    sd = 2,
-    lower = c(lower, 0),
-    upper = c(upper, 1)
-  )
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(
@@ -51,7 +37,9 @@ stk_fit <- function(
       do.call("likelihood",
               list(par = random_par,
                    data = data,
-                   model = "log_lux"
+                   model = "log_lux",
+                   loc = loc,
+                   roi = roi
               ))},
     # include an additional parameter
     # range for data uncertainty

@@ -23,11 +23,14 @@ stk_mask <- memoise::memoise(function(buffer = 0) {
       land |>
         sf::st_geometry() |>
         sf::st_union() |>
-        sf::st_buffer(buffer)
+        sf::st_buffer(buffer) |>
+        sf::st_union()
       )
     )
   }
 
-  return(land)
+  return(
+    land
+  )
 
 })

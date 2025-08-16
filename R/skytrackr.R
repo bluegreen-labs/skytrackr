@@ -18,9 +18,6 @@
 #'  location to constrain the parameter (location) search space.
 #'  This requires the start_location parameter to be set, as you need a
 #'  start position for a trusted initial location.
-#' @param iterations number of optimization iterations
-#' @param particles number of particles when using the default particle filter
-#'  optimization
 #' @param bbox bounding box of the location search domain given as
 #'  c(xmin, ymin, xmax, ymax)
 #' @param range range of values to consider during processing, should be
@@ -39,6 +36,7 @@
 #' @param verbose given feedback including a progress bar
 #'
 #' @importFrom rlang .data
+#' @import patchwork
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
@@ -48,27 +46,30 @@ skytrackr <- function(
     data,
     start_location,
     tolerance = 15,
-    iterations = 20,
-    particles = 100,
     range = c(0.32, 150),
     bbox = c(-180, -90, 180, 90),
     scale = c(1, 10),
     control = list(
       sampler = 'SMC',
       settings = list(
-        initialParticles = particles,
-        iterations = iterations,
+        initialParticles = 100,
+        iterations = 20,
         message = FALSE
       )
     ),
     land_mask = FALSE,
     buffer = 1,
-    plot = FALSE,
+    plot = TRUE,
     verbose = TRUE
 ) {
 
+  sf_use_s2(TRUE)
+
   # set global bounding box
-  bbox_global <- bbox
+  names(bbox) = c("xmin","ymin","xmax","ymax")
+  bbox_sf <- st_as_sfc(
+    st_bbox(bbox)
+  ) |> st_set_crs(4326)
 
   # unravel the data
   data <- data |>
@@ -97,23 +98,26 @@ skytrackr <- function(
 
   # create progress bar
   if(verbose) {
-  message(
-    sprintf(
-      "- Estimating locations from light (lux) profiles for logger: %s!",
-        data$logger[1])
-  )
-  pb <- progress::progress_bar$new(
-    format = "  processing [:bar] :percent eta: :eta",
-    total = length(dates),
-    clear = FALSE,
-    width= 60
+    message(
+      sprintf(
+        "- Estimating locations from light (lux) profiles for logger: %s!",
+          data$logger[1])
     )
-  pb$tick(0)
+    pb <- progress::progress_bar$new(
+      format = "  processing [:bar] :percent eta: :eta",
+      total = length(dates),
+      clear = FALSE,
+      width= 60
+      )
+    pb$tick(0)
   }
 
   # create mask if required
   if(land_mask){
     mask <- stk_mask(buffer = buffer)
+    mask <- suppressWarnings({suppressMessages({
+      st_crop(mask, bbox_sf)
+    })})
   }
 
   # loop over all available dates
@@ -122,64 +126,56 @@ skytrackr <- function(
         if(!missing(start_location)){
 
           # create data point
-          roi <-  suppressMessages(suppressWarnings(
-            sf::st_as_sf(
+          loc <-  sf::st_as_sf(
               data.frame(
                 lon = locations$longitude[i-1],
                 lat = locations$latitude[i-1]
               ),
-              coords = c("lon","lat"),
-              crs = "epsg:4326"
-            ) |>
-              sf::st_buffer(tolerance)
-          ))
+              coords = c("lon","lat")
+            ) |> st_set_crs(4326)
+
+          roi <- suppressWarnings({suppressMessages({
+                  sf::st_buffer(loc, tolerance)
+                })})
 
           if(land_mask){
-            roi <- suppressMessages(suppressWarnings(
+            roi <- suppressWarnings({suppressMessages({
               sf::st_intersection(
-                roi,
-                mask
+                mask,
+                sf::st_buffer(loc, tolerance)
               )
-            ))
+            })})
           }
-
-          bbox <- roi |>
-            sf::st_bbox()
         }
     } else {
       if(!missing(start_location)) {
 
         # create data point
-        roi <- suppressMessages(suppressWarnings(
-          sf::st_as_sf(
+        loc <- sf::st_as_sf(
             data.frame(
               lon = start_location[2],
               lat = start_location[1]
             ),
-            coords = c("lon","lat"),
-            crs = "epsg:4326"
-          ) |>
-            sf::st_buffer(tolerance)
+            coords = c("lon","lat")
+          ) |> st_set_crs(4326)
+
+        roi <- suppressWarnings(suppressMessages(
+            sf::st_buffer(loc, tolerance)
         ))
 
         if(land_mask){
-          roi <- suppressMessages(suppressWarnings(
+          roi <- suppressWarnings(suppressMessages(
             sf::st_intersection(
-              roi,
-              mask
+              mask,
+              sf::st_buffer(loc, tolerance)
             )
           ))
         }
 
-        bbox <- roi |>
-          sf::st_bbox()
-
       } else {
-message(
-"  - No start location provided,
-     using default bounding box throughout search
-     or the first acquired fix!
-")
+        message("
+        - No start location provided, please provide a start location!
+        ")
       }
     }
 
@@ -188,10 +184,10 @@ message(
 
     # fit model parameters for a given
     # day to estimate the location
-      out <- stk_fit(
+    out <- stk_fit(
         data = subs,
-        iterations = iterations,
-        bbox = bbox,
+        roi = roi,
+        loc = sf::st_coordinates(loc),
         scale = scale,
         control = control
       )
@@ -212,91 +208,12 @@ message(
       p <- stk_map(
         locations,
         buffer = buffer,
-        bbox = bbox_global
-      ) +
-        ggplot2::labs(
-          title = sprintf(
-            "%s (%s)",
-            data$logger[1],
-            locations$date[nrow(locations)]
-            )
-        )
+        bbox = bbox,
+        start_location = start_location,
+        roi = roi
+      )
 
-      if(!missing(start_location)){
-        p <- p +
-          ggplot2::geom_point(
-            ggplot2::aes(
-              start_location[2],
-              start_location[1]
-            ),
-            colour = "red"
-          )
-      }
-
-        p <- p +
-          ggplot2::geom_point(
-            ggplot2::aes(
-              longitude[nrow(locations)],
-              latitude[nrow(locations)]
-            ),
-            colour = "green"
-          )
-
-        p_lat <- ggplot2::ggplot(data = locations) +
-          ggplot2::geom_ribbon(
-            ggplot2::aes(
-              y = date,
-              xmin = latitude_qt_5,
-              xmax = latitude_qt_95
-            ),
-            fill = "grey85"
-          ) +
-          ggplot2::geom_path(
-            ggplot2::aes(
-              y = date,
-              x = latitude
-            )
-          ) +
-          ggplot2::geom_point(
-            ggplot2::aes(
-              y = date[nrow(locations)],
-              x = latitude[nrow(locations)]
-            ),
-            colour = "green"
-          ) +
-          ggplot2::theme_bw()
-
-        p_lon <- ggplot2::ggplot(data = locations) +
-          ggplot2::geom_ribbon(
-            ggplot2::aes(
-              y = date,
-              xmin = longitude_qt_5,
-              xmax = longitude_qt_95
-            ),
-            fill = "grey85"
-          ) +
-          ggplot2::geom_path(
-            ggplot2::aes(
-              y = date,
-              x = longitude
-            )
-          ) +
-          ggplot2::geom_point(
-            ggplot2::aes(
-              y = date[nrow(locations)],
-              x = longitude[nrow(locations)]
-            ),
-            colour = "green"
-          ) +
-          ggplot2::theme_bw()
-
-        p <- p + p_lat + p_lon +
-          patchwork::plot_layout(
-            nrow = 3,
-            height = c(3, 1, 1)
-          )
-
-      print(p)
+      plot(p)
     }
   }
 
