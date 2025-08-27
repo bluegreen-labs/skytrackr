@@ -52,12 +52,15 @@ skytrackr <- function(
       )
     ),
     mask,
+    step_selection,
     plot = TRUE,
     verbose = TRUE
 ) {
 
   if(missing(mask)){
-    stop("please provide a base mask or grid of valid sample locations!")
+    stop("
+        - please provide a base mask or grid of valid sample locations!
+        ")
   }
 
   if(missing(start_location)) {
@@ -152,7 +155,8 @@ skytrackr <- function(
         roi = roi,
         loc = sf::st_coordinates(loc),
         scale = scale,
-        control = control
+        control = control,
+        step_selection = step_selection
       )
 
     # set date

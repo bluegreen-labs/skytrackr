@@ -51,32 +51,3 @@ movement_kernel <- function(
 
   return(roi)
 }
-
-#' Step selection
-#'
-#' Step selection probability density function
-#' based upon the distance between a reference
-#' point (previous step) and a new parameter location.
-#'
-#' Step selection will follow a gamma distribution to
-#' be defined with scale and shape parameters (either
-#' through fitting known data, e.g. GPS data, or by
-#' making reasonable assumption on behaviour).
-#'
-#' @param par (random) parameter location coordinates
-#' @param ref reference location coordinates
-#' @param shape gamma distribution shape parameter
-#' @param scale gamma distribution scale parameter
-#'
-#' @returns log-likelihood of a step distance given a gamma distribution
-#' @export
-
-step_selection <- function(par, ref, shape = 1.02, scale = 150000){
-  d <- dgamma(
-    geosphere::distGeo(ref, par[2:1]),
-    shape = shape,
-    scale = scale,
-    log = TRUE
-  )
-  return(d)
-}

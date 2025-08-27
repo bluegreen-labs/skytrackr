@@ -8,7 +8,7 @@
 #' @param par a vector of parameter values, including one for the uncertainty
 #'  on the target values
 #' @param data nested data structure with validation data included
-#' @param model model to run with data and par setings
+#' @param model model to run with data and par settings
 #' @param loc previous modeled step location
 #' @param ... extra arguments to pass to the function
 #' @return single log likelihood
@@ -21,6 +21,7 @@ likelihood <- function(
     model,
     loc,
     roi,
+    step_selection,
     ...
 ) {
 
@@ -64,9 +65,19 @@ likelihood <- function(
   # singlelikelihood for the predicted vs observed values
   sll <- sum(singlelikelihoods, na.rm = TRUE)
 
-  # step selection function
-  step <- step_selection(par, loc)
+  # if not step_selection function is provided
+  # return the single log likelihood on the skylight
+  # model fit
+  if(missing(step_selection) || is.null(step_selection)){
+    return(sll)
+  } else {
+    # calculate distance for step (in meters)
+    dist <- geosphere::distGeo(loc, par[2:1])
 
-  # add mask parameters
-  return(sll + step)
+    # step selection function
+    step <- step_selection(dist)
+
+    # add mask parameters
+    return(sll + step)
+  }
 }

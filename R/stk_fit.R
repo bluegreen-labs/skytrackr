@@ -19,7 +19,8 @@ stk_fit <- function(
   roi,
   loc,
   scale,
-  control
+  control,
+  step_selection
   ) {
 
   # bbox
@@ -39,7 +40,8 @@ stk_fit <- function(
                    data = data,
                    model = "log_lux",
                    loc = loc,
-                   roi = roi
+                   roi = roi,
+                   step_selection = step_selection
               ))},
     # include an additional parameter
     # range for data uncertainty
