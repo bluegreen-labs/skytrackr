@@ -4,15 +4,12 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, iterations, bbox, scale, control)
+stk_fit(data, roi, loc, scale, control)
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
 
-\item{iterations}{number of optimization iterations}
-
-\item{bbox}{bounding box of the location search domain given as
-c(xmin, ymin, xmax, ymax)}
+\item{roi}{region of interest}
 
 \item{scale}{scale factor range due to cloudiness to use in optimization,
 when target values are not provided in lux this can be used to effectively

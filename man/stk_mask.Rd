@@ -4,7 +4,7 @@
 \alias{stk_mask}
 \title{A land mask}
 \usage{
-stk_mask(buffer = 0)
+stk_mask(buffer = 0, resolution = 1, bbox, sf = FALSE)
 }
 \arguments{
 \item{buffer}{buffer in degrees}

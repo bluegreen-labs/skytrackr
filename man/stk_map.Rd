@@ -4,7 +4,7 @@
 \alias{stk_map}
 \title{Plot skytrackr results}
 \usage{
-stk_map(df, buffer, bbox)
+stk_map(df, buffer, bbox, start_location, roi)
 }
 \arguments{
 \item{df}{a data frame with locations produced by skytrackr()}
