@@ -5,7 +5,8 @@
 #'
 #' This is approximative of probability density
 #' data, good enough for now. Should be
-#' corrected for cell spacing / count
+#' corrected for cell spacing / count,
+#' see Ranc et al. 2022 Ecology Letters
 #'
 #' @param roi region of interest raster file
 #' @param shape weibull shape parameter
@@ -51,13 +52,30 @@ movement_kernel <- function(
   return(roi)
 }
 
-# step selection function
-# gamma or weibull distributions
-step_selection <- function(par, loc){
+#' Step selection
+#'
+#' Step selection probability density function
+#' based upon the distance between a reference
+#' point (previous step) and a new parameter location.
+#'
+#' Step selection will follow a gamma distribution to
+#' be defined with scale and shape parameters (either
+#' through fitting known data, e.g. GPS data, or by
+#' making reasonable assumption on behaviour).
+#'
+#' @param par (random) parameter location coordinates
+#' @param ref reference location coordinates
+#' @param shape gamma distribution shape parameter
+#' @param scale gamma distribution scale parameter
+#'
+#' @returns log-likelihood of a step distance given a gamma distribution
+#' @export
+
+step_selection <- function(par, ref, shape = 1.02, scale = 150000){
   d <- dgamma(
-    geosphere::distGeo(loc, par[2:1]),
-    shape = 1.02,
-    scale = 150000,
+    geosphere::distGeo(ref, par[2:1]),
+    shape = shape,
+    scale = scale,
     log = TRUE
   )
   return(d)
