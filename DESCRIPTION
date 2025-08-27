@@ -29,6 +29,7 @@ Imports:
     BayesianTools,
     progress,
     sf,
+    terra,
     utils,
     stats,
     ggplot2,
