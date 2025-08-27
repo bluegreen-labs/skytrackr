@@ -4,7 +4,7 @@
 \alias{likelihood}
 \title{Log likelihood cost function for model optimization}
 \usage{
-likelihood(par, data, model, loc, roi, ...)
+likelihood(par, data, model, loc, roi, step_selection, ...)
 }
 \arguments{
 \item{par}{a vector of parameter values, including one for the uncertainty
@@ -12,7 +12,7 @@ on the target values}
 
 \item{data}{nested data structure with validation data included}
 
-\item{model}{model to run with data and par setings}
+\item{model}{model to run with data and par settings}
 
 \item{loc}{previous modeled step location}
 

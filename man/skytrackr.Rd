@@ -13,6 +13,7 @@ skytrackr(
   control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
     20, message = FALSE)),
   mask,
+  step_selection,
   plot = TRUE,
   verbose = TRUE
 )
