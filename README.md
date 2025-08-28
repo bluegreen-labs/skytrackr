@@ -100,24 +100,39 @@ In addition, care should be taken to specify the start location and tolerance (m
 All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
 
 ```r
+# define land mask with a bounding box
+# and an off-shore buffer (in km), in addition
+# you can specifiy the resolution of the resulting raster
+mask <- stk_mask(
+  bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+  buffer = 150, # in km
+  resolution = 0.5
+)
+
+# define a step selection distribution (gamma function)
+ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
+
 data |>
     skytrackr(
       start_location = c(51.08, 3.73),
-      tolerance = 11,
-      bbox = c(-20, -40, 60, 60),
+      tolerance = 1500, # in km
+      scale = c(1,10),
+      range = c(0.32, 10),
       control = list(
-          sampler = 'DEzs',
-          settings = list(
-              burnin = 2000,
-              iterations = 10000,
-              message = FALSE
-          )
-        ),
+        sampler = 'DEzs',
+        settings = list(
+          burnin = 500,
+          iterations = 1500,
+          message = FALSE
+        )
+      ),
+      step_selection = ssf,
+      mask = mask,
       plot = TRUE
     )
 ```
 
-If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.
+If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png)
 
