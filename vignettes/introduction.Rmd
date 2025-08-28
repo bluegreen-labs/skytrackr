@@ -353,13 +353,15 @@ p + p2 + p3 + p4 + p5 + p6 +
 
 Sensitivity analysis show that especially nighttime bright moments disrupt the positional accuracy of geolocation estimates. While using performance declines steadily when considering the full profile at higher noise levels (c-d).
 
-### Limitations
+### Limitations & future improvements
 
-The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. However, sensitivity analysis have shown that these factors might have less effect than nighttime illumination. Regardless, performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season []. Data assimilation by using pressure measurements at stationary moments [] could be implemented but is currently not. Further improvements can be implemented by masking of locations during optimization (based on step distance and or geographic location, such as a land water mask), and are currently not considered.
+The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. However, sensitivity analysis have shown that these factors might have less effect than nighttime illumination. Regardless, performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season ensuring well defined diurnal light profiles.
+
+The use of a hard threshold distance to a movement kernel as well as specifying a formal step-selection approach constrains estimated locations within normal bounds. Returned tracks are therefore stable over time and do not show pronounced run-away behaviour during equinoxes. However, further data assimilation by using pressure measurements (e.g. @nussbaumer_global_2023) at stationary moments could be implemented easily to account for species which roost in dense vegetation with less well defined light profiles.
 
 ## Conclusion
 
-The {skytrackr} R package provides an optimization based methodology which leverages the whole or part of the diurnal light profile and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical model of sky illuminance, increases accuracy. The Bayesian framework also provides uncertainty measures for each estimate, allowing for post-hoc quality control.
+The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.
 
 ## Availability and requirements
 

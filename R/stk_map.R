@@ -19,7 +19,6 @@ stk_map <- function(
     roi
     ) {
 
-
    # convert to sf
    path <-  sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
       sf::st_set_crs("EPSG:4326") |>
