@@ -19,12 +19,10 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- ropensci --><link href="../bglabs.css" rel="stylesheet">
 <meta property="og:title" content="The skytrackr R package">
-<meta property="og:description" content="skytrackr">
-<meta name="twitter:card" content="summary">
 <!-- Mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" async integrity="sha256-nlrDrBTHxJJlDDX22AS33xYI1OJHnGMDhiYMSe2U0e0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/config/TeX-AMS-MML_HTMLorMML.js" async integrity="sha256-4zys9A4hMQmtq2EUL+JRoXc0NZi8jVJMzb8onewOaSQ=" crossorigin="anonymous"></script>
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -45,7 +43,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v0.9</small></i>
+           <i>skytrackr <small>v1.0</small></i>
         </a>
       </div>
     </div>
@@ -58,7 +56,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -70,7 +68,7 @@
         <li>
   <a href="https://github.com/bluegreen-labs/skytrackr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -81,7 +79,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -93,7 +91,7 @@ approach to geolocation by light</h3>
 Hufkens</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="hidden name"><code>introduction.Rmd</code></div>
 
     </div>
@@ -176,20 +174,6 @@ response for the day. The approach improves upon the template matching
 as suggested by <span class="citation">Ekstrom (2004)</span> by
 including a physical component to the model rather than considering a
 piecewise regression based approach.</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 288 × 5</span></span></span>
-<span><span class="co">#&gt;    logger date       date_time             hour   lux</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:03:09</span> 0.052<span style="text-decoration: underline;">5</span>  0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:08:09</span> 0.136   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:13:09</span> 0.219   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:18:09</span> 0.302   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:23:09</span> 0.386   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:28:09</span> 0.469   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:33:09</span> 0.552   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:38:09</span> 0.636   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:43:09</span> 0.719   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC874  2021-07-11 2021-07-11 <span style="color: #949494;">00:48:09</span> 0.802   0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 278 more rows</span></span></span></code></pre>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-1-1.png" alt="Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line." width="700"><p class="caption">
 Modelled and observed illuminance values in log(lux) for three days in
@@ -199,10 +183,6 @@ offset data is shown as the blue full line, while latitudinal offset
 modelled data for the same period is shown as a full green line.
 </p>
 </div>
-<p>FIX ME: flipped the optimizer to a Sequential Monte Carlo method
-(i.e. particle filter method), which seems faster and as accurate -
-correct below with ref <span class="citation">(Hartig et al.
-2011)</span>.</p>
 <p>By default, the DEzs MCMC sampler <span class="citation">(Ter Braak
 and Vrugt 2008)</span> implemented in BayesianTools <span class="citation">(Hartig et al. 2023)</span> is used to estimate the
 posterior distribution of model parameters. For each location I sample
@@ -228,7 +208,7 @@ favourably to the “Twilight-Free” method as described by <span class="citati
 should be loaded from github.</p>
 <p>The package and function descriptions can be found on github at: <a href="https://github.com/bluegreen-labs/skytrackr" class="external-link uri">https://github.com/bluegreen-labs/skytrackr</a>, and can be
 installed from source using:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bluegreen-labs/skytrackr"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -237,7 +217,7 @@ installed from source using:</p>
 </h2>
 <p>To demonstrate the functioning of the package a small demo dataset
 comprised of a single day of light logging near a Common swift nest box
-in Ghent, Belgium was included (i.e. tag cc874). I will use this data to
+in Ghent, Belgium was included (i.e. tag cc876). I will use this data to
 demonstrate the features of the package. Note that when multiple dates
 are present all dates will be considered. The package is friendly to the
 use of R piped (|&gt;) commands. Using all default settings you can just
@@ -245,50 +225,71 @@ pipe the data in to the <code><a href="../reference/skytrackr.html">skytrackr()<
 object will be a data frame containing the best estimate (median) of the
 longitude and latitude as well as 5-95% quantile as sampled from the
 posterior parameter distribution.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># normally you would first read in the .lux or .glf file using</span></span>
-<span><span class="co"># cc874 &lt;- stk_read_lux("cc874.lux")</span></span>
+<span><span class="co"># cc876 &lt;- stk_read_lux("cc876.lux")</span></span>
 <span></span>
-<span><span class="co"># load the integrated package data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">skytrackr</span><span class="fu">::</span><span class="va"><a href="../reference/cc874.html">cc874</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   logger       date           date_time      hour measurement value</span></span>
-<span><span class="co">#&gt; 1  CC874 2021-07-11 2021-07-11 00:03:09 0.0525000         lux  0.08</span></span>
-<span><span class="co">#&gt; 2  CC874 2021-07-11 2021-07-11 00:08:09 0.1358333         lux  0.08</span></span>
-<span><span class="co">#&gt; 3  CC874 2021-07-11 2021-07-11 00:13:09 0.2191667         lux  0.08</span></span>
-<span><span class="co">#&gt; 4  CC874 2021-07-11 2021-07-11 00:18:09 0.3025000         lux  0.08</span></span>
-<span><span class="co">#&gt; 5  CC874 2021-07-11 2021-07-11 00:23:09 0.3858333         lux  0.08</span></span>
-<span><span class="co">#&gt; 6  CC874 2021-07-11 2021-07-11 00:28:09 0.4691667         lux  0.08</span></span>
+<span><span class="co"># define land mask</span></span>
+<span><span class="va">mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stk_mask.html">stk_mask</a></span><span class="op">(</span></span>
+<span>  bbox  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>  buffer <span class="op">=</span> <span class="fl">150</span>, <span class="co"># in km</span></span>
+<span>  resolution <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Spherical geometry (s2) switched off</span></span>
 <span></span>
-<span><span class="co"># skytrackr allows for piped data input</span></span>
-<span><span class="co"># when using the default SMC particle filter</span></span>
-<span><span class="co"># it is key to specify a known starting location</span></span>
-<span><span class="co"># to optimally use this method</span></span>
-<span><span class="va">location</span> <span class="op">&lt;-</span> <span class="fu">skytrackr</span><span class="fu">::</span><span class="va"><a href="../reference/cc874.html">cc874</a></span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
-<span>    <span class="op">(</span><span class="va">value</span> <span class="op">&gt;</span> <span class="fl">0.09</span> <span class="op">&amp;</span> <span class="va">value</span> <span class="op">&lt;</span> <span class="fl">400</span><span class="op">)</span></span>
-<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="co"># define a step selection distribution</span></span>
+<span><span class="va">ssf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="va">x</span>, shape <span class="op">=</span> <span class="fl">1.02</span>, scale <span class="op">=</span> <span class="fl">150000</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># setting skytrackr with optimizer</span></span>
+<span><span class="co"># parameters in control, only process data for a</span></span>
+<span><span class="co"># single date (selected above) to speed up things</span></span>
+<span><span class="va">location</span> <span class="op">&lt;-</span> <span class="fu">skytrackr</span><span class="fu">::</span><span class="va"><a href="../reference/cc876.html">cc876</a></span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="st">"2021-08-02"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="../reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
-<span>      iterations <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>      particles <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>      scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span>      range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>,</span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
+<span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
+<span>        settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>          iterations <span class="op">=</span> <span class="fl">300</span>,</span>
+<span>          message <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      mask <span class="op">=</span> <span class="va">mask</span>,</span>
+<span>      step_selection <span class="op">=</span> <span class="va">ssf</span>,</span>
 <span>      tolerance <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
-<span><span class="co">#&gt; - Estimating locations from light (lux) profiles for logger: CC874!</span></span>
+<span><span class="co">#&gt; - Estimating locations from light (lux) profiles for logger: CC876!</span></span>
 <span></span>
 <span><span class="co"># print the optimized parameters (i.e. the locations)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   latitude longitude sky_conditions latitude_qt_50 longitude_qt_50</span></span>
-<span><span class="co">#&gt; 1 51.07991  3.730128       1.808316       51.07996        3.730038</span></span>
+<span><span class="co">#&gt; 1 50.85738  3.716409       9.734496       50.83135        3.677164</span></span>
 <span><span class="co">#&gt;   latitude_qt_5 latitude_qt_95 longitude_qt_5 longitude_qt_95</span></span>
-<span><span class="co">#&gt; 1      51.07991       51.08007       3.729858        3.730151</span></span>
-<span><span class="co">#&gt;   sky_conditions_qt_50 grb  n       date equinox</span></span>
-<span><span class="co">#&gt; 1             2.071038  NA 16 2021-07-11      NA</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      50.60039       50.99666       3.563717         3.97147</span></span>
+<span><span class="co">#&gt;   sky_conditions_qt_50      grb  n       date equinox</span></span>
+<span><span class="co">#&gt; 1             6.659886 10.99151 28 2021-08-02   FALSE</span></span></code></pre></div>
 <p>Note that the returned location estimates are very close to the
 original location of the colony (51.8 N/ 3.73 E). These parameters can
 be fed back into the original (underlying) algorithm to calculate the
 full diurnal profile. Doing so allows you to compare the modelled
 (fitted) data to the observed values.</p>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 288 × 7</span></span></span>
+<span><span class="co">#&gt;    logger date_time           date         hour measurement value model_results</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux          0.08         -<span style="color: #BB0000;">8.82</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08         -<span style="color: #BB0000;">8.74</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08         -<span style="color: #BB0000;">8.65</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08         -<span style="color: #BB0000;">8.57</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08         -<span style="color: #BB0000;">8.49</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08         -<span style="color: #BB0000;">8.42</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08         -<span style="color: #BB0000;">8.34</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08         -<span style="color: #BB0000;">8.27</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08         -<span style="color: #BB0000;">8.21</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08         -<span style="color: #BB0000;">8.15</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 278 more rows</span></span></span></code></pre>
 <div class="figure" style="text-align: center">
 <img src="introduction_files/figure-html/unnamed-chunk-4-1.png" alt="Figure showing the fitted model results (full black line) from optimized parameters (latitude, longitude, sky conditions). Default parameters only use a limited twilight set of parameters. From the observed values (coloured dots) only the 'True' values were included in the estimation of the model parameters." width="700"><p class="caption">
 Figure showing the fitted model results (full black line) from optimized
@@ -372,7 +373,7 @@ control.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-bindoff_twilightfree_2018" class="csl-entry">
 Bindoff, Aidan D., Simon J. Wotherspoon, Christophe Guinet, and Mark A.
 Hindell. 2018. <span>“Twilight‐free Geolocation from Noisy Light
@@ -397,13 +398,6 @@ Gelman, Andrew, and Donald B. Rubin. 1992. <span>“Inference from
 <span>Iterative</span> <span>Simulation</span> <span>Using</span>
 <span>Multiple</span> <span>Sequences</span>.”</span> <em>Statistical
 Science</em> 7 (4). <a href="https://doi.org/10.1214/ss/1177011136" class="external-link">https://doi.org/10.1214/ss/1177011136</a>.
-</div>
-<div id="ref-hartig_statistical_2011" class="csl-entry">
-Hartig, Florian, Justin M. Calabrese, Björn Reineking, Thorsten Wiegand,
-and Andreas Huth. 2011. <span>“Statistical Inference for Stochastic
-Simulation Models - Theory and Application: <span>Inference</span> for
-Stochastic Simulation Models.”</span> <em>Ecology Letters</em> 14 (8):
-816–27. <a href="https://doi.org/10.1111/j.1461-0248.2011.01640.x" class="external-link">https://doi.org/10.1111/j.1461-0248.2011.01640.x</a>.
 </div>
 <div id="ref-hartig_bayesiantools_2023" class="csl-entry">
 Hartig, Florian, Francesco Minunno, Stefan Paul, David Cameron, Tankred
@@ -483,9 +477,7 @@ Computing</em> 18 (4): 435–46. <a href="https://doi.org/10.1007/s11222-008-910
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -501,8 +493,8 @@ Computing</em> 18 (4): 435–46. <a href="https://doi.org/10.1007/s11222-008-910
                           <div class="icon fab fa-github"></div></a>
                         <a href="https://bluegreenlabs.org/labs/" target="_blank" class="external-link">
                           <div class="icon fa fa-flask"></div></a>
-                        <a href="http://twitter.com/bluegreen_labs" target="_blank" class="external-link">
-                          <div class="icon fab fa-twitter"></div></a>
+                        <a href="https://www.linkedin.com/company/bluegreen-labs/" target="_blank" class="external-link">
+                          <div class="icon fa fa-linkedin"></div></a>
                     </div>
                 </div>
                 <div class="row top-4">
@@ -533,10 +525,10 @@ Computing</em> 18 (4): 435–46. <a href="https://doi.org/10.1007/s11222-008-910
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>
