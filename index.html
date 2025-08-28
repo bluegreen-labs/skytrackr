@@ -119,7 +119,7 @@
 <div class="section level2">
 <h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
 </h2>
-<p>To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|&gt;) commands. Using all default settings you can just pipe the data in to the <code><a href="reference/skytrackr.html">skytrackr()</a></code> function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.</p>
+<p>To demonstrate the functioning of the package a small demo dataset comprised of a couple of days of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc876). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|&gt;) commands. Using all default settings you can just pipe the data in to the <code><a href="reference/skytrackr.html">skytrackr()</a></code> function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.</p>
 </div>
 <div class="section level2">
 <h2 id="data-pre-screening">Data pre-screening<a class="anchor" aria-label="anchor" href="#data-pre-screening"></a>
@@ -130,9 +130,16 @@
 <code class="sourceCode R"><span><span class="co"># read in the lux file, if a matching .deg</span></span>
 <span><span class="co"># file is found it is integrated into one</span></span>
 <span><span class="co"># long oriented data format</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stk_read_lux.html">stk_read_lux</a></span><span class="op">(</span><span class="st">"your_lux_file.lux"</span><span class="op">)</span></span>
+<span><span class="co"># (here the internal demo data is used)</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stk_read_lux.html">stk_read_lux</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/cc876.lux"</span>, package<span class="op">=</span><span class="st">"skytrackr"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
 <span></span>
-<span><span class="co"># plot the data using plotly show</span></span>
+<span><span class="co"># plot the data as a static plot</span></span>
+<span><span class="fu"><a href="reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plot the data using plotly</span></span>
+<span><span class="co"># (this allows exploring data values, e.g. zooming in and using a tooltip)</span></span>
 <span><span class="fu"><a href="reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="va">df</span>, plotly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot.png"></p>
 <p>Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing.</p>
@@ -140,8 +147,8 @@
 <code class="sourceCode R"><span><span class="co"># library for data wrangling</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="st">"2021-09-15"</span></span>
-<span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="st">"2022-05-21"</span></span>
+<span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="st">"2021-08-02"</span></span>
+<span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="st">"2021-08-10"</span></span>
 <span></span>
 <span><span class="co"># filter data using the dplyr</span></span>
 <span><span class="co"># tidy logic</span></span>
@@ -152,30 +159,15 @@
 <span></span>
 <span><span class="co"># you can run the stk_profile() command again</span></span>
 <span><span class="co"># to show the trimmed data</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="default-sequential-monte-carlo-optimization">Default Sequential Monte Carlo optimization<a class="anchor" aria-label="anchor" href="#default-sequential-monte-carlo-optimization"></a>
-</h2>
-<p>The underlying BayesianTools package used in optimization allows for the specification of optimization techniques including Sequential Monte Carlo (SMC) method which is set as the default.This method is considerably faster than the MCMC DEzs method while fostering better accuracy during equinox periods, given a clean start position of the track. Note that care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight). When results are unstable switch to DEzs optimization below.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># normally you would first read in the .lux or .glf file using</span></span>
-<span><span class="co"># cc874 &lt;- stk_read_lux("cc874.lux")</span></span>
-<span></span>
-<span><span class="co"># load the integrated package data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">skytrackr</span><span class="fu">::</span><span class="va">cc874</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># skytrackr allows for piped data input</span></span>
-<span><span class="va">location</span> <span class="op">&lt;-</span> <span class="va">cc874</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">skytrackr</span><span class="fu">::</span><span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
-<span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
-<span>      tolerance <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png"></p>
 </div>
 <div class="section level2">
 <h2 id="mcmc-dezs-optimization">MCMC DEzs optimization<a class="anchor" aria-label="anchor" href="#mcmc-dezs-optimization"></a>
 </h2>
-<p>Changing the control parameters allows for switching to a MCMC DEzs methodology.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>To track movements by light using {skytrackr} you will need a few additional parameters. First, you will need to define the methodology used to find an optimal solution. The underlying BayesianTools package used in optimization allows for the specification of optimization techniques using the ‘control’ statement. The same argument can be used in the main <code><a href="reference/skytrackr.html">skytrackr()</a></code> routine.</p>
+<p>In addition, care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight - in km). The routine also needs you to specify an applicable land mask for land bound species. This land mask can be buffered extending somewhat offshore if desired. Finally, there is a behavioural component to the optimization routine used through the use of a step-selection function. This step-selection function determines the probability that a certain distance is covered based upon a probability density distribution provided by the user. Common distributions within movement ecology are for example a gamma or weibull distribution. Ideally these distributions are fit to previously collected data (either light-logger or GPS based), or based on common sense.</p>
+<p>All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
@@ -189,14 +181,10 @@
 <span>              message <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>          <span class="op">)</span></span>
 <span>        <span class="op">)</span>,</span>
-<span>      plot <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>      plot <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="quick-optimization-comparison">Quick optimization comparison<a class="anchor" aria-label="anchor" href="#quick-optimization-comparison"></a>
-</h2>
-<p>Comparison between the SMC (a) and DEzs method (b) seems equally well constrained when using a tolerance setting. When no tolerance is provided the DEzs method shows larger equinox related outliers, although the SMC method isn’t free of them either.</p>
-<p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/smc_dezs_comparison.png"></p>
+<p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.</p>
+<p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png"></p>
 </div>
 </div>
   </div>
