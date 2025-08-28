@@ -42,7 +42,7 @@ library("skytrackr")
 
 ## Use
 
-To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
+To demonstrate the functioning of the package a small demo dataset comprised of a couple of days of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc876). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
 
 ## Data pre-screening
 
@@ -54,14 +54,20 @@ In the package I include the `stk_profile()` function which plots `.lux` files (
 # read in the lux file, if a matching .deg
 # file is found it is integrated into one
 # long oriented data format
-df <- stk_read_lux("your_lux_file.lux")
+# (here the internal demo data is used)
+df <- stk_read_lux(
+      system.file("extdata/cc876.lux", package="skytrackr")
+    )
 
-# plot the data using plotly show
+# plot the data as a static plot
+stk_profile(df)
+
+# plot the data using plotly
+# (this allows exploring data values, e.g. zooming in and using a tooltip)
 stk_profile(df, plotly = TRUE)
 ```
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot.png)
-
 
 Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing.
 
@@ -69,8 +75,8 @@ Date and time values of the non-breeding season can easily be determined and use
 # library for data wrangling
 library(dplyr)
 
-start_date <- "2021-09-15"
-end_date <- "2022-05-21"
+start_date <- "2021-08-02"
+end_date <- "2021-08-10"
 
 # filter data using the dplyr
 # tidy logic
@@ -83,28 +89,15 @@ df <- df |>
 # to show the trimmed data
 ```
 
-## Default Sequential Monte Carlo optimization
-
-The underlying BayesianTools package used in optimization allows for the specification of optimization techniques including Sequential Monte Carlo (SMC) method which is set as the default.This method is considerably faster than the MCMC DEzs method while fostering better accuracy during equinox periods, given a clean start position of the track. Note that care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight). When results are unstable switch to DEzs optimization below.
-
-```r
-# normally you would first read in the .lux or .glf file using
-# cc874 <- stk_read_lux("cc874.lux")
-
-# load the integrated package data
-print(head(skytrackr::cc874))
-
-# skytrackr allows for piped data input
-location <- cc874 |>
-  skytrackr::skytrackr(
-      start_location = c(51.08, 3.73),
-      tolerance = 11,
-  )
-```
+![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png)
 
 ## MCMC DEzs optimization
 
-Changing the control parameters allows for switching to a MCMC DEzs methodology.
+To track movements by light using {skytrackr} you will need a few additional parameters. First, you will need to define the methodology used to find an optimal solution. The underlying BayesianTools package used in optimization allows for the specification of optimization techniques using the 'control' statement. The same argument can be used in the main `skytrackr()` routine.
+
+In addition, care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight - in km). The routine also needs you to specify an applicable land mask for land bound species. This land mask can be buffered extending somewhat offshore if desired. Finally, there is a behavioural component to the optimization routine used through the use of a step-selection function. This step-selection function determines the probability that a certain distance is covered based upon a probability density distribution provided by the user. Common distributions within movement ecology are for example a gamma or weibull distribution. Ideally these distributions are fit to previously collected data (either light-logger or GPS based), or based on common sense.
+
+All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
 
 ```r
 data |>
@@ -120,13 +113,11 @@ data |>
               message = FALSE
           )
         ),
-      plot = FALSE
+      plot = TRUE
     )
 ```
 
-## Quick optimization comparison
+If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.
 
-Comparison between the SMC (a) and DEzs method (b) seems equally well constrained when using a tolerance setting. When no tolerance is provided the DEzs method shows larger equinox related outliers, although the SMC method isn't free of them either.
-
-![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/smc_dezs_comparison.png)
+![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png)
 
