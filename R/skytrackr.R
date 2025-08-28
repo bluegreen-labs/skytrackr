@@ -101,6 +101,13 @@ skytrackr <- function(
         "- Estimating locations from light (lux) profiles for logger: %s!",
           data$logger[1])
     )
+
+    if(plot){
+    message(
+        "  (preview plot will update every 15 days)"
+      )
+    }
+
     pb <- progress::progress_bar$new(
       format = "  processing [:bar] :percent eta: :eta",
       total = length(dates),
@@ -109,6 +116,9 @@ skytrackr <- function(
       )
     pb$tick(0)
   }
+
+  # plot updates every 15 days
+  plot_update <- seq(2, length(dates), by = 15)
 
   # loop over all available dates
   for (i in seq_len(length(dates))) {
@@ -177,7 +187,7 @@ skytrackr <- function(
       pb$tick()
     }
 
-    if(plot & nrow(locations) > 1){
+    if(plot & i %in% plot_update){
 
       p <- stk_map(
         locations,
