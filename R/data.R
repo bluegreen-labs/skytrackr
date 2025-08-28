@@ -15,4 +15,4 @@
 #'   \item{hour}{decimal hour}
 #'   \item{lux}{light levels in lux}
 #' }
-"cc874"
+"cc876"
