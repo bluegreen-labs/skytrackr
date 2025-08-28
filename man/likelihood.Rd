@@ -4,7 +4,7 @@
 \alias{likelihood}
 \title{Log likelihood cost function for model optimization}
 \usage{
-likelihood(par, data, model, ...)
+likelihood(par, data, model, loc, roi, step_selection, ...)
 }
 \arguments{
 \item{par}{a vector of parameter values, including one for the uncertainty
@@ -12,7 +12,13 @@ on the target values}
 
 \item{data}{nested data structure with validation data included}
 
-\item{model}{model to run with data and par setings}
+\item{model}{model to run with data and par settings}
+
+\item{loc}{previous modeled step location}
+
+\item{roi}{region of interest with valid sampling locations}
+
+\item{step_selection}{a step selection function on the distance of a proposed move}
 
 \item{...}{extra arguments to pass to the function}
 }
@@ -20,9 +26,7 @@ on the target values}
 single log likelihood
 }
 \description{
-The function is aimed to be maximized, to use it with optimizers which
-minimize cost functions wrap the function as such:
-`cost = function(...){abs(likelihood(...))}`
+Log likelihood cost function for model optimization
 }
 \keyword{cost}
 \keyword{function}

@@ -2,6 +2,7 @@
 
 export(likelihood)
 export(log_lux)
+export(movement_kernel)
 export(read_deg_lux)
 export(skytrackr)
 export(stk_cluster)
@@ -11,4 +12,5 @@ export(stk_mask)
 export(stk_profile)
 export(stk_read_glf)
 export(stk_read_lux)
+import(patchwork)
 importFrom(rlang,.data)

@@ -18,11 +18,6 @@
 #'  location to constrain the parameter (location) search space.
 #'  This requires the start_location parameter to be set, as you need a
 #'  start position for a trusted initial location.
-#' @param iterations number of optimization iterations
-#' @param particles number of particles when using the default particle filter
-#'  optimization
-#' @param bbox bounding box of the location search domain given as
-#'  c(xmin, ymin, xmax, ymax)
 #' @param range range of values to consider during processing, should be
 #'  provided in lux c(min, max) or the equivalent if non-calibrated
 #' @param scale scale / sky condition factor, by default covering the
@@ -30,15 +25,14 @@
 #'  in case of non lux measurements
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
-#' @param land_mask use a land mask to constrain positions to land, buffered
-#'  by a value set by buffer
-#' @param buffer buffer to pad the land mask with, in degrees, default set
-#'  to 1 or ~110km
+#' @param mask mask with priors to constrain positions
+#' @param step_selection a step selection function on the distance of a proposed move
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar
 #'
 #' @importFrom rlang .data
+#' @import patchwork
 #'
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
@@ -47,28 +41,33 @@
 skytrackr <- function(
     data,
     start_location,
-    tolerance = 15,
-    iterations = 20,
-    particles = 100,
+    tolerance = 1,
     range = c(0.32, 150),
-    bbox = c(-180, -90, 180, 90),
     scale = c(1, 10),
     control = list(
-      sampler = 'SMC',
+      sampler = 'DEzs',
       settings = list(
-        initialParticles = particles,
-        iterations = iterations,
+        iterations = 10,
         message = FALSE
       )
     ),
-    land_mask = FALSE,
-    buffer = 1,
-    plot = FALSE,
+    mask,
+    step_selection,
+    plot = TRUE,
     verbose = TRUE
 ) {
 
-  # set global bounding box
-  bbox_global <- bbox
+  if(missing(mask)){
+    stop("
+        - please provide a base mask or grid of valid sample locations!
+        ")
+  }
+
+  if(missing(start_location)) {
+    stop("
+        - No (approximate) start location provided, please provide a start location!
+        ")
+  }
 
   # unravel the data
   data <- data |>
@@ -97,107 +96,78 @@ skytrackr <- function(
 
   # create progress bar
   if(verbose) {
-  message(
-    sprintf(
-      "- Estimating locations from light (lux) profiles for logger: %s!",
-        data$logger[1])
-  )
-  pb <- progress::progress_bar$new(
-    format = "  processing [:bar] :percent eta: :eta",
-    total = length(dates),
-    clear = FALSE,
-    width= 60
+    message(
+      sprintf(
+        "- Estimating locations from light (lux) profiles for logger: %s!",
+          data$logger[1])
     )
-  pb$tick(0)
-  }
-
-  # create mask if required
-  if(land_mask){
-    mask <- stk_mask(buffer = buffer)
+    pb <- progress::progress_bar$new(
+      format = "  processing [:bar] :percent eta: :eta",
+      total = length(dates),
+      clear = FALSE,
+      width= 60
+      )
+    pb$tick(0)
   }
 
   # loop over all available dates
   for (i in seq_len(length(dates))) {
     if (i != 1) {
-        if(!missing(start_location)){
-
           # create data point
-          roi <-  suppressMessages(suppressWarnings(
-            sf::st_as_sf(
+          loc <-  sf::st_as_sf(
               data.frame(
                 lon = locations$longitude[i-1],
                 lat = locations$latitude[i-1]
               ),
-              coords = c("lon","lat"),
-              crs = "epsg:4326"
-            ) |>
-              sf::st_buffer(tolerance)
-          ))
-
-          if(land_mask){
-            roi <- suppressMessages(suppressWarnings(
-              sf::st_intersection(
-                roi,
-                mask
-              )
-            ))
-          }
-
-          bbox <- roi |>
-            sf::st_bbox()
-        }
+              coords = c("lon","lat")
+            ) |> sf::st_set_crs(4326)
     } else {
-      if(!missing(start_location)) {
-
         # create data point
-        roi <- suppressMessages(suppressWarnings(
-          sf::st_as_sf(
+        loc <- sf::st_as_sf(
             data.frame(
               lon = start_location[2],
               lat = start_location[1]
             ),
-            coords = c("lon","lat"),
-            crs = "epsg:4326"
-          ) |>
-            sf::st_buffer(tolerance)
-        ))
-
-        if(land_mask){
-          roi <- suppressMessages(suppressWarnings(
-            sf::st_intersection(
-              roi,
-              mask
-            )
-          ))
-        }
-
-        bbox <- roi |>
-          sf::st_bbox()
-
-      } else {
-message(
-"  - No start location provided,
-     using default bounding box throughout search
-     or the first acquired fix!
-")
-      }
+            coords = c("lon","lat")
+          ) |> sf::st_set_crs(4326)
     }
+
+    # set tolerance units to km
+    units(tolerance) <- "km"
+
+    # buffer the location in equal area
+    # projection, back convert to lat lon
+    pol <- loc |>
+      sf::st_transform(crs = "+proj=laea") |>
+      sf::st_buffer(tolerance) |>
+      sf::st_transform(crs = "epsg:4326")
+
+    roi <- terra::mask(mask, pol) |>
+      terra::crop(sf::st_bbox(pol))
 
     # create a subset
     subs <- data[which(data$date == dates[i]),]
 
     # fit model parameters for a given
     # day to estimate the location
-      out <- stk_fit(
+    out <- stk_fit(
         data = subs,
-        iterations = iterations,
-        bbox = bbox,
+        roi = roi,
+        loc = sf::st_coordinates(loc),
         scale = scale,
-        control = control
+        control = control,
+        step_selection = step_selection
       )
 
     # set date
     out$date <- dates[i]
+
+    # equinox flag
+    doy <- as.numeric(format(out$date, "%j"))
+    out$equinox <- ifelse(
+      (doy > 266 - 10 & doy < 266 + 10) |
+        (doy > 80 - 10 & doy < 80 + 10),
+      TRUE, FALSE)
 
     # append output to data frame
     locations <- rbind(locations, out)
@@ -207,41 +177,18 @@ message(
       pb$tick()
     }
 
-    if(plot){
+    if(plot & nrow(locations) > 1){
+
       p <- stk_map(
         locations,
-        buffer = buffer,
-        bbox = bbox_global
-      ) +
-        ggplot2::labs(
-          title = sprintf(
-            "%s (%s)",
-            data$logger[1],
-            locations$date[nrow(locations)]
-            )
-        )
+        bbox = sf::st_bbox(mask),
+        start_location = start_location,
+        roi = pol # forward roi polygon / not raster
+      )
 
-      if(!missing(start_location)){
-        p <- p +
-          ggplot2::geom_point(
-            ggplot2::aes(
-              start_location[2],
-              start_location[1]
-            ),
-            colour = "red"
-          )
-      }
-
-      print(p)
+      plot(p)
     }
   }
-
-  # add equinox labels, two weeks
-  # before and after equinoxes
-  locations <- locations |>
-    dplyr::mutate(
-      equinox = ifelse(TRUE, NA,NA)
-    )
 
   # return the data frame with
   # location

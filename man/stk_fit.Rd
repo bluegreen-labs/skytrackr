@@ -4,15 +4,14 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, iterations, bbox, scale, control)
+stk_fit(data, roi, loc, scale, control, step_selection)
 }
 \arguments{
 \item{data}{a data frame containing date time and lux values}
 
-\item{iterations}{number of optimization iterations}
+\item{roi}{region of interest}
 
-\item{bbox}{bounding box of the location search domain given as
-c(xmin, ymin, xmax, ymax)}
+\item{loc}{location of the previous step}
 
 \item{scale}{scale factor range due to cloudiness to use in optimization,
 when target values are not provided in lux this can be used to effectively
@@ -20,6 +19,8 @@ implement a Hill-Ekstrom template fitting}
 
 \item{control}{control settings for the Bayesian optimization, forwarded by
 skytrackr()}
+
+\item{step_selection}{a step selection function on the distance of a proposed move}
 }
 \value{
 an estimated illuminance based location (and its uncertainties)

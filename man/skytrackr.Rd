@@ -7,17 +7,13 @@
 skytrackr(
   data,
   start_location,
-  tolerance = 15,
-  iterations = 20,
-  particles = 100,
+  tolerance = 1,
   range = c(0.32, 150),
-  bbox = c(-180, -90, 180, 90),
   scale = c(1, 10),
-  control = list(sampler = "SMC", settings = list(initialParticles = particles,
-    iterations = iterations, message = FALSE)),
-  land_mask = FALSE,
-  buffer = 1,
-  plot = FALSE,
+  control = list(sampler = "DEzs", settings = list(iterations = 10, message = FALSE)),
+  mask,
+  step_selection,
+  plot = TRUE,
   verbose = TRUE
 )
 }
@@ -34,16 +30,8 @@ location to constrain the parameter (location) search space.
 This requires the start_location parameter to be set, as you need a
 start position for a trusted initial location.}
 
-\item{iterations}{number of optimization iterations}
-
-\item{particles}{number of particles when using the default particle filter
-optimization}
-
 \item{range}{range of values to consider during processing, should be
 provided in lux c(min, max) or the equivalent if non-calibrated}
-
-\item{bbox}{bounding box of the location search domain given as
-c(xmin, ymin, xmax, ymax)}
 
 \item{scale}{scale / sky condition factor, by default covering the
 skylight() range of 1-10 but can be extended for more flexibility
@@ -52,11 +40,9 @@ in case of non lux measurements}
 \item{control}{control settings for the Bayesian optimization, generally
 should not be altered (defaults to a sequential monte carlo method)}
 
-\item{land_mask}{use a land mask to constrain positions to land, buffered
-by a value set by buffer}
+\item{mask}{mask with priors to constrain positions}
 
-\item{buffer}{buffer to pad the land mask with, in degrees, default set
-to 1 or ~110km}
+\item{step_selection}{a step selection function on the distance of a proposed move}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}

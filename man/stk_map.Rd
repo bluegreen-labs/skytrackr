@@ -4,14 +4,18 @@
 \alias{stk_map}
 \title{Plot skytrackr results}
 \usage{
-stk_map(df, buffer, bbox)
+stk_map(df, bbox, start_location, roi)
 }
 \arguments{
 \item{df}{a data frame with locations produced by skytrackr()}
 
-\item{buffer}{a land mask buffer value}
-
 \item{bbox}{a bounding box}
+
+\item{start_location}{start location as lat/lon to indicate
+the starting position of the track (optional)}
+
+\item{roi}{region of interest under consideration, only used in
+dynamic plots during optimization (optional)}
 }
 \value{
 a ggplot map of tracked locations

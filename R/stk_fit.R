@@ -4,25 +4,29 @@
 #' to estimate locations (parameters).
 #'
 #' @param data a data frame containing date time and lux values
-#' @param iterations number of optimization iterations
-#' @param bbox bounding box of the location search domain given as
-#'  c(xmin, ymin, xmax, ymax)
+#' @param roi region of interest
+#' @param loc location of the previous step
 #' @param scale scale factor range due to cloudiness to use in optimization,
 #'  when target values are not provided in lux this can be used to effectively
 #'  implement a Hill-Ekstrom template fitting
 #' @param control control settings for the Bayesian optimization, forwarded by
 #'  skytrackr()
+#' @param step_selection a step selection function on the distance of a proposed move
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
 #' @export
 
 stk_fit <- function(
   data,
-  iterations,
-  bbox,
+  roi,
+  loc,
   scale,
-  control
+  control,
+  step_selection
   ) {
+
+  # bbox
+  bbox <- roi |> sf::st_bbox()
 
   # set lower and upper parameter ranges
   # from bounding box settings add scale
@@ -36,7 +40,10 @@ stk_fit <- function(
       do.call("likelihood",
               list(par = random_par,
                    data = data,
-                   model = "log_lux"
+                   model = "log_lux",
+                   loc = loc,
+                   roi = roi,
+                   step_selection = step_selection
               ))},
     # include an additional parameter
     # range for data uncertainty
@@ -47,15 +54,15 @@ stk_fit <- function(
   # calculate the optimization
   # run and return results
   # [suppress all output]
-  out <- suppressWarnings(
-    suppressMessages(
+  out <- #suppressWarnings(
+    #suppressMessages(
       BayesianTools::runMCMC(
         bayesianSetup = setup,
         sampler = control$sampler,
         settings = control$settings
       )
-    )
-  )
+    #)
+  #)
 
   # Gelman-Brooks-Rubin (GBR) potential
   # scale factors to check convergence
@@ -63,7 +70,7 @@ stk_fit <- function(
   # only applies to DEzs as it has
   # 3 chains by default
   if (control$sampler == "DEzs") {
-    grb <- suppressWarnings(BayesianTools::gelmanDiagnostics(out)$mpsrf)
+    grb <- suppressWarnings(suppressMessages(BayesianTools::gelmanDiagnostics(out)$mpsrf))
   } else {
     grb <- NA
   }
@@ -90,12 +97,6 @@ stk_fit <- function(
       )
     )
   )
-
-  # longitude <- stats::quantile(
-  #   samples_par[,2],
-  #   c(0.05,0.5,0.95),
-  #   na.rm = TRUE
-  # )
 
   # use plain quantiles for latitude
   latitude <- stats::quantile(
