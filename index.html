@@ -168,22 +168,37 @@
 <p>In addition, care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight - in km). The routine also needs you to specify an applicable land mask for land bound species. This land mask can be buffered extending somewhat offshore if desired. Finally, there is a behavioural component to the optimization routine used through the use of a step-selection function. This step-selection function determines the probability that a certain distance is covered based upon a probability density distribution provided by the user. Common distributions within movement ecology are for example a gamma or weibull distribution. Ideally these distributions are fit to previously collected data (either light-logger or GPS based), or based on common sense.</p>
 <p>All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="co"># define land mask with a bounding box</span></span>
+<span><span class="co"># and an off-shore buffer (in km), in addition</span></span>
+<span><span class="co"># you can specifiy the resolution of the resulting raster</span></span>
+<span><span class="va">mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/stk_mask.html">stk_mask</a></span><span class="op">(</span></span>
+<span>  bbox  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span>, <span class="co">#xmin, ymin, xmax, ymax</span></span>
+<span>  buffer <span class="op">=</span> <span class="fl">150</span>, <span class="co"># in km</span></span>
+<span>  resolution <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># define a step selection distribution (gamma function)</span></span>
+<span><span class="va">ssf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="va">x</span>, shape <span class="op">=</span> <span class="fl">1.02</span>, scale <span class="op">=</span> <span class="fl">150000</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
-<span>      tolerance <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>      bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span>,</span>
+<span>      tolerance <span class="op">=</span> <span class="fl">1500</span>, <span class="co"># in km</span></span>
+<span>      scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span>      range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>          sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
-<span>          settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>              burnin <span class="op">=</span> <span class="fl">2000</span>,</span>
-<span>              iterations <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span>              message <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>          <span class="op">)</span></span>
-<span>        <span class="op">)</span>,</span>
+<span>        sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
+<span>        settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>          burnin <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>          iterations <span class="op">=</span> <span class="fl">1500</span>,</span>
+<span>          message <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      step_selection <span class="op">=</span> <span class="va">ssf</span>,</span>
+<span>      mask <span class="op">=</span> <span class="va">mask</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.</p>
+<p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).</p>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png"></p>
 </div>
 </div>

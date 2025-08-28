@@ -267,10 +267,12 @@ posterior parameter distribution.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   latitude longitude sky_conditions latitude_qt_50 longitude_qt_50</span></span>
 <span><span class="co">#&gt; 1 50.85738  3.716409       9.734496       50.83135        3.677164</span></span>
-<span><span class="co">#&gt;   latitude_qt_5 latitude_qt_95 longitude_qt_5 longitude_qt_95</span></span>
-<span><span class="co">#&gt; 1      50.60039       50.99666       3.563717         3.97147</span></span>
-<span><span class="co">#&gt;   sky_conditions_qt_50      grb  n       date equinox</span></span>
-<span><span class="co">#&gt; 1             6.659886 10.99151 28 2021-08-02   FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt;   sky_conditions_qt_50 latitude_qt_5 latitude_qt_95 longitude_qt_5</span></span>
+<span><span class="co">#&gt; 1             6.659886      50.60039       50.99666       3.563717</span></span>
+<span><span class="co">#&gt;   longitude_qt_95 sky_conditions_qt_5 sky_conditions_qt_95      grb  n</span></span>
+<span><span class="co">#&gt; 1         3.97147            2.292277             9.745755 10.99151 28</span></span>
+<span><span class="co">#&gt;         date equinox</span></span>
+<span><span class="co">#&gt; 1 2021-08-02   FALSE</span></span></code></pre></div>
 <p>Note that the returned location estimates are very close to the
 original location of the colony (51.8 N/ 3.73 E). These parameters can
 be fed back into the original (underlying) algorithm to calculate the
@@ -325,33 +327,38 @@ performance declines steadily when considering the full profile at
 higher noise levels (c-d).</p>
 </div>
 <div class="section level3">
-<h3 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
+<h3 id="limitations-future-improvements">Limitations &amp; future improvements<a class="anchor" aria-label="anchor" href="#limitations-future-improvements"></a>
 </h3>
 <p>The package does not mitigate uncertainty introduced by occlusion of
 the sensor by feathers, or birds roosting in secluded places. However,
 sensitivity analysis have shown that these factors might have less
 effect than nighttime illumination. Regardless, performance of the
 optimization method remains functionally optimal in species such as
-swifts, which continuously fly during their non-breeding season []. Data
-assimilation by using pressure measurements at stationary moments []
-could be implemented but is currently not. Further improvements can be
-implemented by masking of locations during optimization (based on step
-distance and or geographic location, such as a land water mask), and are
-currently not considered.</p>
+swifts, which continuously fly during their non-breeding season ensuring
+well defined diurnal light profiles.</p>
+<p>The use of a hard threshold distance to a movement kernel as well as
+specifying a formal step-selection approach constrains estimated
+locations within normal bounds. Returned tracks are therefore stable
+over time and do not show pronounced run-away behaviour during
+equinoxes. However, further data assimilation by using pressure
+measurements (e.g. <span class="citation">Nussbaumer et al.
+(2023)</span>) at stationary moments could be implemented easily to
+account for species which roost in dense vegetation with less well
+defined light profiles.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
 </h2>
-<p>The {skytrackr} R package provides an optimization based methodology
-which leverages the whole or part of the diurnal light profile and a
-Bayesian based optimization approach to estimate geolocations from
-light. The use of additional data during twilight, or a full day, allows
-for automation of the process over threshold based methods. Including
-more data in location estimates, based upon a physical model of sky
-illuminance, increases accuracy. The Bayesian framework also provides
-uncertainty measures for each estimate, allowing for post-hoc quality
-control.</p>
+<p>The {skytrackr} R package provides a convenient template fitting
+methodology and a Bayesian based optimization approach to estimate
+geolocations from light. The use of additional data during twilight, or
+a full day, allows for automation of the process over threshold based
+methods. Including more data in location estimates, based upon a
+physical models of behaviour (step-selection), the physical light
+environment and additional parameters allows for improved accuracy at a
+low computational and labour cost while also providing uncertainty
+measures for post-hoc quality control.</p>
 </div>
 <div class="section level2">
 <h2 id="availability-and-requirements">Availability and requirements<a class="anchor" aria-label="anchor" href="#availability-and-requirements"></a>
@@ -464,6 +471,12 @@ Felix Liechti, and Susanne Åkesson. 2019. <span>“Highly Mobile
 Insectivorous Swifts Perform Multiple Intra‐tropical Migrations to
 Exploit an Asynchronous <span>African</span> Phenology.”</span>
 <em>Oikos</em> 128 (5): 640–48. <a href="https://doi.org/10.1111/oik.05531" class="external-link">https://doi.org/10.1111/oik.05531</a>.
+</div>
+<div id="ref-nussbaumer_global_2023" class="csl-entry">
+Nussbaumer, Raphaël, Mathieu Gravey, Martins Briedis, and Felix Liechti.
+2023. <span>“Global Positioning with Animal‐borne Pressure
+Sensors.”</span> <em>Methods in Ecology and Evolution</em> 14 (4):
+1104–17. <a href="https://doi.org/10.1111/2041-210X.14043" class="external-link">https://doi.org/10.1111/2041-210X.14043</a>.
 </div>
 <div id="ref-ter_braak_differential_2008" class="csl-entry">
 Ter Braak, Cajo J. F., and Jasper A. Vrugt. 2008. <span>“Differential
