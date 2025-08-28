@@ -31,7 +31,7 @@ test_that("test helper functions", {
 
 test_that("test optimizations", {
 
-  location <- skytrackr::cc874 |>
+  location <- skytrackr::cc876 |>
     skytrackr(
       mask = mask,
       plot = FALSE,
@@ -55,7 +55,7 @@ test_that("test optimizations", {
 
 test_that("test no start", {
   # no start
-  expect_error(skytrackr::cc874 |>
+  expect_error(skytrackr::cc876 |>
     skytrackr::skytrackr(
       mask = mask,
       plot = FALSE,

@@ -50,8 +50,9 @@ The {skytrackr} R package uses a physical sky illuminance model [@hufkens_skylig
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.cap="Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line."}
 library(skylight)
 
-cc874 <- skytrackr::cc874 |>
+cc876 <- skytrackr::cc876 |>
   dplyr::filter(
+    date == "2021-08-02",
     measurement == "lux"
   ) |>
   tidyr::pivot_wider(
@@ -59,10 +60,8 @@ cc874 <- skytrackr::cc874 |>
     values_from = "value"
   )
 
-print(cc874)
-
 # sequence of hours
-dates <- seq(ISOdate(2021,07,10), ISOdate(2021,07,12), by = "hour")
+dates <- seq(ISOdate(2021,08,01), ISOdate(2021,08,03), by = "hour")
 
 # longitude offset
 location_1 <- data.frame(
@@ -88,7 +87,7 @@ location_3 <- data.frame(
 
 p <- ggplot() +
   geom_point(
-    data = cc874,
+    data = cc876,
     aes(
       date_time,
       log(lux)
@@ -142,14 +141,11 @@ remotes::install_github("bluegreen-labs/skytrackr")
 
 ## Discussion
 
-To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging near a Common swift nest box in Ghent, Belgium was included (i.e. tag cc874). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
+To demonstrate the functioning of the package a small demo dataset comprised of a single day of light logging near a Common swift nest box in Ghent, Belgium was included (i.e. tag cc876). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (|>) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
 
 ```{r}
 # normally you would first read in the .lux or .glf file using
-# cc874 <- stk_read_lux("cc874.lux")
-
-# load the integrated package data
-print(head(skytrackr::cc874))
+# cc876 <- stk_read_lux("cc876.lux")
 
 # define land mask
 mask <- stk_mask(
@@ -161,10 +157,11 @@ mask <- stk_mask(
 # define a step selection distribution
 ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
 
-
 # setting skytrackr with optimizer
-# parameters in control
-location <- skytrackr::cc874 |>
+# parameters in control, only process data for a
+# single date (selected above) to speed up things
+location <- skytrackr::cc876 |>
+  filter(date == "2021-08-02") |>
   skytrackr::skytrackr(
       scale = c(1,10),
       range = c(0.09, 400),
@@ -190,21 +187,27 @@ Note that the returned location estimates are very close to the original locatio
 
 ```{r echo = FALSE, fig.cap="Figure showing the fitted model results (full black line) from optimized parameters (latitude, longitude, sky conditions). Default parameters only use a limited twilight set of parameters. From the observed values (coloured dots) only the 'True' values were included in the estimation of the model parameters."}
 
-# call the underlying model
-cc874$model_results <- skytrackr::log_lux(
+# call the underlying model, with the given parameters
+# for a single date (parameters vary over time)
+cc876 <- skytrackr::cc876 |>
+  filter(date == "2021-08-02")
+
+cc876$model_results <- skytrackr::log_lux(
   par = c(
     location$latitude,
     location$longitude,
     location$sky_conditions),
-  cc874
+  cc876
 )
 
-ggplot(data = cc874) +
+print(cc876)
+
+ggplot(data = cc876) +
   geom_point(
     aes(
       hour,
-      log(lux),
-      colour = (lux > 0.09 & lux < 400)
+      log(value),
+      colour = (value > 0.09 & value < 400)
     )
   ) +
   scale_color_discrete() +
