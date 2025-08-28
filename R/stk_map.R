@@ -19,6 +19,7 @@ stk_map <- function(
     roi
     ) {
 
+
    # convert to sf
    path <-  sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
       sf::st_set_crs("EPSG:4326") |>
@@ -52,7 +53,8 @@ stk_map <- function(
          ggplot2::theme_bw() +
          ggplot2::theme(
             legend.position = "bottom",
-            panel.border = ggplot2::element_blank()
+            panel.border = ggplot2::element_blank(),
+            plot.margin = ggplot2::margin(t = 10, r = 0, b = 0, l = 0, unit = "pt")
          )
    }
 
@@ -96,7 +98,7 @@ stk_map <- function(
          ggplot2::geom_sf(
             data = points,
             ggplot2::aes(
-               shape = "equinox"
+               shape = .data$equinox
             ),
             colour = "grey25"
          ) +
@@ -131,29 +133,19 @@ stk_map <- function(
       )
    }
 
-   p <- p +
-      ggplot2::labs(
-         title = sprintf(
-            "%s (%s - %s)",
-            df$logger[1],
-            df$date[1],
-            df$date[nrow(df)]
-         )
-      )
-
    p_lat <- ggplot2::ggplot(df) +
      ggplot2::geom_ribbon(
        ggplot2::aes(
-         y = "date",
-         xmin = "latitude_qt_5",
-         xmax = "latitude_qt_95"
+         y = .data$date,
+         xmin = .data$latitude_qt_5,
+         xmax = .data$latitude_qt_95
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y ="date",
-         x = "latitude_qt_50"
+         y = .data$date,
+         x = .data$latitude_qt_50
        )
      )  +
       ggplot2::labs(
@@ -164,16 +156,16 @@ stk_map <- function(
    p_lon <- ggplot2::ggplot(df) +
      ggplot2::geom_ribbon(
        ggplot2::aes(
-         y = "date",
-         xmin = "longitude_qt_5",
-         xmax = "longitude_qt_95"
+         y = .data$date,
+         xmin = .data$longitude_qt_5,
+         xmax = .data$longitude_qt_95
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y = "date",
-         x = "longitude_qt_50"
+         y = .data$date,
+         x = .data$longitude_qt_50
        )
      )  +
       ggplot2::labs(
@@ -182,10 +174,18 @@ stk_map <- function(
      ggplot2::theme_bw()
 
    p_sky <- ggplot2::ggplot(df) +
+      ggplot2::geom_ribbon(
+         ggplot2::aes(
+            y = .data$date,
+            xmin = .data$sky_conditions_qt_5,
+            xmax = .data$sky_conditions_qt_95
+         ),
+         fill = "grey85"
+      ) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y = "date",
-         x = "sky_conditions"
+         y = .data$date,
+         x = .data$sky_conditions
        )
      ) +
      ggplot2::labs(
@@ -196,8 +196,12 @@ stk_map <- function(
    p_final <- p + p_lat + p_lon + p_sky +
      patchwork::plot_layout(
        ncol = 4,
-       widths = c(4, 1, 1, 1)
-     )
+       widths = c(4, 1, 1, 1),
+       axis_titles = "collect_y"
+     ) +
+    patchwork::plot_annotation(
+       title = sprintf("%s (from %s to %s)",df$logger[1], df$date[1], df$date[-1])
+    )
 
    return(p_final)
 }

@@ -105,11 +105,11 @@ stk_fit <- function(
     na.rm = TRUE
   )
 
-  sky_conditions <- stats::median(
+  sky_conditions <- stats::quantile(
     samples_par[,3],
+    c(0.05,0.5,0.95),
     na.rm = TRUE
-    )
-
+  )
   # return "best" fit parameters
   bf_par <- BayesianTools::MAP(out)$parametersMAP
 
@@ -121,11 +121,13 @@ stk_fit <- function(
     sky_conditions = bf_par[3],
     latitude_qt_50 = latitude[2],
     longitude_qt_50 = longitude[2],
+    sky_conditions_qt_50 = sky_conditions[2],
     latitude_qt_5 = latitude[1],
     latitude_qt_95 = latitude[3],
     longitude_qt_5 = longitude[1],
     longitude_qt_95 = longitude[3],
-    sky_conditions_qt_50 = sky_conditions,
+    sky_conditions_qt_5 = sky_conditions[1],
+    sky_conditions_qt_95 = sky_conditions[3],
     grb = grb,
     n = nrow(data),
     row.names = NULL
