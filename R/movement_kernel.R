@@ -28,10 +28,10 @@ movement_kernel <- function(
 
   # define distance matrix
   # r is rounded to an integer by zonal
-  r <- rast(
+  r <- terra::rast(
     sqrt((col(im) - offset)^2 + (row(im) - offset)^2),
     crs = terra::crs(roi),
-    extent = ext(roi)
+    extent = terra::ext(roi)
   )
 
   # multiply with original
@@ -39,9 +39,9 @@ movement_kernel <- function(
   roi <- r * roi
 
   # apply weibull function
-  roi <- app(
+  roi <- terra::app(
     roi,
-    fun = \(x) dweibull(
+    fun = \(x) stats::dweibull(
       x,
       shape = shape,
       scale = scale,

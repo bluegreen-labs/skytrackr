@@ -1,59 +1,110 @@
 #---- test functions ----
 
-test_that("test functions without task ids", {
+bbox <- c(-20, -40, 60, 60)
 
-  location <- skytrackr::cc874 |>
-    skytrackr::skytrackr(
-      iterations = 10,
-      particles = 3,
-      start_location = c(51.08, 3.73),
-      tolerance = 11,
-      plot = FALSE
-    )
+# define land mask
+mask <- stk_mask(
+  bbox  =  bbox,
+  buffer = 150, # in km
+  resolution = 0.5
+)
 
-  expect_type(location, "list")
+# define a step selection distribution
+ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
 
-  # no start
-  location <- skytrackr::cc874 |>
-    skytrackr::skytrackr(
-      iterations = 10,
-      particles = 3,
-      tolerance = 11,
-      plot = FALSE
-    )
+test_that("test helper functions", {
+  m <- stk_mask(
+    bbox  =  bbox,
+    buffer = 150, # in km
+    resolution = 0.5
+  )
 
-  expect_type(location, "list")
+  expect_type(m, "S4")
 
-  location_mask <- skytrackr::stk_read_lux(
-    system.file("extdata/cc874.lux", package="skytrackr")) |>
-    skytrackr::skytrackr(
-      iterations = 10,
-      particles = 3,
-      start_location = c(51.08, 3.73),
-      tolerance = 11,
-      land_mask = TRUE,
-      plot = TRUE
-    )
-  expect_type(location_mask, "list")
+  m <- stk_mask(
+    bbox  =  bbox,
+    sf = TRUE
+  )
+
+  expect_type(m, "list")
 })
 
-# remove plot
-file.remove("Rplots.pdf")
+test_that("test optimizations", {
 
-test_that("test clustering + plots", {
-
-  df <- skytrackr::stk_read_lux(
-    system.file("extdata/cc874.lux", package="skytrackr")
+  location <- skytrackr::cc874 |>
+    skytrackr(
+      mask = mask,
+      plot = FALSE,
+      start_location = c(51.08, 3.73),
+      tolerance = 1500, # in km
+      scale = c(1,10),
+      range = c(0.32, 10),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          iterations = 10,
+          message = FALSE
+        )
+      ),
+      step_selection = ssf
     )
 
-  cl <- stk_cluster(df, k = 2)
-  clh <- stk_cluster(df, k = 2, method = "hclust")
+  expect_type(location, "list")
+})
 
-  p <- stk_profile(cl)
-  p_night <- stk_profile(cl, center = "night")
 
-  expect_type(cl, "list")
-  expect_type(clh, "list")
+test_that("test no start", {
+  # no start
+  expect_error(skytrackr::cc874 |>
+    skytrackr::skytrackr(
+      mask = mask,
+      plot = FALSE,
+      tolerance = 1500, # in km
+      scale = c(1,10),
+      range = c(0.32, 10),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          iterations = 10,
+          message = FALSE
+          )
+        ),
+      step_selection = ssf
+    )
+  )
+})
+
+test_that("read from file and optimize", {
+  location <- skytrackr::stk_read_lux(
+      system.file("extdata/cc876.lux", package="skytrackr")
+    ) |>
+    skytrackr::skytrackr(
+      mask = mask,
+      plot = TRUE,
+      start_location = c(51.08, 3.73),
+      tolerance = 1500, # in km
+      scale = c(1,10),
+      range = c(0.32, 10),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          iterations = 10,
+          message = FALSE
+        )
+      ),
+      step_selection = ssf
+    )
+  expect_type(location, "list")
+})
+
+test_that("test plots", {
+
+  df <- skytrackr::stk_read_lux(
+     system.file("extdata/cc876.lux", package="skytrackr")
+     )
+  p <- stk_profile(df)
+  p_night <- stk_profile(df, center = "night")
+
   expect_type(p, "list")
   expect_type(p_night, "list")
 })

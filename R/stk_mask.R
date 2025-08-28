@@ -4,8 +4,14 @@
 #' model results
 #'
 #' @param buffer buffer in degrees
+#' @param resolution resolution of the spatial grid in degrees, when exporting
+#'  as a terra SpatRaster (default = 1)
+#' @param bbox bounding box of the mask, sets hard boundaries on the search
+#'  area of valid locations as well
+#' @param sf return the land mask as an 'sf' polygon, not a rasterized map.
+#' Mostly used in map plotting, not used for processing (default = FALSE)
 #'
-#' @return buffered land mask as an sf object
+#' @return buffered land mask as an 'sf' or 'terra' map object
 #' @export
 
 stk_mask <- memoise::memoise(
@@ -16,20 +22,22 @@ stk_mask <- memoise::memoise(
     sf = FALSE
 ){
 
+  sf::sf_use_s2(FALSE)
+
   # read polygon data convert to sf (formally)
   land <- readRDS(system.file("extdata/mask.rds", package="skytrackr"))
 
   if(!missing(bbox)){
     # set global bounding box
     names(bbox) = c("xmin","ymin","xmax","ymax")
-    bbox_sf <- st_as_sfc(
+    bbox_sf <- sf::st_as_sfc(
       sf::st_bbox(bbox)
     ) |>
       sf::st_set_crs(4326)
 
     land <- suppressWarnings({suppressMessages({
       land |>
-        st_crop(bbox_sf)
+        sf::st_crop(bbox_sf)
     })})
   }
 
@@ -53,7 +61,7 @@ stk_mask <- memoise::memoise(
   # rasterize using terra
 
   # create empty reference matrix
-  ref <- rast(
+  ref <- terra::rast(
     xmin=-180,xmax=180,
     ymin=-90, ymax=90,
     crs = "epsg:4326",

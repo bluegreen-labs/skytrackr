@@ -22,6 +22,7 @@ library(ggplot2)
 library(patchwork)
 library(BayesianTools)
 library(skytrackr)
+
 ```
 
 ## Abstract
@@ -128,8 +129,6 @@ p <- ggplot() +
 plot(p)
 ```
 
-FIX ME: flipped the optimizer to a Sequential Monte Carlo method (i.e. particle filter method), which seems faster and as accurate - correct below with ref [@hartig_statistical_2011].
-
 By default, the DEzs MCMC sampler [@ter_braak_differential_2008] implemented in BayesianTools [@hartig_bayesiantools_2023] is used to estimate the posterior distribution of model parameters. For each location I sample the posterior distribution of the parameters (with a thinning factor of 10), and return summary values. I return the median for best estimates of latitude, longitude and sky condition. In addition, the 5-95% quantiles on the geographic position are provided. The package also returns the Gelman-Rubin-Brooks (GRB) metric [@gelman_inference_1992], which can be used to assess the convergence of the optimization. Both the quantile ranges and the GRB metric can be used in post-hoc quality control screening.
 
 The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_advance_2004]. However, some limitations do apply. The measured light intensities should be translated to physical units in lux to be accurately compared to the physical model. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases an external calibration to convert arbitrary numbers to lux is necessary. Although performance should improve around the equinoxes, performance will remain poorer than average. However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
@@ -152,18 +151,33 @@ To demonstrate the functioning of the package a small demo dataset comprised of 
 # load the integrated package data
 print(head(skytrackr::cc874))
 
-# skytrackr allows for piped data input
-# when using the default SMC particle filter
-# it is key to specify a known starting location
-# to optimally use this method
+# define land mask
+mask <- stk_mask(
+  bbox  =  c(-20, -40, 60, 60),
+  buffer = 150, # in km
+  resolution = 0.5
+)
+
+# define a step selection distribution
+ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
+
+
+# setting skytrackr with optimizer
+# parameters in control
 location <- skytrackr::cc874 |>
-  filter(
-    (value > 0.09 & value < 400)
-    ) |>
   skytrackr::skytrackr(
-      iterations = 100,
-      particles = 30,
+      scale = c(1,10),
+      range = c(0.09, 400),
       start_location = c(51.08, 3.73),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          iterations = 300,
+          message = FALSE
+        )
+      ),
+      mask = mask,
+      step_selection = ssf,
       tolerance = 11,
       plot = FALSE
     )

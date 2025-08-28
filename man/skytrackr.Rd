@@ -10,8 +10,7 @@ skytrackr(
   tolerance = 1,
   range = c(0.32, 150),
   scale = c(1, 10),
-  control = list(sampler = "SMC", settings = list(initialParticles = 100, iterations =
-    20, message = FALSE)),
+  control = list(sampler = "DEzs", settings = list(iterations = 10, message = FALSE)),
   mask,
   step_selection,
   plot = TRUE,
@@ -42,6 +41,8 @@ in case of non lux measurements}
 should not be altered (defaults to a sequential monte carlo method)}
 
 \item{mask}{mask with priors to constrain positions}
+
+\item{step_selection}{a step selection function on the distance of a proposed move}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}

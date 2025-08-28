@@ -26,6 +26,7 @@
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
 #' @param mask mask with priors to constrain positions
+#' @param step_selection a step selection function on the distance of a proposed move
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar
@@ -44,10 +45,9 @@ skytrackr <- function(
     range = c(0.32, 150),
     scale = c(1, 10),
     control = list(
-      sampler = 'SMC',
+      sampler = 'DEzs',
       settings = list(
-        initialParticles = 100,
-        iterations = 20,
+        iterations = 10,
         message = FALSE
       )
     ),
@@ -120,7 +120,7 @@ skytrackr <- function(
                 lat = locations$latitude[i-1]
               ),
               coords = c("lon","lat")
-            ) |> st_set_crs(4326)
+            ) |> sf::st_set_crs(4326)
     } else {
         # create data point
         loc <- sf::st_as_sf(
@@ -129,7 +129,7 @@ skytrackr <- function(
               lat = start_location[1]
             ),
             coords = c("lon","lat")
-          ) |> st_set_crs(4326)
+          ) |> sf::st_set_crs(4326)
     }
 
     # set tolerance units to km
@@ -138,12 +138,12 @@ skytrackr <- function(
     # buffer the location in equal area
     # projection, back convert to lat lon
     pol <- loc |>
-      st_transform(crs = "+proj=laea") |>
+      sf::st_transform(crs = "+proj=laea") |>
       sf::st_buffer(tolerance) |>
-      st_transform(crs = "epsg:4326")
+      sf::st_transform(crs = "epsg:4326")
 
-    roi <- mask(mask, pol) |>
-      crop(st_bbox(pol))
+    roi <- terra::mask(mask, pol) |>
+      terra::crop(sf::st_bbox(pol))
 
     # create a subset
     subs <- data[which(data$date == dates[i]),]
@@ -181,8 +181,7 @@ skytrackr <- function(
 
       p <- stk_map(
         locations,
-        buffer = buffer,
-        bbox = st_bbox(mask),
+        bbox = sf::st_bbox(mask),
         start_location = start_location,
         roi = pol # forward roi polygon / not raster
       )

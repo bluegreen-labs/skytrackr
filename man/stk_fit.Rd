@@ -11,12 +11,16 @@ stk_fit(data, roi, loc, scale, control, step_selection)
 
 \item{roi}{region of interest}
 
+\item{loc}{location of the previous step}
+
 \item{scale}{scale factor range due to cloudiness to use in optimization,
 when target values are not provided in lux this can be used to effectively
 implement a Hill-Ekstrom template fitting}
 
 \item{control}{control settings for the Bayesian optimization, forwarded by
 skytrackr()}
+
+\item{step_selection}{a step selection function on the distance of a proposed move}
 }
 \value{
 an estimated illuminance based location (and its uncertainties)

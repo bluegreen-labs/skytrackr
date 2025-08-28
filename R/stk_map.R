@@ -3,35 +3,37 @@
 #' Create a map of estimated locations
 #'
 #' @param df a data frame with locations produced by skytrackr()
-#' @param buffer a land mask buffer value
 #' @param bbox a bounding box
+#' @param start_location start location as lat/lon to indicate
+#'  the starting position of the track (optional)
+#' @param roi region of interest under consideration, only used in
+#'  dynamic plots during optimization (optional)
 #'
 #' @return a ggplot map of tracked locations
 #' @export
 
 stk_map <- function(
     df,
-    buffer,
     bbox,
     start_location,
     roi
     ) {
 
    # convert to sf
-   path <- st_as_sf(df, coords = c("longitude", "latitude")) |>
+   path <-  sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
       sf::st_set_crs("EPSG:4326") |>
       sf::st_combine() |>
       sf::st_cast("LINESTRING") |>
-      st_transform(crs = "+proj=eqearth")
+      sf::st_transform(crs = "+proj=eqearth")
 
-   points <- st_as_sf(df, coords = c("longitude", "latitude")) |>
+   points <- sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
       sf::st_set_crs("EPSG:4326") |>
       sf::st_cast("POINT") |>
       sf::st_transform(crs = "+proj=eqearth")
 
    # mask polygon / crop to broad bounding box
    # region of interest
-   m <- stk_mask(buffer = 0, bbox = bbox, sf = TRUE)
+   m <- stk_mask(bbox = bbox, sf = TRUE)
 
    # transform to equal earth
    m <- m |>
@@ -50,14 +52,14 @@ stk_map <- function(
          ggplot2::theme_bw() +
          ggplot2::theme(
             legend.position = "bottom",
-            panel.border = element_blank()
+            panel.border = ggplot2::element_blank()
          )
    }
 
    if(!missing(roi)){
 
       # intersection of roi with mask
-      roi <-   m |> st_intersection(
+      roi <-   m |>  sf::st_intersection(
          roi |> sf::st_transform(crs = "+proj=eqearth")
       )
 
@@ -79,7 +81,7 @@ stk_map <- function(
         ggplot2::theme_bw() +
         ggplot2::theme(
            legend.position = "bottom",
-           panel.border = element_blank()
+           panel.border = ggplot2::element_blank()
         )
    }
 
@@ -93,8 +95,8 @@ stk_map <- function(
          ) +
          ggplot2::geom_sf(
             data = points,
-            aes(
-               shape = equinox
+            ggplot2::aes(
+               shape = "equinox"
             ),
             colour = "grey25"
          ) +
@@ -102,7 +104,7 @@ stk_map <- function(
             values = c(19, 1)
          ) +
          ggplot2::geom_sf(
-            data = points |> filter(date == date[nrow(points)]),
+            data = points |> dplyr::filter(date == date[nrow(points)]),
             colour = "black",
             pch = 1,
             size = 4
@@ -110,7 +112,7 @@ stk_map <- function(
    }
 
    if(!missing(start_location)){
-      start <- st_as_sf(
+      start <- sf::st_as_sf(
          data.frame(
             latitude = start_location[1],
             longitude = start_location[2]
@@ -119,7 +121,7 @@ stk_map <- function(
       ) |>
          sf::st_set_crs("EPSG:4326") |>
          sf::st_cast("POINT") |>
-         st_transform(crs = "+proj=eqearth")
+         sf::st_transform(crs = "+proj=eqearth")
 
       p <- p +ggplot2::geom_sf(
          data = start,
@@ -142,16 +144,16 @@ stk_map <- function(
    p_lat <- ggplot2::ggplot(df) +
      ggplot2::geom_ribbon(
        ggplot2::aes(
-         y = date,
-         xmin = latitude_qt_5,
-         xmax = latitude_qt_95
+         y = "date",
+         xmin = "latitude_qt_5",
+         xmax = "latitude_qt_95"
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y = date,
-         x = latitude_qt_50
+         y ="date",
+         x = "latitude_qt_50"
        )
      )  +
       ggplot2::labs(
@@ -162,16 +164,16 @@ stk_map <- function(
    p_lon <- ggplot2::ggplot(df) +
      ggplot2::geom_ribbon(
        ggplot2::aes(
-         y = date,
-         xmin = longitude_qt_5,
-         xmax = longitude_qt_95
+         y = "date",
+         xmin = "longitude_qt_5",
+         xmax = "longitude_qt_95"
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y = date,
-         x = longitude_qt_50
+         y = "date",
+         x = "longitude_qt_50"
        )
      )  +
       ggplot2::labs(
@@ -182,8 +184,8 @@ stk_map <- function(
    p_sky <- ggplot2::ggplot(df) +
      ggplot2::geom_path(
        ggplot2::aes(
-         y = date,
-         x = sky_conditions
+         y = "date",
+         x = "sky_conditions"
        )
      ) +
      ggplot2::labs(

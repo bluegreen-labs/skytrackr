@@ -5,11 +5,13 @@
 #'
 #' @param data a data frame containing date time and lux values
 #' @param roi region of interest
+#' @param loc location of the previous step
 #' @param scale scale factor range due to cloudiness to use in optimization,
 #'  when target values are not provided in lux this can be used to effectively
 #'  implement a Hill-Ekstrom template fitting
 #' @param control control settings for the Bayesian optimization, forwarded by
 #'  skytrackr()
+#' @param step_selection a step selection function on the distance of a proposed move
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
 #' @export
@@ -24,7 +26,7 @@ stk_fit <- function(
   ) {
 
   # bbox
-  bbox <- roi |> st_bbox()
+  bbox <- roi |> sf::st_bbox()
 
   # set lower and upper parameter ranges
   # from bounding box settings add scale

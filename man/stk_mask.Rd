@@ -8,9 +8,18 @@ stk_mask(buffer = 0, resolution = 1, bbox, sf = FALSE)
 }
 \arguments{
 \item{buffer}{buffer in degrees}
+
+\item{resolution}{resolution of the spatial grid in degrees, when exporting
+as a terra SpatRaster (default = 1)}
+
+\item{bbox}{bounding box of the mask, sets hard boundaries on the search
+area of valid locations as well}
+
+\item{sf}{return the land mask as an 'sf' polygon, not a rasterized map.
+Mostly used in map plotting, not used for processing (default = FALSE)}
 }
 \value{
-buffered land mask as an sf object
+buffered land mask as an 'sf' or 'terra' map object
 }
 \description{
 returns a buffered land mask to constrain potential
