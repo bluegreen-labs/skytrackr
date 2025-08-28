@@ -184,7 +184,7 @@ stk_map <- function(
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
-         x = .data$sky_conditions
+         x = .data$sky_conditions_qt_50
        )
      ) +
      ggplot2::labs(
