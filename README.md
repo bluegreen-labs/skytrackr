@@ -140,7 +140,7 @@ During equinoxes the small closed circles will be small open circles as these pe
 You can map the final location estimates using the same rendering layout using `stk_map()`.
 
 ```r
-locations |> stk_map(bbox = bbox)
+locations |> stk_map(bbox = c(-20, -40, 60, 60))
 ```
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png)
