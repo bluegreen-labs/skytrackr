@@ -78,7 +78,8 @@ df <- df |>
   stk_screen_twl(filter = TRUE)
 
 # you can run the stk_profile() command again
-# to show the trimmed data
+# to show the trimmed data, note all functions
+# are pipeable
 df |> stk_profile()
 ```
 
@@ -110,7 +111,7 @@ ssf <- function(x, shape = 1.02, scale = 250, tolerance = 1500){
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 }
 
-data |>
+locations <- data |>
     skytrackr(
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
@@ -130,7 +131,16 @@ data |>
     )
 ```
 
-If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).
+If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. 
+
+During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png)
 
+You can map the final location estimates using the same rendering layout using `stk_map()`.
+
+```r
+locations |> stk_map(bbox = bbox)
+```
+
+![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png)
