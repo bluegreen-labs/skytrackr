@@ -69,27 +69,22 @@ stk_profile(df, plotly = TRUE)
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot.png)
 
-Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing.
+Date and time values of the non-breeding season can easily be determined and used in further sub-setting of the data for final processing. You can use the automated `stk_screen_twl()` function to remove dates with either stationary roosting behaviour (with dark values during daytime hours), or with "false" twilight events (due to birds roosting in dark conditions).
 
 ```r
-# library for data wrangling
-library(dplyr)
-
-start_date <- "2021-08-02"
-end_date <- "2021-08-10"
-
-# filter data using the dplyr
-# tidy logic
+# filter data using twilight heuristics
+# and filter out the flagged values
 df <- df |>
-  dplyr::filter(
-   (date > start_date & date < end_date)
-  )
+  stk_screen_twl(filter = TRUE)
 
 # you can run the stk_profile() command again
 # to show the trimmed data
+df |> stk_profile()
 ```
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png)
+
+Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of an hands off approach as possible, but use expert judgement.
 
 ## MCMC DEzs optimization
 
@@ -109,15 +104,18 @@ mask <- stk_mask(
   resolution = 0.5
 )
 
-# define a step selection distribution (gamma function)
-ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
+# define a step selection distribution
+ssf <- function(x, shape = 1.02, scale = 250, tolerance = 1500){
+  norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+  prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+}
 
 data |>
     skytrackr(
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
       scale = c(1,10),
-      range = c(0.32, 10),
+      range = c(1.5, 140),
       control = list(
         sampler = 'DEzs',
         settings = list(
