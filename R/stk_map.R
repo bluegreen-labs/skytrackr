@@ -20,11 +20,12 @@ stk_map <- function(
     ) {
 
    # convert to sf
-   path <-  sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
-      sf::st_set_crs("EPSG:4326") |>
-      sf::st_combine() |>
-      sf::st_cast("LINESTRING") |>
-      sf::st_transform(crs = "+proj=eqearth")
+   path <-  df |>
+            sf::st_as_sf(coords = c("longitude", "latitude")) |>
+            sf::st_set_crs("EPSG:4326") |>
+            sf::st_combine() |>
+            sf::st_cast("LINESTRING") |>
+            sf::st_transform(crs = "+proj=eqearth")
 
    points <- sf::st_as_sf(df, coords = c("longitude", "latitude")) |>
       sf::st_set_crs("EPSG:4326") |>
@@ -92,7 +93,7 @@ stk_map <- function(
          ggplot2::geom_sf(
             data = path,
             colour = "grey25",
-            lty = 3
+            lty = 3,
          ) +
          ggplot2::geom_sf(
             data = points,
@@ -103,7 +104,7 @@ stk_map <- function(
          ) +
          ggplot2::scale_shape_manual(
             values = c(19, 1)
-         ) +
+          ) +
          ggplot2::geom_sf(
             data = points |> dplyr::filter(date == date[nrow(points)]),
             colour = "black",
@@ -141,6 +142,13 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$latitude
+         ),
+         colour = "red"
+      )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
@@ -161,12 +169,20 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$longitude
+         ),
+         colour = "red"
+      )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
          x = .data$longitude_qt_50
        )
      )  +
+
       ggplot2::labs(
          x = "longitude"
       ) +
@@ -181,6 +197,13 @@ stk_map <- function(
          ),
          fill = "grey85"
       ) +
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$sky_conditions
+         ),
+         colour = "red"
+      )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,

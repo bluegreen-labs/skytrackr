@@ -69,13 +69,13 @@ likelihood <- function(
   if(missing(step_selection) || is.null(step_selection)){
     return(sll)
   } else {
-    # calculate distance for step (in meters)
-    dist <- geosphere::distGeo(loc, par[2:1])
+    # calculate distance for step (in km)
+    dist <- geosphere::distGeo(loc, par[2:1])/1000
 
     # step selection function
     step <- step_selection(dist)
 
     # add mask parameters
-    return(sll + step)
+    return(sll + log(step))
   }
 }

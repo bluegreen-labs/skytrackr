@@ -10,7 +10,12 @@ mask <- stk_mask(
 )
 
 # define a step selection distribution
-ssf <- function(x) dgamma(x, shape = 1.02, scale = 150000, log = TRUE)
+# define a step selection distribution
+ssf <- function(x, shape = 1.06, scale = 250, tolerance = 1500){
+  # normalize over expected range with km increments
+  norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+  prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+}
 
 test_that("test helper functions", {
   m <- stk_mask(

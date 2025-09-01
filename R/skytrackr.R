@@ -109,7 +109,7 @@ skytrackr <- function(
     }
 
     pb <- progress::progress_bar$new(
-      format = "  processing [:bar] :percent eta: :eta",
+      format = "  processing [:bar] :current/:total days (:percent) eta: :eta",
       total = length(dates),
       clear = FALSE,
       width= 60
@@ -117,8 +117,12 @@ skytrackr <- function(
     pb$tick(0)
   }
 
-  # plot updates every 15 days
-  plot_update <- seq(2, length(dates), by = 15)
+  # plot updates every 15 days (if possible)
+  if(length(dates) >= 15){
+    plot_update <- seq(2, length(dates), by = 15)
+  } else {
+    plot_update  <- length(dates)
+  }
 
   # loop over all available dates
   for (i in seq_len(length(dates))) {

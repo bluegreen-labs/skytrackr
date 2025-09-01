@@ -106,6 +106,11 @@ stk_profile <- function(
 
   } else {
 
+    # return single plot
+    if (length(p$p) == 1){
+      return(p$p[[1]])
+    }
+
     # combine plots in ggplot patchwork
     p <- patchwork::wrap_plots(
       p$p,
