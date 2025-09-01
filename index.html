@@ -150,7 +150,8 @@
 <span>  <span class="fu"><a href="reference/stk_screen_twl.html">stk_screen_twl</a></span><span class="op">(</span>filter <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># you can run the stk_profile() command again</span></span>
-<span><span class="co"># to show the trimmed data</span></span>
+<span><span class="co"># to show the trimmed data, note all functions</span></span>
+<span><span class="co"># are pipeable</span></span>
 <span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png"></p>
 <p>Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of an hands off approach as possible, but use expert judgement.</p>
@@ -177,7 +178,7 @@
 <span>  <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="va">x</span>, shape <span class="op">=</span> <span class="va">shape</span>, scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span> <span class="op">/</span> <span class="va">norm</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">data</span> <span class="op">|&gt;</span></span>
+<span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
 <span>      tolerance <span class="op">=</span> <span class="fl">1500</span>, <span class="co"># in km</span></span>
@@ -195,8 +196,13 @@
 <span>      mask <span class="op">=</span> <span class="va">mask</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).</p>
+<p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.</p>
+<p>During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).</p>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png"></p>
+<p>You can map the final location estimates using the same rendering layout using <code><a href="reference/stk_map.html">stk_map()</a></code>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/stk_map.html">stk_map</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="va">bbox</span><span class="op">)</span></span></code></pre></div>
+<p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png"></p>
 </div>
 </div>
   </div>
