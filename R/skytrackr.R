@@ -59,15 +59,17 @@ skytrackr <- function(
 ) {
 
   if(missing(mask)){
-    stop("
+    cl::cli_alert_danger("
         - please provide a base mask or grid of valid sample locations!
-        ")
+          ")
+    stop()
   }
 
   if(missing(start_location)) {
-    stop("
+    cl::cli_alert_danger("
         - No (approximate) start location provided, please provide a start location!
         ")
+    stop()
   }
 
   # unravel the light data
@@ -97,15 +99,28 @@ skytrackr <- function(
 
   # create progress bar
   if(verbose) {
-    message(
-      sprintf(
-        "- Estimating locations from light (lux) profiles for logger: %s!",
-          data$logger[1])
-    )
+
+    cli::cli_div(
+      theme = list(
+        rule = list(
+          color = "darkgrey",
+          "line-type" = "double",
+          "margin-bottom" = 1
+          ),
+        span.strong = list(color = "black"))
+        )
+    cli::cli_rule(
+      left = "{.strong Estimating locations}",
+      right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
+
+      )
+    cli::cli_end()
+    cli::cli_alert_info(
+        "Estimating locations from light (lux) profiles for logger: {.strong {data$logger[1]}}!")
 
     if(plot){
-    message(
-        "  (preview plot will update every 15 days)"
+    cli::cli_alert_info(
+        "(preview plot will update every 15 days)"
       )
     }
 
