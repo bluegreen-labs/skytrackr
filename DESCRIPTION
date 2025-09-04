@@ -28,7 +28,7 @@ Imports:
     skylight,
     circular,
     BayesianTools,
-    progress,
+    cli,
     sf,
     terra,
     geosphere,

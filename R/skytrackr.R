@@ -41,13 +41,14 @@
 skytrackr <- function(
     data,
     start_location,
-    tolerance = 1,
-    range = c(0.32, 150),
+    tolerance = 1500,
+    range = c(0.32, 140),
     scale = c(1, 10),
     control = list(
       sampler = 'DEzs',
       settings = list(
-        iterations = 10,
+        burnin = 1000,
+        iterations = 2000,
         message = FALSE
       )
     ),
@@ -69,7 +70,7 @@ skytrackr <- function(
         ")
   }
 
-  # unravel the data
+  # unravel the light data
   data <- data |>
     dplyr::filter(
       .data$measurement == "lux"
@@ -108,13 +109,10 @@ skytrackr <- function(
       )
     }
 
-    pb <- progress::progress_bar$new(
-      format = "  processing [:bar] :current/:total days (:percent) eta: :eta",
-      total = length(dates),
-      clear = FALSE,
-      width= 60
-      )
-    pb$tick(0)
+    cli::cli_progress_bar(
+      "estimating positions",
+      total = length(dates)
+    )
   }
 
   # plot updates every 15 days (if possible)
@@ -125,7 +123,7 @@ skytrackr <- function(
   }
 
   # loop over all available dates
-  for (i in seq_len(length(dates))) {
+  for (i in seq_along(dates)) {
     if (i != 1) {
           # create data point
           loc <-  sf::st_as_sf(
@@ -188,7 +186,7 @@ skytrackr <- function(
 
     # increment on progress bar
     if(verbose) {
-      pb$tick()
+      cli::cli_progress_update()
     }
 
     if(plot & i %in% plot_update){
@@ -202,6 +200,11 @@ skytrackr <- function(
 
       plot(p)
     }
+  }
+
+  # cleanup of progress bar
+  if(verbose) {
+    cli::cli_progress_done()
   }
 
   # return the data frame with
