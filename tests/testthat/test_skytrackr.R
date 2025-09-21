@@ -120,6 +120,6 @@ test_that("test plots", {
   p <- stk_profile(df)
   p_night <- stk_profile(df, center = "night")
 
-  expect_type(p, "list")
-  expect_type(p_night, "list")
+  expect_s3_class(p, "ggplot")
+  expect_s3_class(p_night, "ggplot")
 })
