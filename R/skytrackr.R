@@ -13,11 +13,9 @@
 #' @param start_location start location of logging, required when using a
 #'  tolerance based estimation. When no start_location is used the default
 #'  bounding box (bbox) settings are used.
-#' @param tolerance tolerance on the search window for optimization, given in
-#'  degrees (to pad left - right, top - bottom). Uses the previous steps
-#'  location to constrain the parameter (location) search space.
-#'  This requires the start_location parameter to be set, as you need a
-#'  start position for a trusted initial location.
+#' @param tolerance tolerance distance on the search window for optimization,
+#'  given in km (left/right, top/bottom). Sets a hard limit on the search window
+#'  regardless of the step selection function used.
 #' @param range range of values to consider during processing, should be
 #'  provided in lux c(min, max) or the equivalent if non-calibrated. In case of
 #'  non calibrated values you will need to adapt the scale values accordingly.
@@ -29,7 +27,9 @@
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
 #' @param mask mask with priors to constrain positions
-#' @param step_selection a step selection function on the distance of a proposed move
+#' @param step_selection a step selection function on the distance of a proposed
+#'  move, step selection is specified as average flight speed to achieve this
+#'  distance (in km/h).
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar

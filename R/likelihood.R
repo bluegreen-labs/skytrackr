@@ -73,7 +73,9 @@ likelihood <- function(
     dist <- geosphere::distGeo(loc, par[2:1])/1000
 
     # step selection function
-    step <- step_selection(dist)
+    # division by 24h to convert from distance
+    # to speed in km/h
+    step <- step_selection(dist/24)
 
     # add mask parameters
     return(sll + log(step))

@@ -25,11 +25,9 @@ skytrackr(
 tolerance based estimation. When no start_location is used the default
 bounding box (bbox) settings are used.}
 
-\item{tolerance}{tolerance on the search window for optimization, given in
-degrees (to pad left - right, top - bottom). Uses the previous steps
-location to constrain the parameter (location) search space.
-This requires the start_location parameter to be set, as you need a
-start position for a trusted initial location.}
+\item{tolerance}{tolerance distance on the search window for optimization,
+given in km (left/right, top/bottom). Sets a hard limit on the search window
+regardless of the step selection function used.}
 
 \item{range}{range of values to consider during processing, should be
 provided in lux c(min, max) or the equivalent if non-calibrated. In case of
@@ -46,7 +44,9 @@ should not be altered (defaults to a sequential monte carlo method)}
 
 \item{mask}{mask with priors to constrain positions}
 
-\item{step_selection}{a step selection function on the distance of a proposed move}
+\item{step_selection}{a step selection function on the distance of a proposed
+move, step selection is specified as average flight speed to achieve this
+distance (in km/h).}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}
