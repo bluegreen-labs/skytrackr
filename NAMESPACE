@@ -2,7 +2,6 @@
 
 export(likelihood)
 export(log_lux)
-export(movement_kernel)
 export(read_deg_lux)
 export(skytrackr)
 export(stk_cluster)

@@ -7,10 +7,11 @@
 skytrackr(
   data,
   start_location,
-  tolerance = 1,
-  range = c(0.32, 150),
+  tolerance = 1500,
+  range = c(0.32, 140),
   scale = c(1, 10),
-  control = list(sampler = "DEzs", settings = list(iterations = 10, message = FALSE)),
+  control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 2000,
+    message = FALSE)),
   mask,
   step_selection,
   plot = TRUE,
@@ -24,25 +25,28 @@ skytrackr(
 tolerance based estimation. When no start_location is used the default
 bounding box (bbox) settings are used.}
 
-\item{tolerance}{tolerance on the search window for optimization, given in
-degrees (to pad left - right, top - bottom). Uses the previous steps
-location to constrain the parameter (location) search space.
-This requires the start_location parameter to be set, as you need a
-start position for a trusted initial location.}
+\item{tolerance}{tolerance distance on the search window for optimization,
+given in km (left/right, top/bottom). Sets a hard limit on the search window
+regardless of the step selection function used.}
 
 \item{range}{range of values to consider during processing, should be
-provided in lux c(min, max) or the equivalent if non-calibrated}
+provided in lux c(min, max) or the equivalent if non-calibrated. In case of
+non calibrated values you will need to adapt the scale values accordingly.}
 
 \item{scale}{scale / sky condition factor, by default covering the
-skylight() range of 1-10 but can be extended for more flexibility
-in case of non lux measurements}
+skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+but can be extended for more flexibility to account for coverage by plumage,
+note that in case of non-physical accurate lux measurements values can have
+a range starting at 0.0001 (a multiplier instead of a divider).}
 
 \item{control}{control settings for the Bayesian optimization, generally
 should not be altered (defaults to a sequential monte carlo method)}
 
 \item{mask}{mask with priors to constrain positions}
 
-\item{step_selection}{a step selection function on the distance of a proposed move}
+\item{step_selection}{a step selection function on the distance of a proposed
+move, step selection is specified as average flight speed to achieve this
+distance (in km/h).}
 
 \item{plot}{plot map of incrementally changing determined locations as
 a progress method}

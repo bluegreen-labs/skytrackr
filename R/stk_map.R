@@ -142,13 +142,13 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
-      ggplot2::geom_path(
-         ggplot2::aes(
-            y = .data$date,
-            x = .data$latitude
-         ),
-         colour = "red"
-      )  +
+      # ggplot2::geom_path(
+      #    ggplot2::aes(
+      #       y = .data$date,
+      #       x = .data$latitude
+      #    ),
+      #    colour = "red"
+      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
@@ -169,13 +169,13 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
-      ggplot2::geom_path(
-         ggplot2::aes(
-            y = .data$date,
-            x = .data$longitude
-         ),
-         colour = "red"
-      )  +
+      # ggplot2::geom_path(
+      #    ggplot2::aes(
+      #       y = .data$date,
+      #       x = .data$longitude
+      #    ),
+      #    colour = "red"
+      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
@@ -197,13 +197,13 @@ stk_map <- function(
          ),
          fill = "grey85"
       ) +
-      ggplot2::geom_path(
-         ggplot2::aes(
-            y = .data$date,
-            x = .data$sky_conditions
-         ),
-         colour = "red"
-      )  +
+      # ggplot2::geom_path(
+      #    ggplot2::aes(
+      #       y = .data$date,
+      #       x = .data$sky_conditions
+      #    ),
+      #    colour = "red"
+      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,

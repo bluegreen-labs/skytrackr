@@ -17,25 +17,62 @@ set.seed(1)
 df1 <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
 df1 <-df1 |>
   stk_screen_twl(filter = TRUE)
-  # dplyr::filter(
-  #   (date >= "2021-07-11" & date <= "2022-05-13")
-  # )
 
-df2 <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+# df2 <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+#
+# p <- df2 |> stk_profile()
+# ggsave("profile_plot.png")
+#
+# df2 <-df2 |>
+#   stk_screen_twl(filter = TRUE)
+#
+# p <- df2 |> stk_profile()
+# ggsave("profile_plot_trimmed.png")
+#
+# df <- bind_rows(df1, df2)
+#
 
-p <- df2 |> stk_profile()
-ggsave("profile_plot.png")
+df <- df1
+#
+# df <- stk_read_glf("inst/extdata/24MP_20200813.glf")
+# df <- df |>
+#   filter(
+#     date >= "2019-08-31" & date <= "2020-04-15"
+#   )
 
-df2 <-df2 |>
-  stk_screen_twl(filter = TRUE)
-  # dplyr::filter(
-  #   (date >= "2021-08-02" & date <= "2022-05-09")
-  # )
+# df <- stk_read_glf("inst/extdata/22LE_20200218.glf")
+#
+# df <- df |>
+#   filter(
+#     date >= "2018-10-10" & date <= "2019-02-27"
+#   )
 
-p <- df2 |> stk_profile()
-ggsave("profile_plot_trimmed.png")
+# test <- df |> filter(date == "2019-09-01")
+#
+# test$latitude <- 47.5
+# test$longitude <- 8.25
+#
+# test <- bind_cols(test, skylight::skylight(
+#   latitude = test$latitude,
+#   longitude = test$longitude,
+#   date = test$date_time,
+#   sky_condition = 0.01
+#   )
+# ) |>
+#   filter(
+#     value > 0
+#   )
+#
+#
+# ggplot(test) +
+#   geom_point(
+#     aes(date_time, log(value))
+#   ) +
+#   geom_point(
+#    aes(date_time, log(total_illuminance)),
+#    col = "red"
+#   )
 
-df <- bind_rows(df1, df2)
 
 #---- DEzs MCMC approach ----
 
@@ -45,14 +82,17 @@ bbox <- c(-20, -40, 60, 60)
 mask <- stk_mask(
   bbox  =  bbox,
   buffer = 150, # in km
-  resolution = 1
+  resolution = 1 # in degrees
 )
 
+tol <- 1500
+
 # define a step selection distribution
-ssf <- function(x, shape = 1.02, scale = 250, tolerance = 1500){
+ssf <- function(x, shape = 1.1, scale = 200, tolerance = tol){
   # normalize over expected range with km increments
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+  return(prob)
 }
 
 locations <- df |>
@@ -61,16 +101,19 @@ locations <- df |>
     skytrackr(
       .,
       mask = mask,
-      plot = FALSE,
-      start_location = c(51.08, 3.73),
-      tolerance = 1500, # in km
-      scale = c(1,20),
-      range = c(0.1, 140),
+      plot = TRUE,
+      start_location = c(51.08, 3.73), # Gent - lux file
+      #start_location = c(47.5, 8.25), # Baden - glf file
+      #start_location = c(36.33, 30.5), # Pirasali - glf file
+      tolerance = tol, # in km
+      scale = c(0.00001, 10),
+      #range = c(0.1, 140000), # full day profile
+      range = c(0.1, 9000), # truncated for glf range / as saturates
       control = list(
         sampler = 'DEzs',
         settings = list(
           burnin = 500,
-          iterations = 3000,
+          iterations = 1000,
           message = FALSE
         )
       ),
@@ -78,9 +121,8 @@ locations <- df |>
     )
   })
 
-saveRDS(locations, "analysis/locations.rds", compress = "xz")
+#saveRDS(locations, "analysis/locations.rds", compress = "xz")
 p <- locations |>
-  #filter(!equinox) |>
   group_by(logger) |>
   do(p = {
     plot(stk_map(., bbox = bbox))

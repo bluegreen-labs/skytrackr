@@ -24,10 +24,6 @@ stk_profile <- function(
     plotly = FALSE
   ) {
 
-  # silence spurious
-  . <- NULL
-  .data <- NULL
-
   # check for multiple logger
   # report first only or requested
 
@@ -56,13 +52,13 @@ stk_profile <- function(
     dplyr::group_by(.data$measurement) |>
     dplyr::do(p = {
 
-      if(.$measurement[1] == "lux") {
+      if(.data$measurement[1] == "lux") {
         .data$value[
           which(.data$value < range[1] | .data$value > range[2])] <- NA
         .data$value <- log(.data$value)
       }
 
-      if(.$measurement[1] == "temperature") {
+      if(.data$measurement[1] == "temperature") {
         .data$value[
           which(.data$value > 50)] <- NA
       }

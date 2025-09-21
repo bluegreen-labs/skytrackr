@@ -92,8 +92,6 @@ stk_read_glf <- function(file) {
 
 read_deg_lux <- function(file) {
 
-  .data <- NULL
-
   # read in logger number
   logger <- readLines(file, n = 3)[3]
   logger <- strsplit(logger, ": ")[[1]][2]

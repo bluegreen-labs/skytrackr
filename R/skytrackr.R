@@ -13,20 +13,23 @@
 #' @param start_location start location of logging, required when using a
 #'  tolerance based estimation. When no start_location is used the default
 #'  bounding box (bbox) settings are used.
-#' @param tolerance tolerance on the search window for optimization, given in
-#'  degrees (to pad left - right, top - bottom). Uses the previous steps
-#'  location to constrain the parameter (location) search space.
-#'  This requires the start_location parameter to be set, as you need a
-#'  start position for a trusted initial location.
+#' @param tolerance tolerance distance on the search window for optimization,
+#'  given in km (left/right, top/bottom). Sets a hard limit on the search window
+#'  regardless of the step selection function used.
 #' @param range range of values to consider during processing, should be
-#'  provided in lux c(min, max) or the equivalent if non-calibrated
+#'  provided in lux c(min, max) or the equivalent if non-calibrated. In case of
+#'  non calibrated values you will need to adapt the scale values accordingly.
 #' @param scale scale / sky condition factor, by default covering the
-#'  skylight() range of 1-10 but can be extended for more flexibility
-#'  in case of non lux measurements
+#'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+#'  but can be extended for more flexibility to account for coverage by plumage,
+#'  note that in case of non-physical accurate lux measurements values can have
+#'  a range starting at 0.0001 (a multiplier instead of a divider).
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
 #' @param mask mask with priors to constrain positions
-#' @param step_selection a step selection function on the distance of a proposed move
+#' @param step_selection a step selection function on the distance of a proposed
+#'  move, step selection is specified as average flight speed to achieve this
+#'  distance (in km/h).
 #' @param plot plot map of incrementally changing determined locations as
 #'  a progress method
 #' @param verbose given feedback including a progress bar
@@ -41,13 +44,14 @@
 skytrackr <- function(
     data,
     start_location,
-    tolerance = 1,
-    range = c(0.32, 150),
+    tolerance = 1500,
+    range = c(0.32, 140),
     scale = c(1, 10),
     control = list(
       sampler = 'DEzs',
       settings = list(
-        iterations = 10,
+        burnin = 1000,
+        iterations = 2000,
         message = FALSE
       )
     ),
@@ -58,18 +62,20 @@ skytrackr <- function(
 ) {
 
   if(missing(mask)){
-    stop("
+    cli::cli_alert_danger("
         - please provide a base mask or grid of valid sample locations!
-        ")
+          ")
+    stop()
   }
 
   if(missing(start_location)) {
-    stop("
+    cli::cli_alert_danger("
         - No (approximate) start location provided, please provide a start location!
         ")
+    stop()
   }
 
-  # unravel the data
+  # unravel the light data
   data <- data |>
     dplyr::filter(
       .data$measurement == "lux"
@@ -96,36 +102,46 @@ skytrackr <- function(
 
   # create progress bar
   if(verbose) {
-    message(
-      sprintf(
-        "- Estimating locations from light (lux) profiles for logger: %s!",
-          data$logger[1])
-    )
+
+    cli::cli_div(
+      theme = list(
+        rule = list(
+          color = "darkgrey",
+          "line-type" = "double",
+          "margin-bottom" = 1
+          ),
+        span.strong = list(color = "black"))
+        )
+    cli::cli_rule(
+      left = "{.strong Estimating locations}",
+      right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
+
+      )
+    cli::cli_end()
+    cli::cli_alert_info(
+        "Processing logger: {.strong {data$logger[1]}}!")
 
     if(plot){
-    message(
-        "  (preview plot will update every 15 days)"
+    cli::cli_alert_info(
+        "(preview plot will update every 7 days)"
       )
     }
 
-    pb <- progress::progress_bar$new(
-      format = "  processing [:bar] :current/:total days (:percent) eta: :eta",
-      total = length(dates),
-      clear = FALSE,
-      width= 60
-      )
-    pb$tick(0)
+    cli::cli_progress_bar(
+      "estimating positions",
+      total = length(dates)
+    )
   }
 
-  # plot updates every 15 days (if possible)
-  if(length(dates) >= 15){
-    plot_update <- seq(2, length(dates), by = 15)
+  # plot updates every 5 days (if possible)
+  if(length(dates) >= 7){
+    plot_update <- seq(2, length(dates), by = 7)
   } else {
     plot_update  <- length(dates)
   }
 
   # loop over all available dates
-  for (i in seq_len(length(dates))) {
+  for (i in seq_along(dates)) {
     if (i != 1) {
           # create data point
           loc <-  sf::st_as_sf(
@@ -188,7 +204,7 @@ skytrackr <- function(
 
     # increment on progress bar
     if(verbose) {
-      pb$tick()
+      cli::cli_progress_update()
     }
 
     if(plot & i %in% plot_update){
@@ -202,6 +218,11 @@ skytrackr <- function(
 
       plot(p)
     }
+  }
+
+  # cleanup of progress bar
+  if(verbose) {
+    cli::cli_progress_done()
   }
 
   # return the data frame with

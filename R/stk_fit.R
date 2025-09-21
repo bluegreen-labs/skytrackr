@@ -70,7 +70,11 @@ stk_fit <- function(
   # only applies to DEzs as it has
   # 3 chains by default
   if (control$sampler == "DEzs") {
-    grb <- suppressWarnings(suppressMessages(BayesianTools::gelmanDiagnostics(out)$mpsrf))
+    grb <- suppressWarnings(
+      suppressMessages(
+        BayesianTools::gelmanDiagnostics(out)$mpsrf
+        )
+      )
   } else {
     grb <- NA
   }

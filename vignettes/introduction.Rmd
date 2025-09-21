@@ -27,7 +27,7 @@ library(skytrackr)
 
 ## Abstract
 
-Geolocation by light has revolutionised animal behavioural studies since its inception, allowing for the tracking of animals using sunset and sunrise estimations. Currently, threshold methodologies use fixed threshold values to determine sunrise and sunset from diurnal light measurements, from which the location is determined (deterministic - via equations). Setting this threshold is time demanding as often not suitable for automated processing at volume due to inherent uncertainties such as contamination in the diurnal light measurements due to clouds and rapid movements around the equator. Here, I present an optimization based methodology which leverages the whole or part of the diurnal light profile and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, and not only a threshold based sunset or sunrise allows for automation of the process. Including more data in location estimates, based upon a physical model of sky illuminance  increases accuracy and provides uncertainty measures for each estimate, allowing for post-hoc further quality control. Convenience and robustness of the method comes at the cost of required computational power compared to fast threshold based approaches.
+Geolocation by light has revolutionized animal behavioural studies since its inception, allowing for the tracking of animals using sunset and sunrise estimations. Currently, threshold methodologies use fixed threshold values to determine sunrise and sunset from diurnal light measurements, from which the location is determined. Setting this threshold is time demanding as often not suitable for automated processing at volume due to inherent uncertainties such as contamination in the diurnal light measurements due to clouds and rapid movements around the equator. Here, I present an optimization based methodology which leverages the whole or part of the diurnal light profile and a Bayesian based optimization approach to estimate geolocations from light. Including more data in location estimates, based upon a physical model of sky illuminance, instead of a simple template, increases accuracy and provides uncertainty measures for each estimate. Convenience and robustness of the method comes at the cost of required computational power compared to fast threshold based approaches. [To be updated]
 
 **Keywords:** geolocation, tracking, movement ecology, flight, illuminance
 
@@ -130,7 +130,9 @@ plot(p)
 
 By default, the DEzs MCMC sampler [@ter_braak_differential_2008] implemented in BayesianTools [@hartig_bayesiantools_2023] is used to estimate the posterior distribution of model parameters. For each location I sample the posterior distribution of the parameters (with a thinning factor of 10), and return summary values. I return the median for best estimates of latitude, longitude and sky condition. In addition, the 5-95% quantiles on the geographic position are provided. The package also returns the Gelman-Rubin-Brooks (GRB) metric [@gelman_inference_1992], which can be used to assess the convergence of the optimization. Both the quantile ranges and the GRB metric can be used in post-hoc quality control screening.
 
-The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_advance_2004]. However, some limitations do apply. The measured light intensities should be translated to physical units in lux to be accurately compared to the physical model. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases an external calibration to convert arbitrary numbers to lux is necessary. Although performance should improve around the equinoxes, performance will remain poorer than average. However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
+The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_advance_2004]. However, some limitations do apply. The measured light intensities should be translated to physical units in lux to be accurately compared to the physical model. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. For example, GLF based data needs a `scale` parameter range with values between 0 and 1, rather than 1 to 10.
+
+Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see figure XYZ). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
 
 The package and function descriptions can be found on github at: https://github.com/bluegreen-labs/skytrackr, and can be installed from source using:
 
@@ -230,132 +232,6 @@ ggplot(data = cc876) +
 ```
 
 This visually confirms the good fit of the model data with the observed values. Note that only a subset of the data is used in model optimization (as defined by the `range` parameter). You can assess the convergence of the model using the `grb` values (i.e the Gelman-Rubin-Brooks metric, @gelman_inference_1992), which should be lower than 1.1 to indicate the convergence of the 3 chains used in the MCMC DEz algorithm. This is further corroborated by considering the upper and lower quantiles and their spread, which are narrowly defined for both latitude and longitude.
-
-### Sensitivity analysis
-
-As a sensitivity analysis I set values to low (effectively 0) values, for a range of 0 - 75% of the dataset. For these subsets I estimate both latitude and longitude using either the full diurnal profile or the default settings using twilight values only. In addition, the same routine was used to introduce bright moments during nighttime (250 lux).
-
-```{r echo = FALSE}
-# load sensitiviy analysis
-sensitivity_default <- readRDS(
-  system.file(
-    package = "skytrackr",
-    "extdata/sensitivity_default.rds"
-    )
-  )
-sensitivity_full <- readRDS(
-  system.file(
-    package = "skytrackr",
-    "extdata/sensitivity_full.rds"
-    )
-  )
-sensitivity_night <- readRDS(
-  system.file(
-    package = "skytrackr",
-    "extdata/sensitivity_night.rds"
-    )
-  )
-
-p <- ggplot(sensitivity_default) +
-  geom_point(
-    aes(
-      0:75,
-      latitude - 51.07
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' latitude'))
-  )
-
-p2 <- ggplot(sensitivity_default) +
-  geom_point(
-    aes(
-      0:75,
-      longitude - 3.74
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' longitude'))
-  )
-
-
-p3 <- ggplot(sensitivity_full) +
-  geom_point(
-    aes(
-      0:75,
-      latitude - 51.07
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' latitude'))
-  )
-
-p4 <- ggplot(sensitivity_full) +
-  geom_point(
-    aes(
-      0:75,
-      longitude - 3.74
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' longitude'))
-  )
-
-p5 <- ggplot(sensitivity_night) +
-  geom_point(
-    aes(
-      0:75,
-      latitude - 51.07
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' latitude'))
-  )
-
-p6 <- ggplot(sensitivity_night) +
-  geom_point(
-    aes(
-      0:75,
-      longitude - 3.74
-    )
-  ) +
-  labs(
-    x = "% missing data",
-    y = expression(paste(Delta, ' longitude'))
-  )
-
-p + p2 + p3 + p4 + p5 + p6 + 
-  plot_layout(
-    ncol = 2,
-    guides = "auto"
-  )  +
-  plot_annotation(
-    title = "",
-    subtitle = "",
-    caption = "",
-    tag_levels = "a",
-    tag_suffix = ")    ",
-    tag_prefix = "("
-  ) &
-  theme_bw() +
-  theme(
-    panel.spacing.y = unit(0.01, "in"),
-    legend.box.margin = margin(t = 5),
-    legend.justification = "left",
-    legend.title = element_text(
-      family = "Montserrat",
-      color = "grey30", size = 13
-    )
-  )
-
-```
-
-Sensitivity analysis show that especially nighttime bright moments disrupt the positional accuracy of geolocation estimates. While using performance declines steadily when considering the full profile at higher noise levels (c-d).
 
 ### Limitations & future improvements
 
