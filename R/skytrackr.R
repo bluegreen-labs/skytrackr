@@ -119,11 +119,11 @@ skytrackr <- function(
       )
     cli::cli_end()
     cli::cli_alert_info(
-        "Estimating locations from light (lux) profiles for logger: {.strong {data$logger[1]}}!")
+        "Processing logger: {.strong {data$logger[1]}}!")
 
     if(plot){
     cli::cli_alert_info(
-        "(preview plot will update every 15 days)"
+        "(preview plot will update every 7 days)"
       )
     }
 
@@ -133,9 +133,9 @@ skytrackr <- function(
     )
   }
 
-  # plot updates every 15 days (if possible)
-  if(length(dates) >= 15){
-    plot_update <- seq(2, length(dates), by = 15)
+  # plot updates every 5 days (if possible)
+  if(length(dates) >= 7){
+    plot_update <- seq(2, length(dates), by = 7)
   } else {
     plot_update  <- length(dates)
   }
