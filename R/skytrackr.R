@@ -19,10 +19,13 @@
 #'  This requires the start_location parameter to be set, as you need a
 #'  start position for a trusted initial location.
 #' @param range range of values to consider during processing, should be
-#'  provided in lux c(min, max) or the equivalent if non-calibrated
+#'  provided in lux c(min, max) or the equivalent if non-calibrated. In case of
+#'  non calibrated values you will need to adapt the scale values accordingly.
 #' @param scale scale / sky condition factor, by default covering the
-#'  skylight() range of 1-10 but can be extended for more flexibility
-#'  in case of non lux measurements
+#'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+#'  but can be extended for more flexibility to account for coverage by plumage,
+#'  note that in case of non-physical accurate lux measurements values can have
+#'  a range starting at 0.0001 (a multiplier instead of a divider).
 #' @param control control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a sequential monte carlo method)
 #' @param mask mask with priors to constrain positions
