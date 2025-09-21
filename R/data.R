@@ -16,18 +16,3 @@
 #'   \item{lux}{light levels in lux}
 #' }
 "cc876"
-
-#' AVONET trait list
-#'
-#' Limited copy of the AVONET trait database used
-#' to calculate flight dynamic characteristics.
-#'
-#' @format DataFrame
-#' \describe{
-#'   \item{species}{species name}
-#'   \item{order}{taxonomic order}
-#'   \item{wing_length}{wing length (in mm)}
-#'   \item{secondary}{length of the secondary (in mm)}
-#'   \item{mass}{body mass (in gr)}
-#' }
-"avonet"
