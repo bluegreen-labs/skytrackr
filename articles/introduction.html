@@ -101,25 +101,23 @@ Hufkens</h4>
 <div class="section level2">
 <h2 id="abstract">Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
 </h2>
-<p>Geolocation by light has revolutionised animal behavioural studies
+<p>Geolocation by light has revolutionized animal behavioural studies
 since its inception, allowing for the tracking of animals using sunset
 and sunrise estimations. Currently, threshold methodologies use fixed
 threshold values to determine sunrise and sunset from diurnal light
-measurements, from which the location is determined (deterministic - via
-equations). Setting this threshold is time demanding as often not
-suitable for automated processing at volume due to inherent
-uncertainties such as contamination in the diurnal light measurements
-due to clouds and rapid movements around the equator. Here, I present an
-optimization based methodology which leverages the whole or part of the
-diurnal light profile and a Bayesian based optimization approach to
-estimate geolocations from light. The use of additional data during
-twilight, or a full day, and not only a threshold based sunset or
-sunrise allows for automation of the process. Including more data in
-location estimates, based upon a physical model of sky illuminance
-increases accuracy and provides uncertainty measures for each estimate,
-allowing for post-hoc further quality control. Convenience and
-robustness of the method comes at the cost of required computational
-power compared to fast threshold based approaches.</p>
+measurements, from which the location is determined. Setting this
+threshold is time demanding as often not suitable for automated
+processing at volume due to inherent uncertainties such as contamination
+in the diurnal light measurements due to clouds and rapid movements
+around the equator. Here, I present an optimization based methodology
+which leverages the whole or part of the diurnal light profile and a
+Bayesian based optimization approach to estimate geolocations from
+light. Including more data in location estimates, based upon a physical
+model of sky illuminance, instead of a simple template, increases
+accuracy and provides uncertainty measures for each estimate.
+Convenience and robustness of the method comes at the cost of required
+computational power compared to fast threshold based approaches. [To be
+updated]</p>
 <p><strong>Keywords:</strong> geolocation, tracking, movement ecology,
 flight, illuminance</p>
 </div>
@@ -199,13 +197,19 @@ apply. The measured light intensities should be translated to physical
 units in lux to be accurately compared to the physical model. Not all
 sensors return physical units, with some returning an arbitrary numbers
 due to data limitations (compression) or hardware choices. In these
-cases an external calibration to convert arbitrary numbers to lux is
-necessary. Although performance should improve around the equinoxes,
-performance will remain poorer than average. However, the addition of
+cases, the physical nature of the underlying model fit to the data does
+not hold and parameters must be relaxed outside their normal range. For
+example, GLF based data needs a <code>scale</code> parameter range with
+values between 0 and 1, rather than 1 to 10.</p>
+<p>Although performance should improve around the equinoxes, performance
+will remain poorer than average. Uncertainty around the equinoxes is
+reflected in the estimated quantiles on the location parameters
+(latitude, longitude, see figure XYZ). However, the addition of
 geolocation estimation uncertainties as well as GRB metrics make
-screening outliers easy and consistent. The methodology should compare
-favourably to the “Twilight-Free” method as described by <span class="citation">(Bindoff et al. 2018)</span>, as no external packages
-should be loaded from github.</p>
+screening outliers easy and consistent but generally not necessary. The
+methodology should compare favourably to the “Twilight-Free” method as
+described by <span class="citation">(Bindoff et al. 2018)</span>, as no
+external packages should be loaded from github.</p>
 <p>The package and function descriptions can be found on github at: <a href="https://github.com/bluegreen-labs/skytrackr" class="external-link uri">https://github.com/bluegreen-labs/skytrackr</a>, and can be
 installed from source using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -265,7 +269,9 @@ posterior parameter distribution.</p>
 <span>      tolerance <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
-<span><span class="co">#&gt; - Estimating locations from light (lux) profiles for logger: CC876!</span></span>
+<span><span class="co">#&gt; <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating locations</span><span style="color: #9E9E9E;"> ══════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.0</span><span style="color: #9E9E9E;"> ══</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Processing logger: <span style="font-weight: bold;">CC876</span>!</span></span>
 <span></span>
 <span><span class="co"># print the optimized parameters (i.e. the locations)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
@@ -315,21 +321,6 @@ convergence of the 3 chains used in the MCMC DEz algorithm. This is
 further corroborated by considering the upper and lower quantiles and
 their spread, which are narrowly defined for both latitude and
 longitude.</p>
-<div class="section level3">
-<h3 id="sensitivity-analysis">Sensitivity analysis<a class="anchor" aria-label="anchor" href="#sensitivity-analysis"></a>
-</h3>
-<p>As a sensitivity analysis I set values to low (effectively 0) values,
-for a range of 0 - 75% of the dataset. For these subsets I estimate both
-latitude and longitude using either the full diurnal profile or the
-default settings using twilight values only. In addition, the same
-routine was used to introduce bright moments during nighttime (250
-lux).</p>
-<p><img src="introduction_files/figure-html/unnamed-chunk-5-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Sensitivity analysis show that especially nighttime bright moments
-disrupt the positional accuracy of geolocation estimates. While using
-performance declines steadily when considering the full profile at
-higher noise levels (c-d).</p>
-</div>
 <div class="section level3">
 <h3 id="limitations-future-improvements">Limitations &amp; future improvements<a class="anchor" aria-label="anchor" href="#limitations-future-improvements"></a>
 </h3>

@@ -70,10 +70,11 @@ those modelled by the sky illuminance model of xyz.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">skytrackr</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">start_location</span>,</span>
-<span>  tolerance <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">150</span><span class="op">)</span>,</span>
+<span>  tolerance <span class="op">=</span> <span class="fl">1500</span>,</span>
+<span>  range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.32</span>, <span class="fl">140</span><span class="op">)</span>,</span>
 <span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>iterations <span class="op">=</span> <span class="fl">10</span>, message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burnin <span class="op">=</span> <span class="fl">1000</span>, iterations <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>    message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">mask</span>,</span>
 <span>  <span class="va">step_selection</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -96,22 +97,23 @@ bounding box (bbox) settings are used.</p></dd>
 
 
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
-<dd><p>tolerance on the search window for optimization, given in
-degrees (to pad left - right, top - bottom). Uses the previous steps
-location to constrain the parameter (location) search space.
-This requires the start_location parameter to be set, as you need a
-start position for a trusted initial location.</p></dd>
+<dd><p>tolerance distance on the search window for optimization,
+given in km (left/right, top/bottom). Sets a hard limit on the search window
+regardless of the step selection function used.</p></dd>
 
 
 <dt id="arg-range">range<a class="anchor" aria-label="anchor" href="#arg-range"></a></dt>
 <dd><p>range of values to consider during processing, should be
-provided in lux c(min, max) or the equivalent if non-calibrated</p></dd>
+provided in lux c(min, max) or the equivalent if non-calibrated. In case of
+non calibrated values you will need to adapt the scale values accordingly.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
 <dd><p>scale / sky condition factor, by default covering the
-skylight() range of 1-10 but can be extended for more flexibility
-in case of non lux measurements</p></dd>
+skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+but can be extended for more flexibility to account for coverage by plumage,
+note that in case of non-physical accurate lux measurements values can have
+a range starting at 0.0001 (a multiplier instead of a divider).</p></dd>
 
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
@@ -124,7 +126,9 @@ should not be altered (defaults to a sequential monte carlo method)</p></dd>
 
 
 <dt id="arg-step-selection">step_selection<a class="anchor" aria-label="anchor" href="#arg-step-selection"></a></dt>
-<dd><p>a step selection function on the distance of a proposed move</p></dd>
+<dd><p>a step selection function on the distance of a proposed
+move, step selection is specified as average flight speed to achieve this
+distance (in km/h).</p></dd>
 
 
 <dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
