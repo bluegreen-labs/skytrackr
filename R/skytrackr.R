@@ -62,14 +62,14 @@ skytrackr <- function(
 ) {
 
   if(missing(mask)){
-    cl::cli_alert_danger("
+    cli::cli_alert_danger("
         - please provide a base mask or grid of valid sample locations!
           ")
     stop()
   }
 
   if(missing(start_location)) {
-    cl::cli_alert_danger("
+    cli::cli_alert_danger("
         - No (approximate) start location provided, please provide a start location!
         ")
     stop()
