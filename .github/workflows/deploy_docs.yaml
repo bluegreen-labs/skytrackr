@@ -35,7 +35,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache: false
-          extra-packages: any::pkgdown, any::devtools, local::.
+          extra-packages: any::pkgdown, any::bookdown, any::devtools, local::.
           needs: website
 
       - name: Build site
