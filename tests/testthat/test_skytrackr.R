@@ -42,7 +42,7 @@ test_that("test optimizations", {
       plot = FALSE,
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
-      scale = c(1,10),
+      scale = log(c(1,10)),
       range = c(0.32, 10),
       control = list(
         sampler = 'DEzs',
@@ -65,7 +65,7 @@ test_that("test no start", {
       mask = mask,
       plot = FALSE,
       tolerance = 1500, # in km
-      scale = c(1,10),
+      scale = log(c(1,10)),
       range = c(0.32, 10),
       control = list(
         sampler = 'DEzs',
@@ -88,7 +88,7 @@ test_that("read from file and optimize", {
       plot = TRUE,
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
-      scale = c(1,10),
+      scale = log(c(1,10)),
       range = c(0.32, 10),
       control = list(
         sampler = 'DEzs',

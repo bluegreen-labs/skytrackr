@@ -8,9 +8,9 @@ skytrackr(
   data,
   start_location,
   tolerance = 1500,
-  range = c(0.32, 140),
-  scale = c(1, 10),
-  control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 2000,
+  range = c(0.09, 148),
+  scale = log(c(1e-05, 50)),
+  control = list(sampler = "DEzs", settings = list(burnin = 500, iterations = 3000,
     message = FALSE)),
   mask,
   step_selection,
@@ -40,7 +40,7 @@ note that in case of non-physical accurate lux measurements values can have
 a range starting at 0.0001 (a multiplier instead of a divider).}
 
 \item{control}{control settings for the Bayesian optimization, generally
-should not be altered (defaults to a sequential monte carlo method)}
+should not be altered (defaults to a Monte Carlo method)}
 
 \item{mask}{mask with priors to constrain positions}
 
