@@ -25,7 +25,7 @@
 #'  note that in case of non-physical accurate lux measurements values can have
 #'  a range starting at 0.0001 (a multiplier instead of a divider).
 #' @param control control settings for the Bayesian optimization, generally
-#'  should not be altered (defaults to a sequential monte carlo method)
+#'  should not be altered (defaults to a Monte Carlo method)
 #' @param mask mask with priors to constrain positions
 #' @param step_selection a step selection function on the distance of a proposed
 #'  move, step selection is specified as average flight speed to achieve this
@@ -45,13 +45,13 @@ skytrackr <- function(
     data,
     start_location,
     tolerance = 1500,
-    range = c(0.32, 140),
-    scale = c(1, 10),
+    range = c(0.09, 148),
+    scale = log(c(0.00001, 50)),
     control = list(
       sampler = 'DEzs',
       settings = list(
-        burnin = 1000,
-        iterations = 2000,
+        burnin = 500,
+        iterations = 3000,
         message = FALSE
       )
     ),

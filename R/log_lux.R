@@ -20,7 +20,7 @@ log_lux <- function(
   # split out model parameters
   lat <- par[1]
   lon <- par[2]
-  sky <- par[3]
+  sky <- exp(par[3])
 
   # run model
   illuminance <- skylight::skylight(
