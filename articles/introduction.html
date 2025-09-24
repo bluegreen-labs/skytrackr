@@ -96,16 +96,16 @@
 
     
     
-<div class="section level2" number="0.1">
+<div class="section level2" number="1">
 <h2 id="abstract">
-<span class="header-section-number">0.1</span> Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
+<span class="header-section-number">1</span> Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
 </h2>
 <p>Geolocation by light has revolutionized animal behavioural studies since its inception, allowing for the tracking of animals using the measurement of their light enviroment. The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters (such as a land mask) allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.</p>
 <p><strong>Keywords:</strong> geolocation, tracking, movement ecology, flight, illuminance</p>
 </div>
-<div class="section level2" number="0.2">
+<div class="section level2" number="2">
 <h2 id="background">
-<span class="header-section-number">0.2</span> Background<a class="anchor" aria-label="anchor" href="#background"></a>
+<span class="header-section-number">2</span> Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
 <p>Geolocation by light has been a popular animal tracking method in ornithology. It has been successfully used to track long distance migration and foraging behaviour of swifts <span class="citation">Hedenström et al. (2019)</span> and other migratory birds, and increased our understanding of these long-distance movements.</p>
 <p>Geolocation by light is a conceptually easy approach. It relies mostly on the shift of sunrise and sunset times to determine longitude and the length of night (or day) between sunrise or sunset to determine latitude deterministically using astronomical equations <span class="citation">(Ekstrom 2004)</span>. Two approaches are commonly used, firstly the twilight method, and secondly a template matching method.</p>
@@ -113,44 +113,44 @@
 <p>Ongoing research therefore often focuses on the use of ancillary data (e.g. air pressure data <span class="citation">(Nussbaumer et al. 2023)</span>) or computational methods to improve both the accuracy of estimates as well as the workflows involved. For example iterative methods can constrain the search space of optimal solutions better <span class="citation">(Merkel et al. 2016)</span>. Twilight free methods have been explored by <span class="citation">Bindoff et al. (2018)</span> which uses a hidden markov model approach to constrain parameters using the full light level data and not explicitly sunrise and sunset thresholding. Despite these advances in methodology few computational resources are available to estimate positions in bulk with minimal intervention.</p>
 <p>Here, I present the {skytrackr} R package which provides a Bayesian optimization based approach using a physical sky illuminance model <span class="citation">Janiczek and DeYoung (1987)</span> to estimate geolocation from light levels. This package aims to provide a hands-off, calibration free, robust methodology to automated geolocation estimates. The package uses both a physical and behavioural components (step selection function) to constrain location estimates.</p>
 </div>
-<div class="section level2" number="0.3">
+<div class="section level2" number="3">
 <h2 id="implementation">
-<span class="header-section-number">0.3</span> Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
+<span class="header-section-number">3</span> Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
 </h2>
-<div class="section level3" number="0.3.1">
+<div class="section level3" number="3.1">
 <h3 id="optimization-strategy">
-<span class="header-section-number">0.3.1</span> Optimization strategy<a class="anchor" aria-label="anchor" href="#optimization-strategy"></a>
+<span class="header-section-number">3.1</span> Optimization strategy<a class="anchor" aria-label="anchor" href="#optimization-strategy"></a>
 </h3>
 <p>The {skytrackr} R package uses a physical sky illuminance model <span class="citation">Janiczek and DeYoung (1987)</span> in combination with Bayesian location parameter estimation <span class="citation">(Hartig et al. 2023)</span> approach to maximise the log-likelihood between observed (logger) and modelled values combined with those of a step-selection model describing the animal’s behaviour.</p>
-<p>Model parameters are limited to latitude, longitude and a sky condition, which scales the sky illuminance response for the day and is a free calibration parameter which is optimized together with the location parameters. The approach improves upon the template matching as suggested by <span class="citation">Ekstrom (2004)</span> by including a physical component to the model rather than considering a simpler piece-wise regression based approach, or more basic physical models. Below (Figure <a href="#fig:profiles">1</a>), is an example of how changes to both longitude or latitude influence the shape of the diurnal light profile. A change in longitude shifts the diurnal curve left to right (blue line), while a latitudinal change will influence the steepness and width of the curve (green line). An optimal fit (but not accounting for attenuation by clouds or a covered sensor) is shown as the red curve. The optimization routine tries to find the optimal fit (red line) using a combination of the above mentioned parameters (latitude, longitude, sky conditions) [while taking into account the probability of a step from the previously estimated location].</p>
+<p>Model parameters are limited to latitude, longitude and a sky condition, which scales the sky illuminance response for the day and is a free calibration parameter which is optimized together with the location parameters. The approach improves upon the template matching as suggested by <span class="citation">Ekstrom (2004)</span> by including a physical component to the model rather than considering a simpler piece-wise regression based approach, or more basic physical models. Below (Figure <a href="#fig:profiles">3.1</a>), is an example of how changes to both longitude or latitude influence the shape of the diurnal light profile. A change in longitude shifts the diurnal curve left to right (blue line), while a latitudinal change will influence the steepness and width of the curve (green line). An optimal fit (but not accounting for attenuation by clouds or a covered sensor) is shown as the red curve. The optimization routine tries to find the optimal fit (red line) using a combination of the above mentioned parameters (latitude, longitude, sky conditions) [while taking into account the probability of a step from the previously estimated location].</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:profiles"></span>
 <img src="introduction_files/figure-html/profiles-1.png" alt="Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line." width="80%"><p class="caption">
-Figure 1: Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line.
+Figure 3.1: Modelled and observed illuminance values in log(lux) for three days in early July 2021. Observed values are shown as light grey dots, modelled values for the exact location are shown as a full red line. Longitudinal offset data is shown as the blue full line, while latitudinal offset modelled data for the same period is shown as a full green line.
 </p>
 </div>
 <p>By default, the DEzs MCMC sampler <span class="citation">(Ter Braak and Vrugt 2008)</span> implemented in BayesianTools <span class="citation">(Hartig et al. 2023)</span> is used to estimate the posterior distribution of model parameters. For each location I sample the posterior distribution of the parameters (with a thinning factor of 10), and return summary values. I return the maxiumum aposteriori values as the best estimate of latitude, longitude and sky conditions. In addition, the 5, 50, and 95% quantiles on the parameter distributions are provided. The package also returns the Gelman-Rubin-Brooks (GRB) metric <span class="citation">(Gelman and Rubin 1992)</span>, which can be used to assess the convergence of the optimization. Both the quantile ranges and the GRB metric can be used in post-hoc quality control screening.</p>
 </div>
-<div class="section level3" number="0.3.2">
+<div class="section level3" number="3.2">
 <h3 id="behavioural-component">
-<span class="header-section-number">0.3.2</span> Behavioural component<a class="anchor" aria-label="anchor" href="#behavioural-component"></a>
+<span class="header-section-number">3.2</span> Behavioural component<a class="anchor" aria-label="anchor" href="#behavioural-component"></a>
 </h3>
-<p>In order to constrain location estimates, especially during equinoxes, behavioural prior knowledge is included during parameter optimization in the form of a step selection function from a previously estimated location. A step-selection function attributes a likelihood to the distance of every step and often takes the form of a gamma or Weibull function (Figure <a href="#fig:ssf">2</a>). The combined log-likelihood of both the parameter estimates of the physical model as well as the behavioural component are taken into account to optimize the final location estimate.</p>
+<p>In order to constrain location estimates, especially during equinoxes, behavioural prior knowledge is included during parameter optimization in the form of a step selection function from a previously estimated location. A step-selection function attributes a likelihood to the distance of every step and often takes the form of a gamma or Weibull function (Figure <a href="#fig:ssf">3.2</a>). The combined log-likelihood of both the parameter estimates of the physical model as well as the behavioural component are taken into account to optimize the final location estimate.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:ssf"></span>
 <img src="introduction_files/figure-html/ssf-1.png" alt="A step selection function showing the probability of moving a given distance from the previous location." width="80%"><p class="caption">
-Figure 2: A step selection function showing the probability of moving a given distance from the previous location.
+Figure 3.2: A step selection function showing the probability of moving a given distance from the previous location.
 </p>
 </div>
 </div>
-<div class="section level3" number="0.3.3">
+<div class="section level3" number="3.3">
 <h3 id="workflow">
-<span class="header-section-number">0.3.3</span> Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
+<span class="header-section-number">3.3</span> Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
 </h3>
 <p>The package workflow is aimed to be pipe (<code>|&gt;</code>) friendly with data formats adhering to tidy data standards. The workflow is meant to be as hands off as possible, with sensible defaults.</p>
-<div class="section level4" number="0.3.3.1">
+<div class="section level4" number="3.3.1">
 <h4 id="reading-data">
-<span class="header-section-number">0.3.3.1</span> Reading data<a class="anchor" aria-label="anchor" href="#reading-data"></a>
+<span class="header-section-number">3.3.1</span> Reading data<a class="anchor" aria-label="anchor" href="#reading-data"></a>
 </h4>
 <p>Two functions are provided to read common data formats, the Migrate Technology Ltd <code>.lux</code> and the Swiss Ornithological Institute (SOI) <code>.glf</code> data formats using <code><a href="../reference/stk_read_lux.html">stk_read_lux()</a></code> and <code><a href="../reference/stk_read_glf.html">stk_read_glf()</a></code> respectively. A small example dataset (<code>.lux</code>) is included to experiment with some of the package functionality.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -161,11 +161,16 @@ Figure 2: A step selection function showing the probability of moving a given di
 <span></span>
 <span><span class="co"># plot the data as a static plot</span></span>
 <span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/light-profile-1.png" width="80%" style="display: block; margin: auto;"></p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:light-profile"></span>
+<img src="introduction_files/figure-html/light-profile-1.png" alt="Light profile of a data logger" width="80%"><p class="caption">
+Figure 3.3: Light profile of a data logger
+</p>
 </div>
-<div class="section level4" number="0.3.3.2">
+</div>
+<div class="section level4" number="3.3.2">
 <h4 id="cleaning-data">
-<span class="header-section-number">0.3.3.2</span> Cleaning data<a class="anchor" aria-label="anchor" href="#cleaning-data"></a>
+<span class="header-section-number">3.3.2</span> Cleaning data<a class="anchor" aria-label="anchor" href="#cleaning-data"></a>
 </h4>
 <p>Light logger data can be influenced by factors which make it impossible to correctly estimate location parameters. For example when no light is recorded when an animal is in a nest during twilight hours. To deal with these “false twilights” or spuriously low values during daytime a screening function is implemented to remove such days, only retaining those days with a reasonably complete diurnal light profile.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -184,7 +189,7 @@ Figure 2: A step selection function showing the probability of moving a given di
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:false-twilight"></span>
 <img src="introduction_files/figure-html/false-twilight-1.png" alt="Data with a false twilight" width="80%"><p class="caption">
-Figure 3: Data with a false twilight
+Figure 3.4: Data with a false twilight
 </p>
 </div>
 <p>You can then clean the data using <code><a href="../reference/stk_screen_twl.html">stk_screen_twl()</a></code>. If the argument <code>filter</code> is set to <code>TRUE</code> the offending day will be removed and not processed.</p>
@@ -199,7 +204,7 @@ Figure 3: Data with a false twilight
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:screen-profile"></span>
 <img src="introduction_files/figure-html/screen-profile-1.png" alt="Screened light values, with offending days removed" width="80%"><p class="caption">
-Figure 4: Screened light values, with offending days removed
+Figure 3.5: Screened light values, with offending days removed
 </p>
 </div>
 <p>Manual selection of regions of the light profile which are of good quality can also be used. A helpful tool in this context is the use of the interactive plotting using the <code>plotly</code> option of the <code><a href="../reference/stk_profile.html">stk_profile()</a></code> function. This plotting option will allow you to inspect the light profiles with a tooltip to determine exact dates between which you would want to process data.</p>
@@ -213,9 +218,9 @@ Figure 4: Screened light values, with offending days removed
 <span>   <span class="va">date</span> <span class="op">&gt;=</span> <span class="st">"2019-08-31"</span> <span class="op">&amp;</span> <span class="va">date</span> <span class="op">&lt;=</span> <span class="st">"2020-04-15"</span></span>
 <span>   <span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level4" number="0.3.3.3">
+<div class="section level4" number="3.3.3">
 <h4 id="creating-a-land-mask">
-<span class="header-section-number">0.3.3.3</span> Creating a land mask<a class="anchor" aria-label="anchor" href="#creating-a-land-mask"></a>
+<span class="header-section-number">3.3.3</span> Creating a land mask<a class="anchor" aria-label="anchor" href="#creating-a-land-mask"></a>
 </h4>
 <p>The optimization routine relies on a land mask to constrain land based animals to land. This mask needs to be generated beforehand. The mask will generate a raster file showing land locations, buffered by a given distance (in km) and with a given spatial resolution (in degrees). Only locations within the mask are considered during location estimates. Should an animal not be constrained to land a mask (map) should be generated with unity (1) values throughout.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -231,22 +236,22 @@ Figure 4: Screened light values, with offending days removed
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:land-mask"></span>
-<img src="introduction_files/figure-html/land-mask-1.png" alt="land mask to constrain location estimates"><p class="caption">
-Figure 5: land mask to constrain location estimates
+<img src="introduction_files/figure-html/land-mask-1.png" alt="Land mask to constrain location estimates"><p class="caption">
+Figure 3.6: Land mask to constrain location estimates
 </p>
 </div>
 </div>
-<div class="section level4" number="0.3.3.4">
+<div class="section level4" number="3.3.4">
 <h4 id="defining-a-step-selection">
-<span class="header-section-number">0.3.3.4</span> Defining a step-selection<a class="anchor" aria-label="anchor" href="#defining-a-step-selection"></a>
+<span class="header-section-number">3.3.4</span> Defining a step-selection<a class="anchor" aria-label="anchor" href="#defining-a-step-selection"></a>
 </h4>
 <p>The location estimates are not only constrained by geography but more importantly by behaviour. A function (returning probabilities) can be used to weight the probability of a step of a particular distance (relative to the previous location). Although any function can be used common step-selection probability distributions such as a gamma or Weibull are adviced.</p>
-<p>Here I do not recommend using a biophysical basis, based on flight speed or power functions, such as used in the {GeoPressureR} package. First, the flight distances are not a reflection of flight speed, as this depends on behaviour. In particular, local ranging at high speed might not result in large distances traveled as measured on a daily time step (the resolution of the analysis). Second, although migration is often the focus of bio-logging the bulk of the behaviour during any trip will not be spent migrating. In short, the step-selection function should reflect the most common local ranging behaviour at a daily time step in order to provide valid constraints during optimization. If available, previous data gathered and expert knowledge can be used to inform you on the shape of this step-selection function. Here, I’ll use a normalized gamma distribution as specified above and shown in Figure <a href="#fig:ssf">2</a>.</p>
+<p>Here I do not recommend using a biophysical basis, based on flight speed or power functions, such as used in the {GeoPressureR} package. First, the flight distances are not a reflection of flight speed, as this depends on behaviour. In particular, local ranging at high speed might not result in large distances traveled as measured on a daily time step (the resolution of the analysis). Second, although migration is often the focus of bio-logging the bulk of the behaviour during any trip will not be spent migrating. In short, the step-selection function should reflect the most common local ranging behaviour at a daily time step in order to provide valid constraints during optimization. If available, previous data gathered and expert knowledge can be used to inform you on the shape of this step-selection function. Here, I’ll use a normalized gamma distribution as specified above and shown in Figure <a href="#fig:ssf">3.2</a>.</p>
 </div>
 </div>
-<div class="section level3" number="0.3.4">
+<div class="section level3" number="3.4">
 <h3 id="estimating-positions">
-<span class="header-section-number">0.3.4</span> Estimating positions<a class="anchor" aria-label="anchor" href="#estimating-positions"></a>
+<span class="header-section-number">3.4</span> Estimating positions<a class="anchor" aria-label="anchor" href="#estimating-positions"></a>
 </h3>
 <p>After reading in the data, cleaning the data, and setting up the mask and step-selection function you can now call the main <code><a href="../reference/skytrackr.html">skytrackr()</a></code> function. This function deals with the final parameter optimization (location estimates). Before proceeding you will have to set a few more parameters. In particular, a start location (which should be the location where you tagged your individual), the tolerance distance (in km) which sets a hard limit on the locations considered (redundant dependent on the shape of the step-selection function), the <code>scale</code> parameter which adjusts the daylight levels to occlusions by clouds (or fur/feathers/other environmental factors), the <code>range</code> of light values (in lux) to consider (to select either only twilight periods or the full diurnal cycle). Finally, you have to specify the <code>control</code> parameters for the BayesianTools functions as a nested list.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -282,20 +287,20 @@ Figure 5: land mask to constrain location estimates
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:preview"></span>
 <img src="skytrackr_preview.png" alt="Dynamic preview during location estimation"><p class="caption">
-Figure 6: Dynamic preview during location estimation
+Figure 3.7: Dynamic preview during location estimation
 </p>
 </div>
-<div class="section level4" number="0.3.4.1">
+<div class="section level4" number="3.4.1">
 <h4 id="optimization-caveats-advanced-control-settings">
-<span class="header-section-number">0.3.4.1</span> Optimization caveats (advanced control settings)<a class="anchor" aria-label="anchor" href="#optimization-caveats-advanced-control-settings"></a>
+<span class="header-section-number">3.4.1</span> Optimization caveats (advanced control settings)<a class="anchor" aria-label="anchor" href="#optimization-caveats-advanced-control-settings"></a>
 </h4>
 <p>Generally speaking around 3000 iterations, with 250 for burnin, should be sufficient to get proper parameter estimates. Using lower values can speed up the processing but at the cost of precision. The latter is important as there is a co-dependency between the current and the previous step through the distance based step-selection function. Hence, errors can propagate through auto-correlation. Increasing iterations has its limit, as 1500x1500 km (or ~150x150 degree, assuming a one degree search grid) search area could be efficiently searched using brute force with ~22K iterations. The use of an optimization based method is to avoid using expensive brute force methods which impose overhead and quantization of the location estimates.</p>
 <p>The default scale parameter range covers values from close to 0 to 50 (values should be provided log transformed to improve optimization stability), far outside the normal range of the {skylight} sky illuminance model (with values normally ranging from 1 to 10). This larger range accounts for either the non-physical basis of the sensor and occlusions of the sensor decreasing light input (i.e. mediating the raw sensor response). This parameter should be set wide enough to allow for sufficient model flexibility, but not too wide as to inflate the parameter space to search (deteriorating parameter/location estimates through insufficient sampling coverage).</p>
 </div>
 </div>
-<div class="section level3" number="0.3.5">
+<div class="section level3" number="3.5">
 <h3 id="visualizing-location-estimates">
-<span class="header-section-number">0.3.5</span> Visualizing location estimates<a class="anchor" aria-label="anchor" href="#visualizing-location-estimates"></a>
+<span class="header-section-number">3.5</span> Visualizing location estimates<a class="anchor" aria-label="anchor" href="#visualizing-location-estimates"></a>
 </h3>
 <p>Running the full dataset for logger CC876, from which a subset is included, would yield a full track. You can visualize a full track using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -304,37 +309,37 @@ Figure 6: Dynamic preview during location estimation
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:final-plot"></span>
 <img src="skytrackr_final_plot.png" alt="Overview plot after location estimation"><p class="caption">
-Figure 7: Overview plot after location estimation
+Figure 3.8: Overview plot after location estimation
 </p>
 </div>
 </div>
 </div>
-<div class="section level2" number="0.4">
+<div class="section level2" number="4">
 <h2 id="discussion">
-<span class="header-section-number">0.4</span> Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
+<span class="header-section-number">4</span> Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching <span class="citation">(Ekstrom 2004)</span>. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure <a href="#fig:final-plot">7</a>). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the “Twilight-Free” method as described by <span class="citation">(Bindoff et al. 2018)</span>, as no external packages should be loaded from github.</p>
+<p>The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching <span class="citation">(Ekstrom 2004)</span>. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure <a href="#fig:final-plot">3.8</a>). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the “Twilight-Free” method as described by <span class="citation">(Bindoff et al. 2018)</span>, as no external packages should be loaded from github.</p>
 <p>The package and function descriptions can be found on github at: <a href="https://github.com/bluegreen-labs/skytrackr" class="external-link uri">https://github.com/bluegreen-labs/skytrackr</a>, and can be installed from source using:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bluegreen-labs/skytrackr"</span><span class="op">)</span></span></code></pre></div>
-<div class="section level3" number="0.4.1">
+<div class="section level3" number="4.1">
 <h3 id="limitations-future-improvements">
-<span class="header-section-number">0.4.1</span> Limitations &amp; future improvements<a class="anchor" aria-label="anchor" href="#limitations-future-improvements"></a>
+<span class="header-section-number">4.1</span> Limitations &amp; future improvements<a class="anchor" aria-label="anchor" href="#limitations-future-improvements"></a>
 </h3>
 <p>The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. Adjusting the scale parameter can alleviate some of these issues. Similarly, if values have no physical meaning relaxing the scale parameter to a value below one (1) might be required. For example, Swiss Ornithological Institute based logger data needs a <code>scale</code> parameter range with values between 0 and 1, multiplying the sky illuminance model output rather than dividing it. Coverage by fur/feathers of loggers can also decrease the registered daylight values, exceeding the normal ranger of the sky illuminance model of a ten fold decrease. To accommodate most scenarios a default scale range of 0.00001 to 50 is used (log transformed). Constraining this range, which shows up as heavily skewed parameters to the upper side of the range, will negatively affect the location estimation. The method is therefore calibration free insofar as the parameter bounds of the sky conditions (i.e. a model output multiplier) are set sensibly. The defaults chosen work well for Migrate Technology Ltd. and SOI based sensors.</p>
 <p>Performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season ensuring well defined diurnal light profiles. The use of a hard threshold distance to a movement kernel as well as specifying a formal step-selection approach constrains estimated locations within normal bounds. Returned tracks are therefore stable over time and do not show pronounced run-away behaviour during equinoxes. However, further data assimilation by using pressure measurements (e.g. <span class="citation">Nussbaumer et al. (2023)</span>) at stationary moments could be implemented to account for species which roost in dense vegetation with less well defined light profiles.</p>
 </div>
 </div>
-<div class="section level2" number="0.5">
+<div class="section level2" number="5">
 <h2 id="conclusion">
-<span class="header-section-number">0.5</span> Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+<span class="header-section-number">5</span> Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
 </h2>
 <p>The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.</p>
 </div>
-<div class="section level2" number="0.6">
+<div class="section level2" number="6">
 <h2 id="availability-and-requirements">
-<span class="header-section-number">0.6</span> Availability and requirements<a class="anchor" aria-label="anchor" href="#availability-and-requirements"></a>
+<span class="header-section-number">6</span> Availability and requirements<a class="anchor" aria-label="anchor" href="#availability-and-requirements"></a>
 </h2>
 <ul>
 <li>
@@ -350,7 +355,7 @@ Figure 7: Overview plot after location estimation
 <strong>License:</strong> AGPLv3</li>
 </ul>
 </div>
-<div class="section level2 unnumbered">
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
