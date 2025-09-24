@@ -40,7 +40,8 @@ Imports:
     rlang,
     tidyr,
     dplyr,
-    patchwork
+    patchwork,
+    mapview
 Suggests:
     rnaturalearth,
     rmarkdown,
