@@ -149,7 +149,7 @@ In order to constrain location estimates, especially during equinoxes, behaviour
 ```{r label = ssf, echo = FALSE, fig.cap="A step selection function showing the probability of moving a given distance from the previous location.", fig.width=7, out.width="80%"}
 
 # define a step selection distribution
-ssf <- function(x, shape = 1.04, scale = 100, tolerance = 1500){
+ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
   # normalize over expected range with km increments
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm

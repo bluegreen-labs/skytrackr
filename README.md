@@ -106,7 +106,7 @@ mask <- stk_mask(
 )
 
 # define a step selection distribution/function
-ssf <- function(x, shape = 1.04, scale = 100, tolerance = 1500){
+ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 }
