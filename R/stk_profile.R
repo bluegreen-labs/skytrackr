@@ -10,7 +10,6 @@
 #' @param range the light range to plot
 #' @param center center data on day or night
 #' @param plotly TRUE or FALSE (convert to dynamic plotly plot or not)
-#'
 #' @importFrom rlang .data
 #'
 #' @return a plotly dynamic graph of light levels for a given logger

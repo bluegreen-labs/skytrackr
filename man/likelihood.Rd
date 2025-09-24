@@ -2,7 +2,7 @@
 % Please edit documentation in R/likelihood.R
 \name{likelihood}
 \alias{likelihood}
-\title{Log likelihood cost function for model optimization}
+\title{Log likelihood cost function}
 \usage{
 likelihood(par, data, model, loc, roi, step_selection, ...)
 }
@@ -26,7 +26,8 @@ on the target values}
 single log likelihood
 }
 \description{
-Log likelihood cost function for model optimization
+Main cost function used during optimization, combining both the fit of the
+illuminance data with the step-selection function.
 }
 \keyword{cost}
 \keyword{function}

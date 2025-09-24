@@ -20,7 +20,8 @@ implement a Hill-Ekstrom template fitting}
 \item{control}{control settings for the Bayesian optimization, forwarded by
 skytrackr()}
 
-\item{step_selection}{a step selection function on the distance of a proposed move}
+\item{step_selection}{a step selection function on the distance
+of a proposed move}
 }
 \value{
 an estimated illuminance based location (and its uncertainties)

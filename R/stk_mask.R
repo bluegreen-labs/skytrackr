@@ -13,6 +13,17 @@
 #'
 #' @return buffered land mask as an 'sf' or 'terra' map object
 #' @export
+#' @examples
+#' \dontrun{
+#' # define land mask with a bounding box
+#' # and an off-shore buffer (in km), in addition
+#' # you can specifiy the resolution of the resulting raster
+#' mask <- stk_mask(
+#'   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+#'   buffer = 150, # in km
+#'   resolution = 0.5 # map grid in degrees
+#'   )
+#' }
 
 stk_mask <- memoise::memoise(
   function(
@@ -25,7 +36,7 @@ stk_mask <- memoise::memoise(
   sf::sf_use_s2(FALSE)
 
   # read polygon data convert to sf (formally)
-  land <- readRDS(system.file("extdata/mask.rds", package="skytrackr"))
+  #land <- readRDS(system.file("extdata/mask.rds", package="skytrackr"))
 
   if(!missing(bbox)){
     # set global bounding box

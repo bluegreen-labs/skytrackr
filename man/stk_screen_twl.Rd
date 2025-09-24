@@ -29,5 +29,20 @@ a skytrackr data frame with poor twilight quality days removed and
  format)
 }
 \description{
-Removes poor quality data based on twilight heuristics
+Removes poor quality data based on twilight heuristics. Allows for quick
+screening of data containing "false" twilights.
+}
+\examples{
+# set demo values artificially low as a demonstration
+library(dplyr)
+df <- cc876 |>
+  mutate(
+  value = ifelse(
+    date_time > "2021-08-15 05:00:00" & date_time < "2021-08-15 12:00:00",
+    0.1,
+    value)
+  )
+
+# screen values and remove them (filter = TRUE)
+df <- df |> stk_screen_twl(filter = TRUE)
 }

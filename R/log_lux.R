@@ -1,4 +1,4 @@
-#' Simulate illuminance as log(lux) values
+#' Simulate illuminance value
 #'
 #' Calculates log(lux) values for a give location, date, time
 #' and sky conditions.

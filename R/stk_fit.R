@@ -11,7 +11,8 @@
 #'  implement a Hill-Ekstrom template fitting
 #' @param control control settings for the Bayesian optimization, forwarded by
 #'  skytrackr()
-#' @param step_selection a step selection function on the distance of a proposed move
+#' @param step_selection a step selection function on the distance
+#'  of a proposed move
 #'
 #' @return an estimated illuminance based location (and its uncertainties)
 #' @export
