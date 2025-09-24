@@ -102,11 +102,11 @@ All three factors, the tolerance (maximum distance covered), the land mask (limi
 mask <- stk_mask(
   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
   buffer = 150, # in km
-  resolution = 0.5
+  resolution = 0.5 # map grid in degrees
 )
 
-# define a step selection distribution
-ssf <- function(x, shape = 1.02, scale = 250, tolerance = 1500){
+# define a step selection distribution/function
+ssf <- function(x, shape = 1.04, scale = 100, tolerance = 1500){
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 }
@@ -115,13 +115,13 @@ locations <- data |>
     skytrackr(
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
-      scale = c(1,10),
-      range = c(1.5, 140),
+      scale = log(c(0.00001,50)), # default range
+      range = c(0.09, 148), # default range
       control = list(
         sampler = 'DEzs',
         settings = list(
-          burnin = 500,
-          iterations = 1500,
+          burnin = 250,
+          iterations = 3000,
           message = FALSE
         )
       ),
