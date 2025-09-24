@@ -50,7 +50,7 @@ skytrackr <- function(
     control = list(
       sampler = 'DEzs',
       settings = list(
-        burnin = 500,
+        burnin = 250,
         iterations = 3000,
         message = FALSE
       )
