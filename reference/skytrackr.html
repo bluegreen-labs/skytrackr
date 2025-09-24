@@ -41,6 +41,9 @@ those modelled by the sky illuminance model of xyz."><meta name="twitter:card" c
       <a href="../articles/introduction.html">The skytrackr R package</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
         <li>
   <a href="https://github.com/bluegreen-labs/skytrackr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -153,6 +156,30 @@ i.e. latitude and the location of the diurnal pattern -
 longitudinal displacement).</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># define land mask with a bounding box</span></span></span>
+<span class="r-in"><span><span class="co"># and an off-shore buffer (in km), in addition</span></span></span>
+<span class="r-in"><span><span class="co"># you can specify the resolution of the resulting raster</span></span></span>
+<span class="r-in"><span><span class="va">mask</span> <span class="op">&lt;-</span> <span class="fu"><a href="stk_mask.html">stk_mask</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  bbox  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span>, <span class="co">#xmin, ymin, xmax, ymax</span></span></span>
+<span class="r-in"><span>  buffer <span class="op">=</span> <span class="fl">150</span>, <span class="co"># in km</span></span></span>
+<span class="r-in"><span>  resolution <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># map grid in degrees</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># define a step selection distribution/function</span></span></span>
+<span class="r-in"><span>  <span class="va">ssf</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">shape</span> <span class="op">=</span> <span class="fl">0.9</span>, <span class="va">scale</span> <span class="op">=</span> <span class="fl">100</span>, <span class="va">tolerance</span> <span class="op">=</span> <span class="fl">1500</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">tolerance</span>, shape <span class="op">=</span> <span class="va">shape</span>, scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="va">x</span>, shape <span class="op">=</span> <span class="va">shape</span>, scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span> <span class="op">/</span> <span class="va">norm</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># estimate locations with default values</span></span></span>
+<span class="r-in"><span><span class="co"># and plot progress</span></span></span>
+<span class="r-in"><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">skytrackr</span><span class="op">(</span>plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
