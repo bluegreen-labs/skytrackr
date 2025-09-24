@@ -9,7 +9,9 @@
 #' @param roi region of interest under consideration, only used in
 #'  plots during optimization (optional)
 #' @param dynamic create a dynamic interactive graph rather than
-#'  a static plot
+#'  a static plot. Both the path as the locations are shown. The size
+#'  of the points is proportional to the latitudinal uncertainty, while
+#'  equinox windows are marked with red points.
 #' @return a ggplot map of tracked locations
 #' @export
 

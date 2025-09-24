@@ -4,7 +4,7 @@
 \alias{stk_map}
 \title{Plot skytrackr results}
 \usage{
-stk_map(df, bbox, start_location, roi)
+stk_map(df, bbox, start_location, roi, dynamic = FALSE)
 }
 \arguments{
 \item{df}{a data frame with locations produced by skytrackr()}
@@ -15,7 +15,12 @@ stk_map(df, bbox, start_location, roi)
 the starting position of the track (optional)}
 
 \item{roi}{region of interest under consideration, only used in
-dynamic plots during optimization (optional)}
+plots during optimization (optional)}
+
+\item{dynamic}{create a dynamic interactive graph rather than
+a static plot. Both the path as the locations are shown. The size
+of the points is proportional to the latitudinal uncertainty, while
+equinox windows are marked with red points.}
 }
 \value{
 a ggplot map of tracked locations

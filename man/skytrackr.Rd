@@ -10,7 +10,7 @@ skytrackr(
   tolerance = 1500,
   range = c(0.09, 148),
   scale = log(c(1e-05, 50)),
-  control = list(sampler = "DEzs", settings = list(burnin = 500, iterations = 3000,
+  control = list(sampler = "DEzs", settings = list(burnin = 250, iterations = 3000,
     message = FALSE)),
   mask,
   step_selection,
