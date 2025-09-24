@@ -128,7 +128,7 @@ skytrackr <- function(
     }
 
     cli::cli_progress_bar(
-      "estimating positions",
+      " - Estimating positions",
       total = length(dates)
     )
   }
@@ -223,6 +223,9 @@ skytrackr <- function(
   # cleanup of progress bar
   if(verbose) {
     cli::cli_progress_done()
+    cli::cli_alert_info(
+      "Data processing done ..."
+    )
   }
 
   # return the data frame with
