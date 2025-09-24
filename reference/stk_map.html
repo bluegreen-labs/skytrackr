@@ -65,7 +65,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_map</span><span class="op">(</span><span class="va">df</span>, <span class="va">bbox</span>, <span class="va">start_location</span>, <span class="va">roi</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_map</span><span class="op">(</span><span class="va">df</span>, <span class="va">bbox</span>, <span class="va">start_location</span>, <span class="va">roi</span>, dynamic <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -87,7 +87,14 @@ the starting position of the track (optional)</p></dd>
 
 <dt id="arg-roi">roi<a class="anchor" aria-label="anchor" href="#arg-roi"></a></dt>
 <dd><p>region of interest under consideration, only used in
-dynamic plots during optimization (optional)</p></dd>
+plots during optimization (optional)</p></dd>
+
+
+<dt id="arg-dynamic">dynamic<a class="anchor" aria-label="anchor" href="#arg-dynamic"></a></dt>
+<dd><p>create a dynamic interactive graph rather than
+a static plot. Both the path as the locations are shown. The size
+of the points is proportional to the latitudinal uncertainty, while
+equinox windows are marked with red points.</p></dd>
 
 </dl></div>
     <div id="value">
