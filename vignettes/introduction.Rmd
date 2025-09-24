@@ -33,13 +33,13 @@ library(skytrackr)
 
 ```
 
-## Abstract
+# Abstract
 
 Geolocation by light has revolutionized animal behavioural studies since its inception, allowing for the tracking of animals using the measurement of their light enviroment. The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters (such as a land mask) allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.
 
 **Keywords:** geolocation, tracking, movement ecology, flight, illuminance
 
-## Background
+# Background
 
 Geolocation by light has been a popular animal tracking method in ornithology. It has been successfully used to track long distance migration and foraging behaviour of swifts [@kearsley_aeroecology_2022, @norevik_windassociated_2020, @hedenstrom_annual_2016, @norevik_highly_2019, @hedenstrom_flight_2019] and other migratory birds, and increased our understanding of these long-distance movements.
 
@@ -51,9 +51,9 @@ Ongoing research therefore often focuses on the use of ancillary data (e.g. air 
 
 Here, I present the {skytrackr} R package which provides a Bayesian optimization based approach using a physical sky illuminance model [@hufkens_skylight_2022, @janiczek_computer_1987] to estimate geolocation from light levels. This package aims to provide a hands-off, calibration free, robust methodology to automated geolocation estimates. The package uses both a physical and behavioural components (step selection function) to constrain location estimates.
 
-## Implementation
+# Implementation
 
-### Optimization strategy
+## Optimization strategy
 
 The {skytrackr} R package uses a physical sky illuminance model [@hufkens_skylight_2022, @janiczek_computer_1987] in combination with Bayesian location parameter estimation [@hartig_bayesiantools_2023] approach to maximise the log-likelihood between observed (logger) and modelled values combined with those of a step-selection model describing the animal's behaviour. 
 
@@ -142,14 +142,14 @@ plot(p)
 
 By default, the DEzs MCMC sampler [@ter_braak_differential_2008] implemented in BayesianTools [@hartig_bayesiantools_2023] is used to estimate the posterior distribution of model parameters. For each location I sample the posterior distribution of the parameters (with a thinning factor of 10), and return summary values. I return the maxiumum aposteriori values as the best estimate of latitude, longitude and sky conditions. In addition, the 5, 50, and 95% quantiles on the parameter distributions are provided. The package also returns the Gelman-Rubin-Brooks (GRB) metric [@gelman_inference_1992], which can be used to assess the convergence of the optimization. Both the quantile ranges and the GRB metric can be used in post-hoc quality control screening.
 
-### Behavioural component
+## Behavioural component
 
 In order to constrain location estimates, especially during equinoxes, behavioural prior knowledge is included during parameter optimization in the form of a step selection function from a previously estimated location. A step-selection function attributes a likelihood to the distance of every step and often takes the form of a gamma or Weibull function (Figure \@ref(fig:ssf)). The combined log-likelihood of both the parameter estimates of the physical model as well as the behavioural component are taken into account to optimize the final location estimate.
 
 ```{r label = ssf, echo = FALSE, fig.cap="A step selection function showing the probability of moving a given distance from the previous location.", fig.width=7, out.width="80%"}
 
 # define a step selection distribution
-ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
+ssf <- function(x, shape = 1.04, scale = 100, tolerance = 1500){
   # normalize over expected range with km increments
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
@@ -160,15 +160,15 @@ plot(1:1500, ssf(1:1500), xlab = "distance (km)", ylab = "probability", type ='l
 
 ```
 
-### Workflow
+## Workflow
 
 The package workflow is aimed to be pipe (`|>`) friendly with data formats adhering to tidy data standards. The workflow is meant to be as hands off as possible, with sensible defaults.
 
-#### Reading data
+### Reading data
 
 Two functions are provided to read common data formats, the Migrate Technology Ltd `.lux` and the Swiss Ornithological Institute (SOI) `.glf` data formats using `stk_read_lux()` and `stk_read_glf()` respectively. A small example dataset (`.lux`) is included to experiment with some of the package functionality.
 
-```{r label = light-profile, fig.cap="", fig.width=7, out.width="80%"}
+```{r label = light-profile, fig.cap="Light profile of a data logger", fig.width=7, out.width="80%"}
 # read in the lux file
 df <- stk_read_lux(
       system.file("extdata/cc876.lux", package="skytrackr")
@@ -178,7 +178,7 @@ df <- stk_read_lux(
 df |> stk_profile()
 ```
 
-#### Cleaning data
+### Cleaning data
 
 Light logger data can be influenced by factors which make it impossible to correctly estimate location parameters. For example when no light is recorded when an animal is in a nest during twilight hours. To deal with these "false twilights" or spuriously low values during daytime a screening function is implemented to remove such days, only retaining those days with a reasonably complete diurnal light profile.
 
@@ -220,11 +220,11 @@ df <- df |>
    )
 ```
 
-#### Creating a land mask
+### Creating a land mask
 
 The optimization routine relies on a land mask to constrain land based animals to land. This mask needs to be generated beforehand. The mask will generate a raster file showing land locations, buffered by a given distance (in km) and with a given spatial resolution (in degrees). Only locations within the mask are considered during location estimates. Should an animal not be constrained to land a mask (map) should be generated with unity (1) values throughout.
 
-```{r label = land-mask, fig.cap = "land mask to constrain location estimates"}
+```{r label = land-mask, fig.cap = "Land mask to constrain location estimates"}
 # generate a mask
 mask <- stk_mask(
   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
@@ -236,13 +236,13 @@ mask <- stk_mask(
 plot(mask)
 ```
 
-#### Defining a step-selection
+### Defining a step-selection
 
 The location estimates are not only constrained by geography but more importantly by behaviour. A function (returning probabilities) can be used to weight the probability of a step of a particular distance (relative to the previous location). Although any function can be used common step-selection probability distributions such as a gamma or Weibull are adviced.
 
 Here I do not recommend using a biophysical basis, based on flight speed or power functions, such as used in the {GeoPressureR} package. First, the flight distances are not a reflection of flight speed, as this depends on behaviour. In particular, local ranging at high speed might not result in large distances traveled as measured on a daily time step (the resolution of the analysis). Second, although migration is often the focus of bio-logging the bulk of the behaviour during any trip will not be spent migrating. In short, the step-selection function should reflect the most common local ranging behaviour at a daily time step in order to provide valid constraints during optimization. If available, previous data gathered and expert knowledge can be used to inform you on the shape of this step-selection function. Here, I'll use a normalized gamma distribution as specified above and shown in Figure \@ref(fig:ssf). 
 
-### Estimating positions
+## Estimating positions
 
 After reading in the data, cleaning the data, and setting up the mask and step-selection function you can now call the main `skytrackr()` function. This function deals with the final parameter optimization (location estimates). Before proceeding you will have to set a few more parameters. In particular, a start location (which should be the location where you tagged your individual), the tolerance distance (in km) which sets a hard limit on the locations considered (redundant dependent on the shape of the step-selection function), the `scale` parameter which adjusts the daylight levels to occlusions by clouds (or fur/feathers/other environmental factors), the `range` of light values (in lux) to consider (to select either only twilight periods or the full diurnal cycle). Finally, you have to specify the `control` parameters for the BayesianTools functions as a nested list.
 
@@ -286,13 +286,13 @@ If the `plot` parameter is set to `TRUE` a plot of the estimated locations will 
 knitr::include_graphics("skytrackr_preview.png")
 ```
 
-#### Optimization caveats (advanced control settings)
+### Optimization caveats (advanced control settings)
 
 Generally speaking around 3000 iterations, with 250 for burnin, should be sufficient to get proper parameter estimates. Using lower values can speed up the processing but at the cost of precision. The latter is important as there is a co-dependency between the current and the previous step through the distance based step-selection function. Hence, errors can propagate through auto-correlation. Increasing iterations has its limit, as 1500x1500 km (or ~150x150 degree, assuming a one degree search grid) search area could be efficiently searched using brute force with ~22K iterations. The use of an optimization based method is to avoid using expensive brute force methods which impose overhead and quantization of the location estimates.
 
 The default scale parameter range covers values from close to 0 to 50 (values should be provided log transformed to improve optimization stability), far outside the normal range of the {skylight} sky illuminance model (with values normally ranging from 1 to 10). This larger range accounts for either the non-physical basis of the sensor and occlusions of the sensor decreasing light input (i.e. mediating the raw sensor response). This parameter should be set wide enough to allow for sufficient model flexibility, but not too wide as to inflate the parameter space to search (deteriorating parameter/location estimates through insufficient sampling coverage).
 
-### Visualizing location estimates
+## Visualizing location estimates
 
 Running the full dataset for logger CC876, from which a subset is included, would yield a full track. You can visualize a full track using the `stk_map()` function.
 
@@ -305,7 +305,7 @@ locations |> stk_map(bbox = c(-20, -40, 60, 60))
 knitr::include_graphics("skytrackr_final_plot.png")
 ```
 
-## Discussion
+# Discussion
 
 The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_advance_2004]. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure \@ref(fig:final-plot)). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
 
@@ -316,17 +316,17 @@ if(!require(remotes)){install.packages("remotes")}
 remotes::install_github("bluegreen-labs/skytrackr")
 ```
 
-### Limitations & future improvements
+## Limitations & future improvements
 
 The package does not mitigate uncertainty introduced by occlusion of the sensor by feathers, or birds roosting in secluded places. Adjusting the scale parameter can alleviate some of these issues. Similarly, if values have no physical meaning relaxing the scale parameter to a value below one (1) might be required. For example, Swiss Ornithological Institute based logger data needs a `scale` parameter range with values between 0 and 1, multiplying the sky illuminance model output rather than dividing it. Coverage by fur/feathers of loggers can also decrease the registered daylight values, exceeding the normal ranger of the sky illuminance model of a ten fold decrease. To accommodate most scenarios a default scale range of 0.00001 to 50 is used (log transformed). Constraining this range, which shows up as heavily skewed parameters to the upper side of the range, will negatively affect the location estimation. The method is therefore calibration free insofar as the parameter bounds of the sky conditions (i.e. a model output multiplier) are set sensibly. The defaults chosen work well for Migrate Technology Ltd. and SOI based sensors.
 
 Performance of the optimization method remains functionally optimal in species such as swifts, which continuously fly during their non-breeding season ensuring well defined diurnal light profiles. The use of a hard threshold distance to a movement kernel as well as specifying a formal step-selection approach constrains estimated locations within normal bounds. Returned tracks are therefore stable over time and do not show pronounced run-away behaviour during equinoxes. However, further data assimilation by using pressure measurements (e.g. @nussbaumer_global_2023) at stationary moments could be implemented to account for species which roost in dense vegetation with less well defined light profiles.
 
-## Conclusion
+# Conclusion
 
 The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.
 
-## Availability and requirements
+# Availability and requirements
 
  - **Project name:** skytrackr
  - **Project homepage:** https://github.com/bluegreen-labs/skytrackr
@@ -334,6 +334,6 @@ The {skytrackr} R package provides a convenient template fitting methodology and
  - **Programming Language:** R
  - **License:** AGPLv3
 
-## References
+# References
 
 
