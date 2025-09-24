@@ -31,30 +31,29 @@ stk_map <- function(
             uncertainty = .data$latitude_qt_95 - .data$latitude_qt_5
          )
 
-      path <-  df |>
-         sf::st_as_sf(coords = c("longitude", "latitude")) |>
-         sf::st_set_crs("EPSG:4326") |>
-         sf::st_combine() |>
-         sf::st_cast("LINESTRING")
-
       points <- df |>
          sf::st_as_sf(
             coords = c("longitude","latitude"),
             crs = 4326
          )
 
+      path <-  points |>
+         dplyr::group_by(.data$logger) |>
+         dplyr::summarise(do_union = FALSE) |>
+         sf::st_cast("MULTILINESTRING")
+
       m <- mapview::mapview(
          path,
-         map.types = "Esri.WorldImagery",
-         col.regions = "#000",
-         col = "#000"
+         map.types = "Esri.WorldImagery"
       )
 
       m <- m + mapview::mapview(
          points,
+         popup = TRUE,
          zcol = "equinox",
-         popup = leafpop ::popupTable(df, zcol = c("logger","date","equinox")),
-         col.regions = c("#FFF","#ff0000"),
+         col.regions = c("grey", "white"),
+         col = c("grey", "white"),
+         alpha.regions = 0.8,
          cex = "uncertainty",
          label = NA
       )
