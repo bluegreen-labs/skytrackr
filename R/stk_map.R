@@ -1,6 +1,6 @@
 #' Plot skytrackr results
 #'
-#' Create a map of estimated locations
+#' Create a map of estimated locations as a static or dynamic map.
 #'
 #' @param df a data frame with locations produced by skytrackr()
 #' @param bbox a bounding box
@@ -12,8 +12,41 @@
 #'  a static plot. Both the path as the locations are shown. The size
 #'  of the points is proportional to the latitudinal uncertainty, while
 #'  equinox windows are marked with red points.
+
+#' @importFrom rlang .data
+
 #' @return a ggplot map of tracked locations
 #' @export
+#' @examples
+#' \dontrun{
+#'
+#' #----- estimated locations on demo data ----
+#' # define land mask with a bounding box
+#' # and an off-shore buffer (in km), in addition
+#' # you can specify the resolution of the resulting raster
+#' mask <- stk_mask(
+#'   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+#'   buffer = 150, # in km
+#'   resolution = 0.5 # map grid in degrees
+#'   )
+#'
+#'   # define a step selection distribution/function
+#'   ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
+#'   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+#'   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+#' }
+#'
+#' # estimate locations with default values
+#' # and plot progress
+#' locations <- cc876 |> skytrackr(plot = FALSE)
+#'
+#' #----- actual plotting routines ----
+#' # static plot, with required bounding box
+#' locations |> stk_map(bbox = c(-20, -40, 60, 60))
+#'
+#' # dynamic plot
+#' locations |> stk_map(dynamic = TRUE)
+#' }
 
 stk_map <- function(
     df,
@@ -185,13 +218,6 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
-      # ggplot2::geom_path(
-      #    ggplot2::aes(
-      #       y = .data$date,
-      #       x = .data$latitude
-      #    ),
-      #    colour = "red"
-      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
@@ -212,13 +238,6 @@ stk_map <- function(
        ),
        fill = "grey85"
      ) +
-      # ggplot2::geom_path(
-      #    ggplot2::aes(
-      #       y = .data$date,
-      #       x = .data$longitude
-      #    ),
-      #    colour = "red"
-      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
@@ -240,13 +259,6 @@ stk_map <- function(
          ),
          fill = "grey85"
       ) +
-      # ggplot2::geom_path(
-      #    ggplot2::aes(
-      #       y = .data$date,
-      #       x = .data$sky_conditions
-      #    ),
-      #    colour = "red"
-      # )  +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,

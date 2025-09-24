@@ -1,6 +1,7 @@
 #' Twilight screening routine
 #'
-#' Removes poor quality data based on twilight heuristics
+#' Removes poor quality data based on twilight heuristics. Allows for quick
+#' screening of data containing "false" twilights.
 #'
 #' @param df skytrackr data frame
 #' @param threshold twilight threshold (default = 1.5)
@@ -18,6 +19,19 @@
 #'  dusk and dawn timings marked (data is returned as a long format, not a wide
 #'  format)
 #' @export
+#' @examples
+#' # set demo values artificially low as a demonstration
+#' library(dplyr)
+#' df <- cc876 |>
+#'   mutate(
+#'   value = ifelse(
+#'     date_time > "2021-08-15 05:00:00" & date_time < "2021-08-15 12:00:00",
+#'     0.1,
+#'     value)
+#'   )
+#'
+#' # screen values and remove them (filter = TRUE)
+#' df <- df |> stk_screen_twl(filter = TRUE)
 
 stk_screen_twl <- function(
     df,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/log_lux.R
 \name{log_lux}
 \alias{log_lux}
-\title{Simulate illuminance as log(lux) values}
+\title{Simulate illuminance value}
 \usage{
 log_lux(par, data, ...)
 }

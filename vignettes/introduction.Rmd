@@ -1,6 +1,6 @@
 ---
 title: "The skytrackr R package"
-subtitle: "an optimization based approach to geolocation by light"
+subtitle: "a template matching approach to geolocation by light"
 author: "Koen Hufkens"
 bibliography: references.bib
 output: 

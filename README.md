@@ -84,7 +84,7 @@ df |> stk_profile()
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png)
 
-Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of an hands off approach as possible, but use expert judgement.
+Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but use expert judgement.
 
 ## MCMC DEzs optimization
 

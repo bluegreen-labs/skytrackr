@@ -25,3 +25,15 @@ buffered land mask as an 'sf' or 'terra' map object
 returns a buffered land mask to constrain potential
 model results
 }
+\examples{
+\dontrun{
+# define land mask with a bounding box
+# and an off-shore buffer (in km), in addition
+# you can specifiy the resolution of the resulting raster
+mask <- stk_mask(
+  bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+  buffer = 150, # in km
+  resolution = 0.5 # map grid in degrees
+  )
+}
+}

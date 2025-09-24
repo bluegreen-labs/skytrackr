@@ -16,3 +16,14 @@
 #'   \item{lux}{light levels in lux}
 #' }
 "cc876"
+
+#' Land area vector
+#'
+#' Vector polygon of world land areas to constrain
+#' model optimization.
+#'
+#' @format sf
+#' \describe{
+#'   \item{MULTIPOLYGON}{sf multipolygon}
+#' }
+"land"

@@ -13,5 +13,5 @@ read_deg_lux(file)
 a data frame with logger data
 }
 \description{
-Read lux and deg files
+This function is wrapped by the `stk_read_lux()` function.
 }

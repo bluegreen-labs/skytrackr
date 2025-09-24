@@ -2,7 +2,7 @@
 % Please edit documentation in R/stk_read.R
 \name{stk_read_glf}
 \alias{stk_read_glf}
-\title{Read GLF files}
+\title{Read Swiss Ornithology institute GLF files}
 \usage{
 stk_read_glf(file)
 }
@@ -14,5 +14,11 @@ a skytrackr compatible data frame for use in further location
  estimation
 }
 \description{
-Read Swiss Ornithology institute files
+Read Swiss Ornithology institute files in the `.glf` and re-formats
+them to a skytrackr compatible format.
+}
+\examples{
+\dontrun{
+df <- stk_read_glf("your_SOI_glf_file.glf")
+}
 }

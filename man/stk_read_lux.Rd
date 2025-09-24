@@ -14,6 +14,12 @@ a skytrackr compatible data frame for use in further location
  estimation
 }
 \description{
-Read Migrate Technology lux files and re-formats
+Read Migrate Technology Ltd. `.lux` files and re-formats
 them to a skytrackr compatible format.
+}
+\examples{
+# read in the demo lux file
+df <- stk_read_lux(
+ system.file("extdata/cc876.lux", package="skytrackr")
+)
 }

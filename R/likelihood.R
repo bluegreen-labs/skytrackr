@@ -1,5 +1,8 @@
 
-#' Log likelihood cost function for model optimization
+#' Log likelihood cost function
+#'
+#' Main cost function used during optimization, combining both the fit of the
+#' illuminance data with the step-selection function.
 #'
 #' @param par a vector of parameter values, including one for the uncertainty
 #'  on the target values

@@ -14,32 +14,37 @@ set.seed(1)
 
 #library(skytrackr)
 
-df1 <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
-df1 <-df1 |>
-  stk_screen_twl(filter = TRUE)
-
-# df2 <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+# df1 <- stk_read_lux("data-raw/CC874_18Jun22_123407.lux")
+# df1 <-df1 |>
+#   stk_screen_twl(filter = TRUE)
 #
+df2 <- stk_read_lux("data-raw/CC876_22Jun22_161546.lux")
+
 # p <- df2 |> stk_profile()
 # ggsave("profile_plot.png")
 #
-# df2 <-df2 |>
-#   stk_screen_twl(filter = TRUE)
-#
+df2 <- df2 |>
+  stk_screen_twl(filter = TRUE) |>
+    filter(
+      date >= "2021-08-01" & date <= "2022-05-15"
+    )
+
 # p <- df2 |> stk_profile()
 # ggsave("profile_plot_trimmed.png")
 #
 # df <- bind_rows(df1, df2)
-#
 
-df <- df1
-#
+#df <- df1
+df <- df2
+
+# BADEN
 # df <- stk_read_glf("inst/extdata/24MP_20200813.glf")
 # df <- df |>
 #   filter(
 #     date >= "2019-08-31" & date <= "2020-04-15"
 #   )
 
+# PIRASALI
 # df <- stk_read_glf("inst/extdata/22LE_20200218.glf")
 #
 # df <- df |>
@@ -82,13 +87,22 @@ bbox <- c(-20, -40, 60, 60)
 mask <- stk_mask(
   bbox  =  bbox,
   buffer = 150, # in km
-  resolution = 1 # in degrees
+  resolution = 0.5 # in degrees
 )
 
 tol <- 1500
 
+# define land mask with a bounding box
+# and an off-shore buffer (in km), in addition
+# you can specifiy the resolution of the resulting raster
+mask <- stk_mask(
+  bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+  buffer = 150, # in km
+  resolution = 0.5 # map grid in degrees
+)
+
 # define a step selection distribution
-ssf <- function(x, shape = 1.1, scale = 200, tolerance = tol){
+ssf <- function(x, shape = 0.9, scale = 100, tolerance = tol){
   # normalize over expected range with km increments
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
@@ -101,32 +115,22 @@ locations <- df |>
     skytrackr(
       .,
       mask = mask,
-      plot = TRUE,
-      start_location = c(51.08, 3.73), # Gent - lux file
+      plot = FALSE,
       #start_location = c(47.5, 8.25), # Baden - glf file
       #start_location = c(36.33, 30.5), # Pirasali - glf file
+      start_location = c(51.08, 3.73), # Gent - lux file
       tolerance = tol, # in km
-      scale = c(0.00001, 10),
-      #range = c(0.1, 140000), # full day profile
-      range = c(0.1, 9000), # truncated for glf range / as saturates
+      scale = log(c(0.00001, 50)),
+      range = c(0.09, 148),
+      #range = c(8, 9000),
       control = list(
         sampler = 'DEzs',
         settings = list(
-          burnin = 500,
-          iterations = 1000,
+          burnin = 250,
+          iterations = 3000,
           message = FALSE
         )
       ),
       step_selection = ssf
     )
   })
-
-#saveRDS(locations, "analysis/locations.rds", compress = "xz")
-p <- locations |>
-  group_by(logger) |>
-  do(p = {
-    plot(stk_map(., bbox = bbox))
-  })
-
-
-

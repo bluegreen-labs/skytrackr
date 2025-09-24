@@ -40,6 +40,27 @@
 #' @return data frame with location estimate, their uncertainties, and
 #' ancillary model parameters useful in quality control
 #' @export
+#' @examples
+#' \dontrun{
+#' # define land mask with a bounding box
+#' # and an off-shore buffer (in km), in addition
+#' # you can specify the resolution of the resulting raster
+#' mask <- stk_mask(
+#'   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+#'   buffer = 150, # in km
+#'   resolution = 0.5 # map grid in degrees
+#'   )
+#'
+#'   # define a step selection distribution/function
+#'   ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
+#'   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+#'   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+#' }
+#'
+#' # estimate locations with default values
+#' # and plot progress
+#' locations <- cc876 |> skytrackr(plot = TRUE)
+#' }
 
 skytrackr <- function(
     data,
