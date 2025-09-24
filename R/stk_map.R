@@ -7,8 +7,9 @@
 #' @param start_location start location as lat/lon to indicate
 #'  the starting position of the track (optional)
 #' @param roi region of interest under consideration, only used in
-#'  dynamic plots during optimization (optional)
-#'
+#'  plots during optimization (optional)
+#' @param dynamic create a dynamic interactive graph rather than
+#'  a static plot
 #' @return a ggplot map of tracked locations
 #' @export
 
@@ -16,8 +17,49 @@ stk_map <- function(
     df,
     bbox,
     start_location,
-    roi
+    roi,
+    dynamic = FALSE
     ) {
+
+   # show dynamic plot
+   if(dynamic){
+
+      df <- df |>
+         dplyr::mutate(
+            uncertainty = .data$latitude_qt_95 - .data$latitude_qt_5
+         )
+
+      path <-  df |>
+         sf::st_as_sf(coords = c("longitude", "latitude")) |>
+         sf::st_set_crs("EPSG:4326") |>
+         sf::st_combine() |>
+         sf::st_cast("LINESTRING")
+
+      points <- df |>
+         sf::st_as_sf(
+            coords = c("longitude","latitude"),
+            crs = 4326
+         )
+
+      m <- mapview::mapview(
+         path,
+         map.types = "Esri.WorldImagery",
+         col.regions = "#000",
+         col = "#000"
+      )
+
+      m <- m + mapview::mapview(
+         points,
+         zcol = "equinox",
+         popup = leafpop ::popupTable(df, zcol = c("logger","date","equinox")),
+         col.regions = c("#FFF","#ff0000"),
+         cex = "uncertainty",
+         label = NA
+      )
+
+      print(m)
+      return(invisible())
+   }
 
    # convert to sf
    path <-  df |>
