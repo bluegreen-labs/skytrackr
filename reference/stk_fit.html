@@ -78,36 +78,40 @@ to estimate locations (parameters).</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>a data frame containing date time and lux values</p></dd>
+<dd><p>A skytrackr data frame</p></dd>
 
 
 <dt id="arg-roi">roi<a class="anchor" aria-label="anchor" href="#arg-roi"></a></dt>
-<dd><p>region of interest</p></dd>
+<dd><p>A region of interest defined by a dynamic bounding box (set via
+the tolerance value and relative to the previous step)</p></dd>
 
 
 <dt id="arg-loc">loc<a class="anchor" aria-label="anchor" href="#arg-loc"></a></dt>
-<dd><p>location of the previous step</p></dd>
+<dd><p>The location of the previous step</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>scale factor range due to cloudiness to use in optimization,
-when target values are not provided in lux this can be used to effectively
-implement a Hill-Ekstrom template fitting</p></dd>
+<dd><p>Scale / sky condition factor covering the
+skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+but can be extended for more flexibility to account for coverage by plumage,
+note that in case of non-physical accurate lux measurements values can have
+a range starting at 0.0001 (a multiplier instead of a divider).</p></dd>
 
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
-<dd><p>control settings for the Bayesian optimization, forwarded by
-skytrackr()</p></dd>
+<dd><p>Control settings for the Bayesian optimization, generally
+should not be altered (defaults to a Monte Carlo method). For detailed
+information I refer to the BayesianTools package documentation.</p></dd>
 
 
 <dt id="arg-step-selection">step_selection<a class="anchor" aria-label="anchor" href="#arg-step-selection"></a></dt>
-<dd><p>a step selection function on the distance
-of a proposed move</p></dd>
+<dd><p>A step selection function on the distance of a proposed
+move, step selection is specified on distance (in km) basis.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>an estimated illuminance based location (and its uncertainties)</p>
+    <p>An estimated illuminance based location (and its uncertainties).</p>
     </div>
 
   </div>

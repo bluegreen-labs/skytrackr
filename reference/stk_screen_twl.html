@@ -78,36 +78,36 @@ screening of data containing "false" twilights.</p>
 
 
 <dl><dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
-<dd><p>skytrackr data frame</p></dd>
+<dd><p>A skytrackr data frame.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>twilight threshold (default = 1.5)</p></dd>
+<dd><p>A twilight threshold (default = 1.5).</p></dd>
 
 
 <dt id="arg-dips">dips<a class="anchor" aria-label="anchor" href="#arg-dips"></a></dt>
-<dd><p>allowed number of interruptions during a daylight profile
+<dd><p>The allowed number of interruptions during a daylight profile
 below the twilight threshold before flagging as a poor quality "suspect"
-day</p></dd>
+day.</p></dd>
 
 
 <dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
-<dd><p>threshold of the allowed step change in illuminance values
+<dd><p>A threshold of the allowed step change in illuminance values
 between the twilight value and the preceding one. Large jumps and the lack
 of a smooth transition suggest a false twilight (bird leaving a dark nest
 site long after or long before dawn or dusk).</p></dd>
 
 
 <dt id="arg-filter">filter<a class="anchor" aria-label="anchor" href="#arg-filter"></a></dt>
-<dd><p>return the data prefiltered, removing all poor quality days
-or false twilight ones</p></dd>
+<dd><p>Logical if to return data prefiltered, removing all poor quality days
+or false twilight ones (default = FALSE)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a skytrackr data frame with poor twilight quality days removed and
+    <p>A skytrackr data frame with poor twilight quality days removed and
  dusk and dawn timings marked (data is returned as a long format, not a wide
- format)</p>
+ format).</p>
     </div>
 
     <div id="ref-examples">

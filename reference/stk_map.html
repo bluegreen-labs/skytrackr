@@ -76,33 +76,34 @@
 
 
 <dl><dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
-<dd><p>a data frame with locations produced by skytrackr()</p></dd>
+<dd><p>A data frame with locations produced with the skytrackr() function</p></dd>
 
 
 <dt id="arg-bbox">bbox<a class="anchor" aria-label="anchor" href="#arg-bbox"></a></dt>
-<dd><p>a bounding box</p></dd>
+<dd><p>A geographic bounding box provided as a vector with the format
+xmin, ymin, xmax, ymax.</p></dd>
 
 
 <dt id="arg-start-location">start_location<a class="anchor" aria-label="anchor" href="#arg-start-location"></a></dt>
-<dd><p>start location as lat/lon to indicate
+<dd><p>A start location as lat/lon to indicate
 the starting position of the track (optional)</p></dd>
 
 
 <dt id="arg-roi">roi<a class="anchor" aria-label="anchor" href="#arg-roi"></a></dt>
-<dd><p>region of interest under consideration, only used in
-plots during optimization (optional)</p></dd>
+<dd><p>A region of interest under consideration, only used in
+plots during optimization</p></dd>
 
 
 <dt id="arg-dynamic">dynamic<a class="anchor" aria-label="anchor" href="#arg-dynamic"></a></dt>
-<dd><p>create a dynamic interactive graph rather than
+<dd><p>Option to create a dynamic interactive graph rather than
 a static plot. Both the path as the locations are shown. The size
 of the points is proportional to the latitudinal uncertainty, while
-equinox windows are marked with red points.</p></dd>
+equinox windows are marked with red points. (default = FALSE)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a ggplot map of tracked locations</p>
+    <p>A ggplot map of tracked locations or mapview dynamic overview.</p>
     </div>
 
     <div id="ref-examples">
