@@ -26,3 +26,4 @@
 ^.*-logo\..*$
 ^codemeta\.json$
 ^.*\.png*$
+^CRAN-SUBMISSION$
