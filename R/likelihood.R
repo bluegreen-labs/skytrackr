@@ -12,7 +12,6 @@
 #' @param step_selection A step selection function on the distance of a proposed move.
 #' @param ... extra arguments to pass to the function
 #' @return The single log-likelihood cost of a proposed parameter set.
-#' @keywords model, optimization, cost function
 #' @export
 
 likelihood <- function(

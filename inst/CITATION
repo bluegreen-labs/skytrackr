@@ -1,0 +1,13 @@
+citHeader("To cite skytrackr in publications use:")
+
+bibentry(bibtype = "Misc",
+         title = "Skytrackr: A Sky Illuminance Location Tracker",,
+         author = as.person("Koen Hufkens"),
+         year = "2025",
+         doi = "10.5281/zenodo.8331492",
+         url = "https://bluegreen-labs.github.io/skytrackr/",
+         textVersion  =
+           paste("Hufkens (2025).",
+                 "Skytrackr: A Sky Illuminance Location Tracker",
+                 "https://doi.org/10.5281/zenodo.8331492")
+)

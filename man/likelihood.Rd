@@ -29,7 +29,3 @@ The single log-likelihood cost of a proposed parameter set.
 Main cost function used during optimization, combining both the fit of the
 illuminance data with the step-selection function.
 }
-\keyword{cost}
-\keyword{function}
-\keyword{model,}
-\keyword{optimization,}
