@@ -3,7 +3,7 @@
 \docType{data}
 \name{land}
 \alias{land}
-\title{Land area vector}
+\title{Land area polygon}
 \format{
 sf
 \describe{

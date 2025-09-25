@@ -7,21 +7,20 @@
 stk_profile(data, logger, range = c(0, 1e+05), center = "day", plotly = FALSE)
 }
 \arguments{
-\item{data}{skytrackr compatible data frame}
+\item{data}{A skytrackr compatible data frame.}
 
-\item{logger}{the logger to plot}
+\item{logger}{The logger to plot.}
 
-\item{range}{the light range to plot}
+\item{range}{The light range to plot.}
 
-\item{center}{center data on day or night}
+\item{center}{Set the data to center data on "day" or "night"
+(default = "day").}
 
-\item{plotly}{TRUE or FALSE (convert to dynamic plotly plot or not)}
+\item{plotly}{Logical, convert to dynamic plotly plot or not (default = FALSE)}
 }
 \value{
-a plotly dynamic graph of light levels for a given logger
+A static or dynamic graph of light levels for a given logger.
 }
 \description{
-Uses plotly to provide a seasonal profile plot
-NOTE make this a method class so you can call
-plot(data.frame) or plot(df, plotly = TRUE)
+Provides static or dynamic (plotly) seasonal profile plot
 }

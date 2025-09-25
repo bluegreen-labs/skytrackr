@@ -3,18 +3,22 @@
 #' Fits a simulated lux profile to observed light logger data
 #' to estimate locations (parameters).
 #'
-#' @param data a data frame containing date time and lux values
-#' @param roi region of interest
-#' @param loc location of the previous step
-#' @param scale scale factor range due to cloudiness to use in optimization,
-#'  when target values are not provided in lux this can be used to effectively
-#'  implement a Hill-Ekstrom template fitting
-#' @param control control settings for the Bayesian optimization, forwarded by
-#'  skytrackr()
-#' @param step_selection a step selection function on the distance
-#'  of a proposed move
+#' @param data A skytrackr data frame
+#' @param roi A region of interest defined by a dynamic bounding box (set via
+#'  the tolerance value and relative to the previous step)
+#' @param loc The location of the previous step
+#' @param scale Scale / sky condition factor covering the
+#'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
+#'  but can be extended for more flexibility to account for coverage by plumage,
+#'  note that in case of non-physical accurate lux measurements values can have
+#'  a range starting at 0.0001 (a multiplier instead of a divider).
+#' @param control Control settings for the Bayesian optimization, generally
+#'  should not be altered (defaults to a Monte Carlo method). For detailed
+#'  information I refer to the BayesianTools package documentation.
+#' @param step_selection A step selection function on the distance of a proposed
+#'  move, step selection is specified on distance (in km) basis.
 #'
-#' @return an estimated illuminance based location (and its uncertainties)
+#' @return An estimated illuminance based location (and its uncertainties).
 #' @export
 
 stk_fit <- function(

@@ -1,18 +1,16 @@
-
 #' Plot seasonal profiles
 #'
-#' Uses plotly to provide a seasonal profile plot
-#' NOTE make this a method class so you can call
-#' plot(data.frame) or plot(df, plotly = TRUE)
+#' Provides static or dynamic (plotly) seasonal profile plot
 #'
-#' @param data skytrackr compatible data frame
-#' @param logger the logger to plot
-#' @param range the light range to plot
-#' @param center center data on day or night
-#' @param plotly TRUE or FALSE (convert to dynamic plotly plot or not)
+#' @param data A skytrackr compatible data frame.
+#' @param logger The logger to plot.
+#' @param range The light range to plot.
+#' @param center Set the data to center data on "day" or "night"
+#'  (default = "day").
+#' @param plotly Logical, convert to dynamic plotly plot or not (default = FALSE)
 #' @importFrom rlang .data
 #'
-#' @return a plotly dynamic graph of light levels for a given logger
+#' @return A static or dynamic graph of light levels for a given logger.
 #' @export
 
 stk_profile <- function(

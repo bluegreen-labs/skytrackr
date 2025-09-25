@@ -1,13 +1,13 @@
-#' Cluster geolocator data
+#' Cluster geolocator co-variates
 #'
 #' Uses k-means and hierarchical clustering to group geolocator
 #' covariates into consistent groups for visual analysis
 #'
-#' @param df a skytrackr data frame
-#' @param k number of k-means/hierarchical clusters to consider
-#' @param method method to use, kmeans by default, hclust can be set
+#' @param df A skytrackr data frame.
+#' @param k The number of k-means/hierarchical clusters to consider.
+#' @param method The method to use, "kmeans" (default), "hclust" can be set.
 #'
-#' @return original data frame with attached cluster labels
+#' @return The original data frame with attached cluster labels.
 #' @export
 
 stk_cluster <- function(
@@ -51,7 +51,7 @@ stk_cluster <- function(
 
   # center values as based on distance
   # with widely different absolute values
-  df_wide <- apply(df_wide, 2, scale)
+  #df_wide <- apply(df_wide, 2, scale)
 
   if (method == "kmeans") {
     # calculate kmeans clustering

@@ -7,11 +7,11 @@
 stk_read_glf(file)
 }
 \arguments{
-\item{file}{a .glf file with light level values}
+\item{file}{A `.glf` file with light level values.}
 }
 \value{
-a skytrackr compatible data frame for use in further location
- estimation
+A skytrackr compatible data frame for use in further location
+ estimation.
 }
 \description{
 Read Swiss Ornithology institute files in the `.glf` and re-formats

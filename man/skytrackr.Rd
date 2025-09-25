@@ -2,7 +2,7 @@
 % Please edit documentation in R/skytrackr.R
 \name{skytrackr}
 \alias{skytrackr}
-\title{Sky (illuminance) tracker}
+\title{Sky (illuminance) location estimation routine}
 \usage{
 skytrackr(
   data,
@@ -19,47 +19,44 @@ skytrackr(
 )
 }
 \arguments{
-\item{data}{a data frame containing date time and lux values}
+\item{data}{A skytrackr data frame.}
 
-\item{start_location}{start location of logging, required when using a
-tolerance based estimation. When no start_location is used the default
-bounding box (bbox) settings are used.}
+\item{start_location}{A start location of logging.}
 
-\item{tolerance}{tolerance distance on the search window for optimization,
+\item{tolerance}{Tolerance distance on the search window for optimization,
 given in km (left/right, top/bottom). Sets a hard limit on the search window
 regardless of the step selection function used.}
 
-\item{range}{range of values to consider during processing, should be
-provided in lux c(min, max) or the equivalent if non-calibrated. In case of
-non calibrated values you will need to adapt the scale values accordingly.}
+\item{range}{Range of values to consider during processing, should be
+provided in lux c(min, max) or the equivalent if non-calibrated.}
 
-\item{scale}{scale / sky condition factor, by default covering the
+\item{scale}{Scale / sky condition factor, by default covering the
 skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 but can be extended for more flexibility to account for coverage by plumage,
 note that in case of non-physical accurate lux measurements values can have
-a range starting at 0.0001 (a multiplier instead of a divider).}
+a range starting at 0.0001 (a multiplier instead of a divider). Values need
+to be provided on a log scale (default = log(c(0.00001, 50)))}
 
-\item{control}{control settings for the Bayesian optimization, generally
-should not be altered (defaults to a Monte Carlo method)}
+\item{control}{Control settings for the Bayesian optimization, generally
+should not be altered (defaults to a Monte Carlo method). For detailed
+information I refer to the BayesianTools package documentation.}
 
-\item{mask}{mask with priors to constrain positions}
+\item{mask}{Mask to constrain positions to land}
 
-\item{step_selection}{a step selection function on the distance of a proposed
-move, step selection is specified as average flight speed to achieve this
-distance (in km/h).}
+\item{step_selection}{A step selection function on the distance of a proposed
+move, step selection is specified on distance (in km) basis.}
 
-\item{plot}{plot map of incrementally changing determined locations as
-a progress method}
+\item{plot}{Plot a map during location estimation (updated every seven days)}
 
-\item{verbose}{given feedback including a progress bar}
+\item{verbose}{Give feedback including a progress bar (TRUE or FALSE)}
 }
 \value{
-data frame with location estimate, their uncertainties, and
-ancillary model parameters useful in quality control
+A data frame with location estimate, their uncertainties, and
+ ancillary model parameters useful in quality control
 }
 \description{
 Skytrack compares geolocator based light measurements in lux with
-those modelled by the sky illuminance model of xyz.
+those modelled by the sky illuminance model of Janiczek and DeYoung (1987).
 }
 \details{
 Model fits are applied by default to values up to sunrise or after

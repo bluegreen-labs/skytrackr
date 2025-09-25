@@ -7,11 +7,11 @@
 stk_read_lux(file)
 }
 \arguments{
-\item{file}{a .lux file with light level values}
+\item{file}{A `.lux` file with light level values}
 }
 \value{
-a skytrackr compatible data frame for use in further location
- estimation
+A skytrackr compatible data frame for use in further location
+ estimation.
 }
 \description{
 Read Migrate Technology Ltd. `.lux` files and re-formats

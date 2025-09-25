@@ -7,15 +7,14 @@
 log_lux(par, data, ...)
 }
 \arguments{
-\item{par}{three parameters specifying the cycling model}
+\item{par}{Three parameters specifying the illuminance model.}
 
-\item{data}{data consisting of vegetation greenness (G), mean
-daytime temperature (T) and daylenght (D) as a data frame}
+\item{data}{A data frame with the required drivers for the illuminance model.}
 
 \item{...}{optional other parameters to forward}
 }
 \value{
-sky illuminance as log(lux)
+Sky illuminance as log(lux)
 }
 \description{
 Calculates log(lux) values for a give location, date, time

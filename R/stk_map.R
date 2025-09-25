@@ -2,20 +2,21 @@
 #'
 #' Create a map of estimated locations as a static or dynamic map.
 #'
-#' @param df a data frame with locations produced by skytrackr()
-#' @param bbox a bounding box
-#' @param start_location start location as lat/lon to indicate
+#' @param df A data frame with locations produced with the skytrackr() function
+#' @param bbox A geographic bounding box provided as a vector with the format
+#'  xmin, ymin, xmax, ymax.
+#' @param start_location A start location as lat/lon to indicate
 #'  the starting position of the track (optional)
-#' @param roi region of interest under consideration, only used in
-#'  plots during optimization (optional)
-#' @param dynamic create a dynamic interactive graph rather than
+#' @param roi A region of interest under consideration, only used in
+#'  plots during optimization
+#' @param dynamic Option to create a dynamic interactive graph rather than
 #'  a static plot. Both the path as the locations are shown. The size
 #'  of the points is proportional to the latitudinal uncertainty, while
-#'  equinox windows are marked with red points.
+#'  equinox windows are marked with red points. (default = FALSE)
 
 #' @importFrom rlang .data
 
-#' @return a ggplot map of tracked locations
+#' @return A ggplot map of tracked locations or mapview dynamic overview.
 #' @export
 #' @examples
 #' \dontrun{

@@ -2,27 +2,28 @@
 % Please edit documentation in R/stk_mask.R
 \name{stk_mask}
 \alias{stk_mask}
-\title{A land mask}
+\title{Generate a land surface mask}
 \usage{
 stk_mask(buffer = 0, resolution = 1, bbox, sf = FALSE)
 }
 \arguments{
-\item{buffer}{buffer in degrees}
+\item{buffer}{how much to buffer the land areas (in km, default = 0
+excluding all water bodies)}
 
 \item{resolution}{resolution of the spatial grid in degrees, when exporting
 as a terra SpatRaster (default = 1)}
 
-\item{bbox}{bounding box of the mask, sets hard boundaries on the search
-area of valid locations as well}
+\item{bbox}{bounding box of the mask to constrain the estimated location
+parameter space}
 
-\item{sf}{return the land mask as an 'sf' polygon, not a rasterized map.
-Mostly used in map plotting, not used for processing (default = FALSE)}
+\item{sf}{returns the land mask as an 'sf' polygon, not a rasterized map for
+use in map plotting, not used for processing (default = FALSE)}
 }
 \value{
 buffered land mask as an 'sf' or 'terra' map object
 }
 \description{
-returns a buffered land mask to constrain potential
+returns a (buffered) land mask to constrain potential
 model results
 }
 \examples{

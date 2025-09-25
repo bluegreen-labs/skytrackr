@@ -7,23 +7,24 @@
 stk_map(df, bbox, start_location, roi, dynamic = FALSE)
 }
 \arguments{
-\item{df}{a data frame with locations produced by skytrackr()}
+\item{df}{A data frame with locations produced with the skytrackr() function}
 
-\item{bbox}{a bounding box}
+\item{bbox}{A geographic bounding box provided as a vector with the format
+xmin, ymin, xmax, ymax.}
 
-\item{start_location}{start location as lat/lon to indicate
+\item{start_location}{A start location as lat/lon to indicate
 the starting position of the track (optional)}
 
-\item{roi}{region of interest under consideration, only used in
-plots during optimization (optional)}
+\item{roi}{A region of interest under consideration, only used in
+plots during optimization}
 
-\item{dynamic}{create a dynamic interactive graph rather than
+\item{dynamic}{Option to create a dynamic interactive graph rather than
 a static plot. Both the path as the locations are shown. The size
 of the points is proportional to the latitudinal uncertainty, while
-equinox windows are marked with red points.}
+equinox windows are marked with red points. (default = FALSE)}
 }
 \value{
-a ggplot map of tracked locations
+A ggplot map of tracked locations or mapview dynamic overview.
 }
 \description{
 Create a map of estimated locations as a static or dynamic map.
