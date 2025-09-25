@@ -22,5 +22,8 @@
 ^\.httr-oauth$
 ^.*-logo\..*$
 ^codemeta\.json$
-^.*\.png*$
 ^CRAN-SUBMISSION$
+
+# ignore top level plots
+^skytrackr_.*\.png$
+^profile_.*\.png$

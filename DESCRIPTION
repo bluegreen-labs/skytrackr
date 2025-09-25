@@ -44,10 +44,9 @@ Imports:
     patchwork,
     mapview
 Suggests:
-    rnaturalearth,
+    knitr,
     rmarkdown,
     bookdown,
     covr,
-    testthat,
-    knitr
+    testthat
 VignetteBuilder: knitr
