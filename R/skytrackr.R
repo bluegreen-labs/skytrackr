@@ -34,7 +34,7 @@
 #' @import patchwork
 #'
 #' @return A data frame with location estimate, their uncertainties, and
-#'  ancillary model parameters useful in quality control
+#'  ancillary model parameters useful in quality control.
 #' @export
 #' @examples
 #' \dontrun{

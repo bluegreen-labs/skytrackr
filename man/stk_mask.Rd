@@ -7,24 +7,24 @@
 stk_mask(buffer = 0, resolution = 1, bbox, sf = FALSE)
 }
 \arguments{
-\item{buffer}{how much to buffer the land areas (in km, default = 0
-excluding all water bodies)}
+\item{buffer}{The buffer distance from land areas (in km, default = 0
+excluding all water bodies).}
 
-\item{resolution}{resolution of the spatial grid in degrees, when exporting
-as a terra SpatRaster (default = 1)}
+\item{resolution}{The resolution of the spatial grid in degrees, when exporting
+as a terra SpatRaster (default = 1).}
 
-\item{bbox}{bounding box of the mask to constrain the estimated location
-parameter space}
+\item{bbox}{A bounding box of the mask to constrain the estimated location
+parameter space.}
 
-\item{sf}{returns the land mask as an 'sf' polygon, not a rasterized map for
+\item{sf}{Return the land mask as an 'sf' polygon, not a rasterized map for.
 use in map plotting, not used for processing (default = FALSE)}
 }
 \value{
-buffered land mask as an 'sf' or 'terra' map object
+A buffered land mask as an 'sf' or 'terra' map object.
 }
 \description{
-returns a (buffered) land mask to constrain potential
-model results
+Returns a (buffered) land mask to constrain potential
+model results.
 }
 \examples{
 \dontrun{

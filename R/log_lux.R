@@ -7,7 +7,7 @@
 #' @param data A data frame with the required drivers for the illuminance model.
 #' @param ... optional other parameters to forward
 #'
-#' @return Sky illuminance as log(lux)
+#' @return Sky illuminance as log(lux).
 #' @export
 
 log_lux <- function(

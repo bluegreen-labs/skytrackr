@@ -14,7 +14,7 @@ log_lux(par, data, ...)
 \item{...}{optional other parameters to forward}
 }
 \value{
-Sky illuminance as log(lux)
+Sky illuminance as log(lux).
 }
 \description{
 Calculates log(lux) values for a give location, date, time

@@ -52,7 +52,7 @@ move, step selection is specified on distance (in km) basis.}
 }
 \value{
 A data frame with location estimate, their uncertainties, and
- ancillary model parameters useful in quality control
+ ancillary model parameters useful in quality control.
 }
 \description{
 Skytrack compares geolocator based light measurements in lux with
