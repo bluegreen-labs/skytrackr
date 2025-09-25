@@ -17,7 +17,7 @@
 #' }
 "cc876"
 
-#' Land area vector
+#' Land area polygon
 #'
 #' Vector polygon of world land areas to constrain
 #' model optimization.

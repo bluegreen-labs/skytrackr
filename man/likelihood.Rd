@@ -7,23 +7,23 @@
 likelihood(par, data, model, loc, roi, step_selection, ...)
 }
 \arguments{
-\item{par}{a vector of parameter values, including one for the uncertainty
-on the target values}
+\item{par}{A vector of parameter values, including one for the uncertainty
+on the target values.}
 
-\item{data}{nested data structure with validation data included}
+\item{data}{A nested data structure with validation data included.}
 
-\item{model}{model to run with data and par settings}
+\item{model}{A model to run with data and par settings.}
 
-\item{loc}{previous modeled step location}
+\item{loc}{The previous modeled step location.}
 
-\item{roi}{region of interest with valid sampling locations}
+\item{roi}{A region of interest with valid sampling locations.}
 
-\item{step_selection}{a step selection function on the distance of a proposed move}
+\item{step_selection}{A step selection function on the distance of a proposed move.}
 
 \item{...}{extra arguments to pass to the function}
 }
 \value{
-single log likelihood
+The single log-likelihood cost of a proposed parameter set.
 }
 \description{
 Main cost function used during optimization, combining both the fit of the

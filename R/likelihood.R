@@ -1,18 +1,17 @@
-
 #' Log likelihood cost function
 #'
 #' Main cost function used during optimization, combining both the fit of the
 #' illuminance data with the step-selection function.
 #'
-#' @param par a vector of parameter values, including one for the uncertainty
-#'  on the target values
-#' @param data nested data structure with validation data included
-#' @param model model to run with data and par settings
-#' @param loc previous modeled step location
-#' @param roi region of interest with valid sampling locations
-#' @param step_selection a step selection function on the distance of a proposed move
+#' @param par A vector of parameter values, including one for the uncertainty
+#'  on the target values.
+#' @param data A nested data structure with validation data included.
+#' @param model A model to run with data and par settings.
+#' @param loc The previous modeled step location.
+#' @param roi A region of interest with valid sampling locations.
+#' @param step_selection A step selection function on the distance of a proposed move.
 #' @param ... extra arguments to pass to the function
-#' @return single log likelihood
+#' @return The single log-likelihood cost of a proposed parameter set.
 #' @keywords model, optimization, cost function
 #' @export
 

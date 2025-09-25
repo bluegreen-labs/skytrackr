@@ -1,17 +1,20 @@
-#' A land mask
+#' Generate a land surface mask
 #'
-#' returns a buffered land mask to constrain potential
-#' model results
+#' Returns a (buffered) land mask to constrain potential
+#' model results.
 #'
-#' @param buffer buffer in degrees
-#' @param resolution resolution of the spatial grid in degrees, when exporting
-#'  as a terra SpatRaster (default = 1)
-#' @param bbox bounding box of the mask, sets hard boundaries on the search
-#'  area of valid locations as well
-#' @param sf return the land mask as an 'sf' polygon, not a rasterized map.
-#' Mostly used in map plotting, not used for processing (default = FALSE)
+#' @param buffer The buffer distance from land areas (in km, default = 0
+#'  excluding all water bodies).
+#' @param resolution The resolution of the spatial grid in degrees, when exporting
+#'  as a terra SpatRaster (default = 1).
+#' @param bbox A bounding box of the mask to constrain the estimated location
+#'  parameter space.
+#' @param sf Return the land mask as an 'sf' polygon, not a rasterized map for.
+#'  use in map plotting, not used for processing (default = FALSE)
 #'
-#' @return buffered land mask as an 'sf' or 'terra' map object
+#' @importFrom memoise memoise
+#'
+#' @return A buffered land mask as an 'sf' or 'terra' map object.
 #' @export
 #' @examples
 #' \dontrun{

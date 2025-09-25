@@ -1,44 +1,40 @@
-
-#' Sky (illuminance) tracker
+#' Sky (illuminance) location estimation routine
 #'
 #' Skytrack compares geolocator based light measurements in lux with
-#' those modelled by the sky illuminance model of xyz.
+#' those modelled by the sky illuminance model of Janiczek and DeYoung (1987).
 #'
 #' Model fits are applied by default to values up to sunrise or after
 #' sunset only as most critical to the model fit (capturing daylength,
 #' i.e. latitude and the location of the diurnal pattern -
 #' longitudinal displacement).
 #'
-#' @param data a data frame containing date time and lux values
-#' @param start_location start location of logging, required when using a
-#'  tolerance based estimation. When no start_location is used the default
-#'  bounding box (bbox) settings are used.
-#' @param tolerance tolerance distance on the search window for optimization,
+#' @param data A skytrackr data frame.
+#' @param start_location A start location of logging.
+#' @param tolerance Tolerance distance on the search window for optimization,
 #'  given in km (left/right, top/bottom). Sets a hard limit on the search window
 #'  regardless of the step selection function used.
-#' @param range range of values to consider during processing, should be
-#'  provided in lux c(min, max) or the equivalent if non-calibrated. In case of
-#'  non calibrated values you will need to adapt the scale values accordingly.
-#' @param scale scale / sky condition factor, by default covering the
+#' @param range Range of values to consider during processing, should be
+#'  provided in lux c(min, max) or the equivalent if non-calibrated.
+#' @param scale Scale / sky condition factor, by default covering the
 #'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 #'  but can be extended for more flexibility to account for coverage by plumage,
 #'  note that in case of non-physical accurate lux measurements values can have
-#'  a range starting at 0.0001 (a multiplier instead of a divider).
-#' @param control control settings for the Bayesian optimization, generally
-#'  should not be altered (defaults to a Monte Carlo method)
-#' @param mask mask with priors to constrain positions
-#' @param step_selection a step selection function on the distance of a proposed
-#'  move, step selection is specified as average flight speed to achieve this
-#'  distance (in km/h).
-#' @param plot plot map of incrementally changing determined locations as
-#'  a progress method
-#' @param verbose given feedback including a progress bar
+#'  a range starting at 0.0001 (a multiplier instead of a divider). Values need
+#'  to be provided on a log scale (default = log(c(0.00001, 50)))
+#' @param control Control settings for the Bayesian optimization, generally
+#'  should not be altered (defaults to a Monte Carlo method). For detailed
+#'  information I refer to the BayesianTools package documentation.
+#' @param mask Mask to constrain positions to land
+#' @param step_selection A step selection function on the distance of a proposed
+#'  move, step selection is specified on distance (in km) basis.
+#' @param plot Plot a map during location estimation (updated every seven days)
+#' @param verbose Give feedback including a progress bar (TRUE or FALSE)
 #'
 #' @importFrom rlang .data
 #' @import patchwork
 #'
-#' @return data frame with location estimate, their uncertainties, and
-#' ancillary model parameters useful in quality control
+#' @return A data frame with location estimate, their uncertainties, and
+#'  ancillary model parameters useful in quality control.
 #' @export
 #' @examples
 #' \dontrun{

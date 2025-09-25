@@ -3,12 +3,11 @@
 #' Calculates log(lux) values for a give location, date, time
 #' and sky conditions.
 #'
-#' @param par three parameters specifying the cycling model
-#' @param data data consisting of vegetation greenness (G), mean
-#'  daytime temperature (T) and daylenght (D) as a data frame
+#' @param par Three parameters specifying the illuminance model.
+#' @param data A data frame with the required drivers for the illuminance model.
 #' @param ... optional other parameters to forward
 #'
-#' @return sky illuminance as log(lux)
+#' @return Sky illuminance as log(lux).
 #' @export
 
 log_lux <- function(

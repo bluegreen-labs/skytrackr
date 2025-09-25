@@ -4,11 +4,11 @@
 #' Read Migrate Technology Ltd. `.lux` files and re-formats
 #' them to a skytrackr compatible format.
 #'
-#' @param file a .lux file with light level values
+#' @param file A `.lux` file with light level values
 #'
 #' @importFrom rlang .data
-#' @return a skytrackr compatible data frame for use in further location
-#'  estimation
+#' @return A skytrackr compatible data frame for use in further location
+#'  estimation.
 #' @export
 #' @examples
 #' # read in the demo lux file
@@ -42,10 +42,10 @@ stk_read_lux <- function(file) {
 #' Read Swiss Ornithology institute files in the `.glf` and re-formats
 #' them to a skytrackr compatible format.
 #'
-#' @param file a .glf file with light level values
+#' @param file A `.glf` file with light level values.
 #'
-#' @return a skytrackr compatible data frame for use in further location
-#'  estimation
+#' @return A skytrackr compatible data frame for use in further location
+#'  estimation.
 #' @export
 #' @examples
 #' \dontrun{
@@ -96,9 +96,9 @@ stk_read_glf <- function(file) {
 #'
 #' This function is wrapped by the `stk_read_lux()` function.
 #'
-#' @param file a lux or deg file
+#' @param file A lux or deg file.
 #'
-#' @return a data frame with logger data
+#' @return A skytrackr data frame with logger data.
 #' @export
 #' @importFrom rlang .data
 

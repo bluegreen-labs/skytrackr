@@ -7,26 +7,26 @@
 stk_screen_twl(df, threshold = 1.5, dips = 3, step = 100, filter = FALSE)
 }
 \arguments{
-\item{df}{skytrackr data frame}
+\item{df}{A skytrackr data frame.}
 
-\item{threshold}{twilight threshold (default = 1.5)}
+\item{threshold}{A twilight threshold (default = 1.5).}
 
-\item{dips}{allowed number of interruptions during a daylight profile
+\item{dips}{The allowed number of interruptions during a daylight profile
 below the twilight threshold before flagging as a poor quality "suspect"
-day}
+day.}
 
-\item{step}{threshold of the allowed step change in illuminance values
+\item{step}{A threshold of the allowed step change in illuminance values
 between the twilight value and the preceding one. Large jumps and the lack
 of a smooth transition suggest a false twilight (bird leaving a dark nest
 site long after or long before dawn or dusk).}
 
-\item{filter}{return the data prefiltered, removing all poor quality days
-or false twilight ones}
+\item{filter}{Logical if to return data prefiltered, removing all poor quality days
+or false twilight ones (default = FALSE)}
 }
 \value{
-a skytrackr data frame with poor twilight quality days removed and
+A skytrackr data frame with poor twilight quality days removed and
  dusk and dawn timings marked (data is returned as a long format, not a wide
- format)
+ format).
 }
 \description{
 Removes poor quality data based on twilight heuristics. Allows for quick

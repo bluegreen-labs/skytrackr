@@ -7,10 +7,10 @@
 read_deg_lux(file)
 }
 \arguments{
-\item{file}{a lux or deg file}
+\item{file}{A lux or deg file.}
 }
 \value{
-a data frame with logger data
+A skytrackr data frame with logger data.
 }
 \description{
 This function is wrapped by the `stk_read_lux()` function.

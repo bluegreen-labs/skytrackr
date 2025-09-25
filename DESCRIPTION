@@ -12,10 +12,10 @@ Authors@R: c(person(
               role = c("cph", "fnd"))
                )
 Maintainer: Koen Hufkens <koen.hufkens@gmail.com>
-Description: A tool to calculate geolocation by light positions using sky
+Description: A tool to calculate geolocation by light using sky
  illuminance values (in lux). The routine uses model optimization and parameter
  estimation to determine locations robustly using a template matching approach
- and behaviourly informed constraints.
+ and behaviourly informed constraints (step-selection).
 URL: https://github.com/bluegreen-labs/skytrackr
 BugReports: https://github.com/bluegreen-labs/skytrackr/issues
 Depends:

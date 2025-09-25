@@ -35,7 +35,7 @@ library(skytrackr)
 
 # Abstract
 
-Geolocation by light has revolutionized animal behavioural studies since its inception, allowing for the tracking of animals using the measurement of their light enviroment. The {skytrackr} R package provides a convenient template fitting methodology and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters (such as a land mask) allows for improved accuracy at a low computational and labour cost while also providing uncertainty measures for post-hoc quality control.
+The {skytrackr} R package provides a convenient template fitting methodology [@ekstrom_advance_2004] and a Bayesian based optimization approach to estimate geolocations from light. The use of additional data during twilight, or a full day, allows for automation of the process over threshold based methods. Including more data in location estimates, based upon a physical models of behaviour (step-selection), the physical light environment and additional parameters (such as a land mask) improve accuracy at a low computational and labour cost, while also providing uncertainty measures for post-hoc quality control.
 
 **Keywords:** geolocation, tracking, movement ecology, flight, illuminance
 
@@ -309,7 +309,7 @@ knitr::include_graphics("skytrackr_final_plot.png")
 
 The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching [@ekstrom_advance_2004]. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure \@ref(fig:final-plot)). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the "Twilight-Free" method as described by [@bindoff_twilightfree_2018], as no external packages should be loaded from github.
 
-The package and function descriptions can be found on github at: https://github.com/bluegreen-labs/skytrackr, and can be installed from source using:
+The package and function descriptions can be found on github at: https://github.com/bluegreen-labs/skytrackr. To install the development releases of the package run the following commands:
 
 ```{r eval = FALSE}
 if(!require(remotes)){install.packages("remotes")}

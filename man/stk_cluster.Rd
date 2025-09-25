@@ -2,19 +2,19 @@
 % Please edit documentation in R/stk_cluster.R
 \name{stk_cluster}
 \alias{stk_cluster}
-\title{Cluster geolocator data}
+\title{Cluster geolocator co-variates}
 \usage{
 stk_cluster(df, k = 2, method = "kmeans")
 }
 \arguments{
-\item{df}{a skytrackr data frame}
+\item{df}{A skytrackr data frame.}
 
-\item{k}{number of k-means/hierarchical clusters to consider}
+\item{k}{The number of k-means/hierarchical clusters to consider.}
 
-\item{method}{method to use, kmeans by default, hclust can be set}
+\item{method}{The method to use, "kmeans" (default), "hclust" can be set.}
 }
 \value{
-original data frame with attached cluster labels
+The original data frame with attached cluster labels.
 }
 \description{
 Uses k-means and hierarchical clustering to group geolocator

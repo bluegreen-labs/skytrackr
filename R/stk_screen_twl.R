@@ -3,21 +3,21 @@
 #' Removes poor quality data based on twilight heuristics. Allows for quick
 #' screening of data containing "false" twilights.
 #'
-#' @param df skytrackr data frame
-#' @param threshold twilight threshold (default = 1.5)
-#' @param dips allowed number of interruptions during a daylight profile
+#' @param df A skytrackr data frame.
+#' @param threshold A twilight threshold (default = 1.5).
+#' @param dips The allowed number of interruptions during a daylight profile
 #'  below the twilight threshold before flagging as a poor quality "suspect"
-#'  day
-#' @param step threshold of the allowed step change in illuminance values
+#'  day.
+#' @param step A threshold of the allowed step change in illuminance values
 #'  between the twilight value and the preceding one. Large jumps and the lack
 #'  of a smooth transition suggest a false twilight (bird leaving a dark nest
 #'  site long after or long before dawn or dusk).
-#' @param filter return the data prefiltered, removing all poor quality days
-#'  or false twilight ones
+#' @param filter Logical if to return data prefiltered, removing all poor quality days
+#'  or false twilight ones (default = FALSE)
 #'
-#' @returns a skytrackr data frame with poor twilight quality days removed and
+#' @returns A skytrackr data frame with poor twilight quality days removed and
 #'  dusk and dawn timings marked (data is returned as a long format, not a wide
-#'  format)
+#'  format).
 #' @export
 #' @examples
 #' # set demo values artificially low as a demonstration
