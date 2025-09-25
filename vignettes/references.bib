@@ -6,16 +6,16 @@
 	url = {https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.14043},
 	doi = {10.1111/2041-210X.14043},
 	abstract = {Abstract
-            
-              
-                
+
+
+
                   Over the past decades, tracking technologies have become more ubiquitous and helped uncover crucial spatiotemporal relationships in nature. In order to apply these technologies to small animals and reduce any potential adverse impact of devices, geopositioning methodologies compatible with lightweight devices are highly sought after. Measured by lightweight geolocators, atmospheric pressure provides an untapped opportunity for global geopositioning, as its natural temporal variation is unique to each location.
-                
-                
+
+
                   In this study, we estimate the position of birds by comparing pressure data recorded by the geolocator with reference data from a global weather reanalysis database. The method produces a likelihood map of the position based on (1) a mask of the locations for which the ground‐level elevation matches the pressure measured by the geolocator and (2) a mismatch between the temporal time series measured by the geolocator and the reanalysis dataset. This new method is introduced step by step and applied to 16 tracks of nine long‐ and short‐distance migrant species.
-                
-                
-                  
+
+
+
                     Using known positions of double‐tagged individuals (light and pressure data), we demonstrate that our method is almost three times more accurate than light‐based positioning with an average error of 44 km in our trials. In contrast to the traditional light‐based approach, pressure geolocation can provide useful information for short stationary periods (less than a day) and is not affected by the equinox problem nor by any shading effects due to weather or animal behaviour. To facilitate the application of the method, we developed an R package
                     GeoPressureR
                     , together with a user guide
@@ -23,9 +23,9 @@
                     and starting code
                     GeoPressureTemplate
                     .
-                  
-                
-                
+
+
+
                   The use of pressure sensors to position animals has the potential to become widespread thanks to the combination of both affordable lightweight devices ({\textless}0.4 g) and this method to estimate position of the device precisely and accurately. In particular, such devices can now be applied to short‐distant migrants ({\textgreater}100 km), forest‐dwelling species, nocturnal animals and altitudinal migrants.},
 	language = {en},
 	number = {4},
@@ -188,7 +188,7 @@
 	title = {{BayesianTools}: {General}-{Purpose} {MCMC} and {SMC} {Samplers} and {Tools} for {Bayesian} {Statistics}},
 	copyright = {GPL-3},
 	shorttitle = {{BayesianTools}},
-	url = {https://cran.r-project.org/web/packages/BayesianTools/},
+	url = {https://cran.r-project.org/package=BayesianTools},
 	abstract = {General-purpose MCMC and SMC samplers, as well as plot and diagnostic functions for Bayesian statistics, with a particular focus on calibrating complex system models. Implemented samplers include various Metropolis MCMC variants (including adaptive and/or delayed rejection MH), the T-walk, two differential evolution MCMCs, two DREAM MCMCs, and a sequential Monte Carlo (SMC) particle filter.},
 	urldate = {2023-08-31},
 	author = {Hartig, Florian and Minunno, Francesco and Paul, Stefan and Cameron, David and Ott, Tankred and Pichler, Maximilian},
@@ -255,23 +255,23 @@ Conclusions: The algorithm computes stable results with uncertainty estimates, i
 	url = {https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12953},
 	doi = {10.1111/2041-210X.12953},
 	abstract = {Abstract
-            
-              
-                
-                  
+
+
+
+
                     Solar geolocation is used to quantify the movements of animals tagged with sensors that record ambient light with respect to time. Global location sensor (
                     GLS
                     ) tags are small, light, and present minimal drag or wing loading. They are affordable, and some can record data for several migratory cycles. These benefits mean they can be used in applications for which satellite tags are unsuitable. However, large errors in estimated locations can result if the sensor is obscured, especially around twilight, and sometimes the data obtained is unusable by existing methods of analysis due to this source of noise. This places limitations on the usefulness of solar geolocation in conservation and monitoring efforts.
-                  
-                
-                
+
+
+
                   All existing methods of analysis are dependent on twilights being identifiable or faithfully recorded. Instead, the method introduced here depends on the overall pattern of day and night to calculate the likelihoods for a Hidden Markov Model, where the hidden states are geographic locations. We call this a “twilight‐free” method of light‐based geolocation.
-                
-                
+
+
                   This method quickly estimates locations from otherwise unusable noisy light data. We use examples to show that the method produces tracks that are comparable in accuracy and precision to other geolocation methods. Furthermore, efficiency and replicability of estimated paths are improved because the user does not have to subjectively identify twilights. Other data sources, such as sea surface temperature and land or sea masks are easily incorporated, further improving location estimates and processing speed.
-                
-                
-                  
+
+
+
                     The twilight‐free method offers new opportunities to researchers interested in the movements of animals that routinely have obscured sensors, or to analyse previously unusable noisy light data. It offers a fast, efficient, and replicable method for analysing tag data without the need for time‐consuming pre‐ or post‐processing. By increasing the yield of usable data from
                     GLS
                     tagging studies, researchers can more efficiently quantify where animals are going and when, and monitor changes in habitat. This is of fundamental importance to management and conservation efforts.},
@@ -295,17 +295,17 @@ Conclusions: The algorithm computes stable results with uncertainty estimates, i
 	url = {https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2656.13116},
 	doi = {10.1111/1365-2656.13116},
 	abstract = {Abstract
-            
-              
-                
-                  
+
+
+
+
                     The advent of miniaturized biologging devices has provided ecologists with unprecedented opportunities to record animal movement across scales, and led to the collection of ever‐increasing quantities of tracking data. In parallel, sophisticated tools have been developed to process, visualize and analyse tracking data; however, many of these tools have proliferated in isolation, making it challenging for users to select the most appropriate method for the question in hand. Indeed, within the
                     r
                     software alone, we listed 58 packages created to deal with tracking data or ‘tracking packages’.
-                  
-                
-                
-                  
+
+
+
+
                     Here, we reviewed and described each tracking package based on a workflow centred around tracking data (i.e. spatio‐temporal locations (
                     x
                     ,
@@ -313,19 +313,19 @@ Conclusions: The algorithm computes stable results with uncertainty estimates, i
                     ,
                     t
                     )), broken down into three stages: pre‐processing, post‐processing and analysis, the latter consisting of data visualization, track description, path reconstruction, behavioural pattern identification, space use characterization, trajectory simulation and others.
-                  
-                
-                
+
+
+
                   Supporting documentation is key to render a package accessible for users. Based on a user survey, we reviewed the quality of packages' documentation and identified 11 packages with good or excellent documentation.
-                
-                
-                  
+
+
+
                     Links between packages were assessed through a network graph analysis. Although a large group of packages showed some degree of connectivity (either depending on functions or suggesting the use of another tracking package), one third of the packages worked in isolation, reflecting a fragmentation in the
                     r
                     movement‐ecology programming community.
-                  
-                
-                
+
+
+
                   Finally, we provide recommendations for users when choosing packages, and for developers to maximize the usefulness of their contribution and strengthen the links within the programming community.},
 	language = {en},
 	number = {1},
