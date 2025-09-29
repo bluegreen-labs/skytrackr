@@ -19,6 +19,15 @@ to update the 'last accessed' date):
 
 ## Installation
 
+### stable release
+
+To install the current stable release use a CRAN repository:
+
+``` r
+install.packages("skytrackr")
+library("skytrackr")
+```
+
 ### development release
 
 To install the development releases of the package run the following
