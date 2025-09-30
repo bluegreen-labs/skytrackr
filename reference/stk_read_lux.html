@@ -22,7 +22,7 @@ them to a skytrackr compatible format."><meta name="twitter:card" content="summa
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.0</small></i>
+           <i>skytrackr <small>v1.1</small></i>
         </a>
       </div>
     </div>
@@ -70,15 +70,19 @@ them to a skytrackr compatible format.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_read_lux</span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_read_lux</span><span class="op">(</span><span class="va">files</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
-<dd><p>A `.lux` file with light level values</p></dd>
+<dl><dt id="arg-files">files<a class="anchor" aria-label="anchor" href="#arg-files"></a></dt>
+<dd><p>A `.lux` file or list of `.lux` files with light level values</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>provide detailed feedback</p></dd>
 
 </dl></div>
     <div id="value">
@@ -93,6 +97,34 @@ them to a skytrackr compatible format.</p>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">stk_read_lux</span><span class="op">(</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/cc876.lux"</span>, package<span class="op">=</span><span class="st">"skytrackr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Reading data</span><span style="color: #9E9E9E;"> ══════════════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.1</span><span style="color: #9E9E9E;"> ══</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing file: <span style="font-weight: bold;">cc876.lux </span>!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Header information</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">“Migrate Technology Ltd logger Type: 13.2061.8, current settings:</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">Approx 1'C resolution. Altimeter fitted. Light range 5, clipped</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">OFF, max light regime, floor 0.08lux. Logger number: CC876</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">MODE: 15 (light, temperature, pressure recorded) LIGHT: Sampled</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">every minute with max light recorded every 5mins. TEMPERATURE and</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">PRESSURE: Sampled and recorded every 30mins. WET/DRY and</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">CONDUCTIVITY: NOT RECORDED Max record length = 16 months. Total</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">battery life approx 13 months. Logger is currently 13 months old.</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">Programmed: 29/06/2021 19:44:10. Start of logging (DD/MM/YYYY</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">HH:MM:SS): 30/06/2021 19:44:10 Age at start of logging (secs):</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">3923996, approx 2 months End of logging (DD/MM/YYYY HH:MM:SS):</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">22/06/2022 16:15:21 Age at end of logging (secs): 34756240,</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">approx 13 months Timer (DDDDD:HH:MM:SS): 00356:20:30:44 Drift</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">(secs): 27. Memory not full.  Pointers:</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">60380,209592,12105912,12105912,0,0,49,60% light mem used,68%</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">wet/dry/temp mem used Tcals (Ax^3+Bx^2+Cx+D): NaN,NaN,NaN,NaN</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">Approx 1'C resolution. Altimeter fitted. Light range 5, clipped</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-style: italic;">OFF, max light regime, floor 0.08lux.”</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     <span style="font-weight: bold; font-style: italic;">— </span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>
