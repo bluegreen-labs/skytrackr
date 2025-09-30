@@ -53,9 +53,9 @@ stk_screen_twl <- function(
     dplyr::group_by(.data$logger, .data$date) |>
     dplyr::summarize(
       dawn = min(.data$hour[.data$value >= threshold], na.rm = TRUE),
-      dawn = ifelse(is.infinite(dawn), min(.data$hour), dawn),
+      dawn = ifelse(is.infinite(.data$dawn), min(.data$hour), .data$dawn),
       dusk = max(.data$hour[.data$value >= threshold], na.rm = TRUE),
-      dusk = ifelse(is.infinite(dusk), max(.data$hour), dusk),
+      dusk = ifelse(is.infinite(.data$dusk), max(.data$hour), .data$dusk),
       roost = length(
         which(.data$value[.data$hour > .data$dawn & .data$hour < .data$dusk] < threshold)
         ) > dips
