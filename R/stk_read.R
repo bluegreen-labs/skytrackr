@@ -80,6 +80,7 @@ stk_read_lux <- function(files, verbose = TRUE) {
 #' them to a skytrackr compatible format.
 #'
 #' @param files A `.glf` file or list of `.glf` files with light level values.
+#' @param verbose provide detailed feedback
 #'
 #' @return A skytrackr compatible data frame for use in further location
 #'  estimation.
@@ -89,7 +90,7 @@ stk_read_lux <- function(files, verbose = TRUE) {
 #' df <- stk_read_glf("your_SOI_glf_file.glf")
 #' }
 
-stk_read_glf <- function(files) {
+stk_read_glf <- function(files, verbose = TRUE) {
 
   df_final <- lapply(files, function(file){
 
@@ -151,6 +152,7 @@ stk_read_glf <- function(files) {
 #' This function is wrapped by the `stk_read_lux()` function.
 #'
 #' @param file A lux or deg file.
+#' @param verbose provide detailed feedback
 #'
 #' @return A skytrackr data frame with logger data.
 #' @export
