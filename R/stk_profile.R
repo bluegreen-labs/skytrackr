@@ -61,12 +61,13 @@ stk_profile <- function(
       }
 
       ggplot2::ggplot(.data) +
-        ggplot2::geom_raster(
+        ggplot2::geom_tile(
           ggplot2::aes(
             .data$date,
-            .data$hour,
+            round(.data$hour,4),
             fill = .data$value
-          )
+          ),
+          height = 0.25
         ) +
         ggplot2::labs(
           title = .data$logger[1],
