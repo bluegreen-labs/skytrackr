@@ -4,10 +4,12 @@
 \alias{stk_read_glf}
 \title{Read Swiss Ornithology institute GLF files}
 \usage{
-stk_read_glf(files)
+stk_read_glf(files, verbose = TRUE)
 }
 \arguments{
 \item{files}{A `.glf` file or list of `.glf` files with light level values.}
+
+\item{verbose}{provide detailed feedback}
 }
 \value{
 A skytrackr compatible data frame for use in further location

@@ -8,6 +8,8 @@ read_deg_lux(file, verbose = TRUE)
 }
 \arguments{
 \item{file}{A lux or deg file.}
+
+\item{verbose}{provide detailed feedback}
 }
 \value{
 A skytrackr data frame with logger data.
