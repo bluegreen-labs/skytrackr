@@ -60,6 +60,12 @@ stk_map <- function(
    # show dynamic plot
    if(dynamic){
 
+      # if not logger ID column exists
+      # assign one for further processing
+      if(! "logger" %in% names(df)){
+        df$logger <- "Logger"
+      }
+
       df <- df |>
          dplyr::mutate(
             uncertainty = .data$latitude_qt_95 - .data$latitude_qt_5
