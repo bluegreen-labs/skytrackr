@@ -41,25 +41,30 @@ stk_screen_twl <- function(
     filter = FALSE
 ){
 
+  # no summarize feedback
+  options(dplyr.summarise.inform = FALSE)
+
   # for all dates calculate twilight values based upon
   # a threshold, commonly 1.5
   twl <- df |>
     dplyr::filter(
       .data$measurement == "lux"
     ) |>
-    dplyr::group_by(.data$date) |>
+    dplyr::group_by(.data$logger, .data$date) |>
     dplyr::summarize(
       dawn = min(.data$hour[.data$value >= threshold], na.rm = TRUE),
+      dawn = ifelse(is.infinite(dawn), min(.data$hour), dawn),
       dusk = max(.data$hour[.data$value >= threshold], na.rm = TRUE),
+      dusk = ifelse(is.infinite(dusk), max(.data$hour), dusk),
       roost = length(
-        which(.data$value[.data$hour > .data$dawn & .data$hour < .data$dusk] < 1.5)
+        which(.data$value[.data$hour > .data$dawn & .data$hour < .data$dusk] < threshold)
         ) > dips
     )
 
   df_out <- dplyr::left_join(
     df,
     twl,
-    by = "date"
+    by = c("logger","date")
   )
 
   # detect false twilight by looking at how much the dawn and dusk values
@@ -67,7 +72,7 @@ stk_screen_twl <- function(
   # logarithmic in developent so missed steps increase light levels significantly
   # exiting dark nests late shows up as an abrupt step in light levels
   false_twl <- df_out |>
-    dplyr::group_by(.data$date) |>
+    dplyr::group_by(.data$logger, .data$date) |>
     dplyr::summarise(
       dawn_start = which(.data$hour == .data$dawn)[1],
       dusk_start = which(.data$hour == .data$dusk)[1],
@@ -82,7 +87,7 @@ stk_screen_twl <- function(
   df_out <- dplyr::left_join(
     df_out,
     false_twl,
-    by = "date"
+    by = c("logger","date")
   )
 
   if(filter){
@@ -93,5 +98,5 @@ stk_screen_twl <- function(
       )
   }
 
-  return(df_out)
+  return(df_out |> dplyr::ungroup())
 }
