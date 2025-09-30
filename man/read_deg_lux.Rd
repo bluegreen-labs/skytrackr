@@ -4,7 +4,7 @@
 \alias{read_deg_lux}
 \title{Read lux and deg files}
 \usage{
-read_deg_lux(file)
+read_deg_lux(file, verbose = TRUE)
 }
 \arguments{
 \item{file}{A lux or deg file.}

@@ -4,10 +4,12 @@
 \alias{stk_read_lux}
 \title{Read Migrate Technology .lux files}
 \usage{
-stk_read_lux(file)
+stk_read_lux(files, verbose = TRUE)
 }
 \arguments{
-\item{file}{A `.lux` file with light level values}
+\item{files}{A `.lux` file or list of `.lux` files with light level values}
+
+\item{verbose}{provide detailed feedback}
 }
 \value{
 A skytrackr compatible data frame for use in further location
