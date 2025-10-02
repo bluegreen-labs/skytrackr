@@ -63,6 +63,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/skytrackr_parallel_processing.html">Parallel processing</a>
+    </li>
+    <li>
       <a href="articles/skytrackr_vignette.html">The skytrackr R package</a>
     </li>
   </ul>
@@ -206,7 +209,8 @@
 <span>      step_selection <span class="op">=</span> <span class="va">ssf</span>,</span>
 <span>      mask <span class="op">=</span> <span class="va">mask</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
+<span>    <span class="op">)</span></span>
+<span>    </span></code></pre></div>
 <p>If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined.</p>
 <p>During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).</p>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png"></p>
@@ -214,6 +218,33 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/stk_map.html">stk_map</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png"></p>
+</div>
+<div class="section level2">
+<h2 id="batch-processing">Batch processing<a class="anchor" aria-label="anchor" href="#batch-processing"></a>
+</h2>
+<p>The {skytrackr} package follows/supports tidy data processing logic. Simple serial batch processing of individual loggers is supported by using the <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code> function, and wrapping the function call in a <code><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">dplyr::do()</a></code> statement. For more complex, parallel, data processing I refer to the <a href="https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_parallel_processing.html" class="external-link">parallel processing vignette</a>.</p>
+<pre><code><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">group_by</span><span class="op">(</span><span class="va">logger</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">do</span><span class="op">(</span><span class="op">{</span></span>
+<span>      <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
+<span>        <span class="va">.</span>,</span>
+<span>        start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
+<span>        tolerance <span class="op">=</span> <span class="fl">1500</span>, <span class="co"># in km</span></span>
+<span>        scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.00001</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span>, <span class="co"># default range</span></span>
+<span>        range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">148</span><span class="op">)</span>, <span class="co"># default range</span></span>
+<span>        control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>          sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
+<span>          settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>            burnin <span class="op">=</span> <span class="fl">250</span>,</span>
+<span>            iterations <span class="op">=</span> <span class="fl">3000</span>,</span>
+<span>            message <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>          <span class="op">)</span></span>
+<span>        <span class="op">)</span>,</span>
+<span>        step_selection <span class="op">=</span> <span class="va">ssf</span>,</span>
+<span>        mask <span class="op">=</span> <span class="va">mask</span>,</span>
+<span>        plot <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">}</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
   </div>
