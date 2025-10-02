@@ -83,6 +83,8 @@ df_logger <- df |>
 print(df_logger)
 ```
 
+# Parallel processing
+
 Finally, after the setup we can now call the main parallel routine to be executed. The setup follows the routine specified in the main README with a few exceptions. Mainly, the generation of the mask, step-selection function and setting the random seed must be included in the `do()` statement. The parallel sessions do not have access to shared memory. As such, we have to define the mask, step-selection function and random seed for each run (logger) separately.
 
 ```{r eval = FALSE}

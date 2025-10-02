@@ -4,7 +4,7 @@
 \alias{stk_screen_twl}
 \title{Twilight screening routine}
 \usage{
-stk_screen_twl(df, threshold = 1.5, dips = 3, step = 100, filter = FALSE)
+stk_screen_twl(df, threshold = 1.5, dips = 3, step = 100, filter = TRUE)
 }
 \arguments{
 \item{df}{A skytrackr data frame.}
@@ -20,8 +20,8 @@ between the twilight value and the preceding one. Large jumps and the lack
 of a smooth transition suggest a false twilight (bird leaving a dark nest
 site long after or long before dawn or dusk).}
 
-\item{filter}{Logical if to return data prefiltered, removing all poor quality days
-or false twilight ones (default = FALSE)}
+\item{filter}{Logical if to return data pre-filtered, removing all poor quality days
+or false twilight ones (default = TRUE)}
 }
 \value{
 A skytrackr data frame with poor twilight quality days removed and
@@ -30,7 +30,7 @@ A skytrackr data frame with poor twilight quality days removed and
 }
 \description{
 Removes poor quality data based on twilight heuristics. Allows for quick
-screening of data containing "false" twilights.
+screening of data containing "false" twilight values.
 }
 \examples{
 # set demo values artificially low as a demonstration

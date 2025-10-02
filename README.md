@@ -50,7 +50,7 @@ library("skytrackr")
 
 ## Use
 
-To demonstrate the functioning of the package a small demo dataset of a couple of days of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc876). I will use this data to demonstrate the features of the package. Note that when multiple dates are present all dates will be considered. The package is friendly to the use of R piped (`|>`) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
+To demonstrate the functioning of the package a small demo dataset of a couple of days of light logging of a Common swift near a nest box in Ghent, Belgium was included (i.e. tag cc876). I will use this data to demonstrate the features of the package. The package is friendly to the use of R piped (`|>`) commands. Using all default settings you can just pipe the data in to the `skytrackr()` function, while specifying only a mask, step-selection function and start location. The returned object will be a data frame containing the best estimate (median) of the longitude and latitude as well as 5-95% quantile as sampled from the posterior parameter distribution.
 
 ## Data pre-screening
 
@@ -95,7 +95,7 @@ df |> stk_profile()
 
 Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but use expert judgement.
 
-## MCMC DEzs optimization
+## Basic optimization
 
 To track movements by light using {skytrackr} you will need a few additional parameters. First, you will need to define the methodology used to find an optimal solution. The underlying BayesianTools package used in optimization allows for the specification of optimization techniques using the 'control' statement. The same argument can be used in the main `skytrackr()` routine.
 

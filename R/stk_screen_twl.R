@@ -1,7 +1,7 @@
 #' Twilight screening routine
 #'
 #' Removes poor quality data based on twilight heuristics. Allows for quick
-#' screening of data containing "false" twilights.
+#' screening of data containing "false" twilight values.
 #'
 #' @param df A skytrackr data frame.
 #' @param threshold A twilight threshold (default = 1.5).
@@ -12,8 +12,8 @@
 #'  between the twilight value and the preceding one. Large jumps and the lack
 #'  of a smooth transition suggest a false twilight (bird leaving a dark nest
 #'  site long after or long before dawn or dusk).
-#' @param filter Logical if to return data prefiltered, removing all poor quality days
-#'  or false twilight ones (default = FALSE)
+#' @param filter Logical if to return data pre-filtered, removing all poor quality days
+#'  or false twilight ones (default = TRUE)
 #'
 #' @returns A skytrackr data frame with poor twilight quality days removed and
 #'  dusk and dawn timings marked (data is returned as a long format, not a wide
@@ -38,7 +38,7 @@ stk_screen_twl <- function(
     threshold = 1.5,
     dips = 3,
     step = 100,
-    filter = FALSE
+    filter = TRUE
 ){
 
   # no summarize feedback
