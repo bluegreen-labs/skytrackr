@@ -59,10 +59,11 @@ stk_map <- function(
 
    # check if not a {multidplyr} data frame
    if(inherits(df, "multidplyr_party_df")){
-      cli::cli_abort(c(
+      df <- as.data.frame(df)
+      cli::cli_alert(c(
          "Provided data is a {{multidplyr}} data frame.",
          "x" = "
-           Please convert to a standard data frame using:
+           The data was converted to a standard data frame using:
            df <- as.data.frame(df)
          "
          )
