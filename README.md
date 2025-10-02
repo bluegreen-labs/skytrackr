@@ -137,6 +137,8 @@ locations <- data |>
       mask = mask,
       plot = TRUE
     )
+    
+
 ```
 
 If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. 
@@ -152,3 +154,32 @@ locations |> stk_map(bbox = c(-20, -40, 60, 60))
 ```
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png)
+
+## Batch processing
+
+The {skytrackr} package follows/supports tidy data processing logic. Simple serial batch processing of individual loggers is supported by using the `dplyr::group_by()` function, and wrapping the function call in a `dplyr::do()` statement. For more complex, parallel, data processing I refer to the [parallel processing vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_parallel_processing.html).
+
+```
+locations <- data |>
+    group_by(logger) |>
+    do({
+      skytrackr(
+        .,
+        start_location = c(51.08, 3.73),
+        tolerance = 1500, # in km
+        scale = log(c(0.00001,50)), # default range
+        range = c(0.09, 148), # default range
+        control = list(
+          sampler = 'DEzs',
+          settings = list(
+            burnin = 250,
+            iterations = 3000,
+            message = FALSE
+          )
+        ),
+        step_selection = ssf,
+        mask = mask,
+        plot = TRUE
+      )
+    })
+```
