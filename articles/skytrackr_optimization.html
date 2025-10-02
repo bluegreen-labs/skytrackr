@@ -146,7 +146,7 @@
 <span class="header-section-number">3</span> Post-processing<a class="anchor" aria-label="anchor" href="#post-processing"></a>
 </h2>
 <p>After estimating locations you can inspect the location estimation data using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function. This will give you an initial idea on the accuracy of the estimates. In particular, values of the <code>sky conditions</code> parameter should not be skewed dramatically to higher values. The latter suggests that the true parameter might be out of bounds. Dependent estimates of latitude and longitude will therefore be wrongly estimated.</p>
-<p>Additionally, exploring uncertainty metrics such as the spread of the uncertainty on both longitude and latitude parameters helps determine the quality of the estimated locations. For most optimizer specified a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing covergence of the parameter estimates.</p>
+<p>Additionally, exploring uncertainty metrics such as the spread of the uncertainty on both longitude and latitude parameters helps determine the quality of the estimated locations. For most optimizer specified a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing covergence of the parameter (location) estimates.</p>
 </div>
   </div>
 
