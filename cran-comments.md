@@ -2,7 +2,9 @@ Dear CRAN team,
 
 This is an update of the {skytrackr} package. The packages estimates the position of animals using geolocation by light through inverse model optimization and parameter estimation.
 
-The updates include mostly utility / workflow improvements. In particular, the data ingestion now supports batch processing (both reading and screening the data for outliers). The feedback of these routines is also improved. Plotting data is improved to allow for uneven time steps (which happens in some instances).
+The updates include mostly utility, workflow and documentation improvements. In particular, the data ingestion now supports batch processing (both reading and screening the data for outliers). The feedback of these routines has also improved. Plotting data has improved to allow for uneven time steps (which happens in some instances).
+
+Additional documentation on parallization using {multidplyr} and general advice on optimization strategies is now provided in two additional vignettes.
 
 Kind regards,
 Koen Hufkens
