@@ -48,5 +48,6 @@ Suggests:
     rmarkdown,
     bookdown,
     covr,
-    testthat
+    testthat,
+    multidplyr
 VignetteBuilder: knitr
