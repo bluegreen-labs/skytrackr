@@ -21,7 +21,8 @@ skytrackr(
 \arguments{
 \item{data}{A skytrackr data frame.}
 
-\item{start_location}{A start location of logging.}
+\item{start_location}{A start location of logging as a vector of
+latitude and longitude}
 
 \item{tolerance}{Tolerance distance on the search window for optimization,
 given in km (left/right, top/bottom). Sets a hard limit on the search window
@@ -83,6 +84,10 @@ mask <- stk_mask(
 
 # estimate locations with default values
 # and plot progress
-locations <- cc876 |> skytrackr(plot = TRUE)
+locations <- cc876 |> skytrackr(
+  plot = TRUE,
+  mask = mask,
+  step_selection = ssf,
+  start_location = c(50, 4))
 }
 }
