@@ -61,6 +61,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/skytrackr_optimization.html">Optimization tips</a>
+    </li>
+    <li>
       <a href="../articles/skytrackr_parallel_processing.html">Parallel processing</a>
     </li>
     <li>
@@ -163,6 +166,11 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17,274 more rows</span></span></span></code></pre></div>
+</div>
+<div class="section level2" number="3">
+<h2 id="parallel-processing">
+<span class="header-section-number">3</span> Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h2>
 <p>Finally, after the setup we can now call the main parallel routine to be executed. The setup follows the routine specified in the main README with a few exceptions. Mainly, the generation of the mask, step-selection function and setting the random seed must be included in the <code><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do()</a></code> statement. The parallel sessions do not have access to shared memory. As such, we have to define the mask, step-selection function and random seed for each run (logger) separately.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the analysis in parallel</span></span>

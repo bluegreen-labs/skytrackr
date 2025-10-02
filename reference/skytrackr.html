@@ -38,6 +38,9 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987)."><me
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/skytrackr_optimization.html">Optimization tips</a>
+    </li>
+    <li>
       <a href="../articles/skytrackr_parallel_processing.html">Parallel processing</a>
     </li>
     <li>
@@ -97,7 +100,8 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987).</p>
 
 
 <dt id="arg-start-location">start_location<a class="anchor" aria-label="anchor" href="#arg-start-location"></a></dt>
-<dd><p>A start location of logging.</p></dd>
+<dd><p>A start location of logging as a vector of
+latitude and longitude</p></dd>
 
 
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
@@ -176,7 +180,11 @@ longitudinal displacement).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># estimate locations with default values</span></span></span>
 <span class="r-in"><span><span class="co"># and plot progress</span></span></span>
-<span class="r-in"><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">skytrackr</span><span class="op">(</span>plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">skytrackr</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  mask <span class="op">=</span> <span class="va">mask</span>,</span></span>
+<span class="r-in"><span>  step_selection <span class="op">=</span> <span class="va">ssf</span>,</span></span>
+<span class="r-in"><span>  start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
