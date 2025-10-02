@@ -1,102 +1,81 @@
-# load libraries and functions
-options("dplyr.show_progress" = FALSE)
-library(dplyr)
-library(ggplot2)
-library(rnaturalearth)
-library(sf)
 library(skytrackr)
+library(dplyr)
+library(multidplyr)
 
-files <- list.files(
-  "~/Dropbox/Research_Projects/code_repository/bitbucket/apus_lunar_synchrony/data-raw/geolocators/Gent_Voorhaven_A_apus/",
-  glob2rx("*.lux"),
-  full.names = TRUE
-)
+# creating a fake dataset
+# by duplicating data and
+# renaming the logger
+df1 <- skytrackr::cc876
+df1$logger <- "CC888"
+df2 <- skytrackr::cc876
+df <- bind_rows(df1,df2)
 
-files <- files[!grepl("drift", files)]
-data <- lapply(files, function(file){
-  stk_read_lux(file)
-})
+# create a new cluster
+# where the "skytrackr" library
+# is made available
+cluster <- new_cluster(2)
+cluster_library(cluster, "skytrackr")
 
-data <- do.call("rbind", data) |>
-  filter(
-    logger == "CC876",
-    date >= "2021-08-02"
-  )
+# split tasks by logger
+# across cluster partitions
+df_logger <- df |>
+  group_by(logger) |>
+  partition(cluster)
 
-locations <- data |>
+# run the analysis in parallel
+# on the cluster (local or remote)
+locations <- df_logger |>
   group_by(logger) |>
   do({
-    skytrackr(
-      .,
-      #start_location = c(51.08, 3.73),
-      #tolerance = 11,
-      iterations = 20,
-      particles = 100,
-      range = c(0.32, 150),
-      bbox = c(-20, -40, 60, 60)
+
+    # set seed per parallel unit
+    set.seed(1)
+
+    # define land mask
+    mask <- stk_mask(
+      bbox  =  c(-20, -40, 60, 60),
+      buffer = 150, # in km
+      resolution = 0.5 # in degrees
     )
-  })
 
-saveRDS(locations, "data-raw/gent_locations_SMC_no_tolerance.rds", compress = "xz")
-
-locations <- data |>
-  group_by(logger) |>
-  do({
-    skytrackr(
-      .,
-      start_location = c(51.08, 3.73),
-      range = c(0.32, 150),
-      tolerance = 11,
-      iterations = 20,
-      particles = 100,
-      bbox = c(-20, -40, 60, 60)
+    # define land mask with a bounding box
+    # and an off-shore buffer (in km), in addition
+    # you can specifiy the resolution of the resulting raster
+    mask <- stk_mask(
+      bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
+      buffer = 150, # in km
+      resolution = 0.5 # map grid in degrees
     )
-  })
 
-saveRDS(locations, "data-raw/gent_locations_SMC_tolerance.rds", compress = "xz")
+    # define a step selection distribution
+    ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
+      # normalize over expected range with km increments
+      norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+      prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+      return(prob)
+    }
 
-locations <- data |>
-  group_by(logger) |>
-  do({
     skytrackr(
-      .,
-      #start_location = c(51.08, 3.73),
-      #tolerance = 11,
-      range = c(0.32, 150),
-      bbox = c(-20, -40, 60, 60),
+      .data,
+      mask = mask,
+      plot = FALSE,
+      verbose = FALSE,
+      start_location = c(51.08, 3.73), # Gent - lux file
+      tolerance = 1500, # in km
+      scale = log(c(0.00001, 50)),
+      range = c(0.09, 148),
       control = list(
         sampler = 'DEzs',
         settings = list(
-          burnin = 2000,
-          iterations = 18000,
+          burnin = 250,
+          iterations = 300,
           message = FALSE
         )
-      )
+      ),
+      step_selection = ssf
     )
   })
 
-saveRDS(locations, "data-raw/gent_locations_DEzs_no_tolerance.rds", compress = "xz")
-
-
-locations <- data |>
-  group_by(logger) |>
-  do({
-    skytrackr(
-      .,
-      start_location = c(51.08, 3.73),
-      tolerance = 11,
-      range = c(0.32, 150),
-      bbox = c(-20, -40, 60, 60),
-      control = list(
-        sampler = 'DEzs',
-        settings = list(
-          burnin = 2000,
-          iterations = 18000,
-          message = FALSE
-        )
-      )
-    )
-  })
-
-saveRDS(locations, "data-raw/gent_locations_DEzs_tolerance.rds", compress = "xz")
-
+# drop the parallel processing info
+# locations <- locations |>
+#   as.data.frame()
