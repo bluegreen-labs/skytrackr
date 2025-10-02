@@ -75,13 +75,13 @@ stk_fit <- function(
   # only applies to DEzs as it has
   # 3 chains by default
   if (control$sampler == "DEzs") {
-    grb <- suppressWarnings(
+    grd <- suppressWarnings(
       suppressMessages(
         BayesianTools::gelmanDiagnostics(out)$mpsrf
         )
       )
   } else {
-    grb <- NA
+    grd <- NA
   }
 
   # sample the posterior distribution
@@ -137,7 +137,7 @@ stk_fit <- function(
     longitude_qt_95 = longitude[3],
     sky_conditions_qt_5 = exp(sky_conditions[1]),
     sky_conditions_qt_95 = exp(sky_conditions[3]),
-    grb = grb,
+    grd = grd,
     n = nrow(data),
     row.names = NULL
   )

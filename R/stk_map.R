@@ -128,9 +128,34 @@ stk_map <- function(
       sf::st_cast("POINT") |>
       sf::st_transform(crs = "+proj=eqearth")
 
+
+   # automatically calculate bounding box
+   if(missing(bbox)){
+      cli::cli_alert(c(
+         "No bounding box (bbox) provided.",
+         "x" = "
+           Bounding box is estimated from the data.
+         "
+         )
+      )
+
+      # estimate bounding box
+      bbox <- df |>
+         dplyr::ungroup() |>
+         dplyr::summarize(
+            xmin = min(.data$longitude, na.rm = TRUE) - 5,
+            ymin = min(.data$latitude, na.rm = TRUE) - 5,
+            xmax = max(.data$longitude, na.rm = TRUE) + 5,
+            ymax = max(.data$latitude, na.rm = TRUE) + 5
+         ) |> unlist()
+   }
+
    # mask polygon / crop to broad bounding box
    # region of interest
-   m <- stk_mask(bbox = bbox, sf = TRUE)
+   m <- stk_mask(
+      bbox = bbox,
+      sf = TRUE
+   )
 
    # transform to equal earth
    m <- m |>
@@ -295,10 +320,7 @@ stk_map <- function(
        ncol = 4,
        widths = c(4, 1, 1, 1),
        axis_titles = "collect_y"
-     ) +
-    patchwork::plot_annotation(
-       title = sprintf("%s (from %s to %s)",df$logger[1], df$date[1], df$date[-1])
-    )
+     )
 
    return(p_final)
 }

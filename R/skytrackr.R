@@ -9,7 +9,8 @@
 #' longitudinal displacement).
 #'
 #' @param data A skytrackr data frame.
-#' @param start_location A start location of logging.
+#' @param start_location A start location of logging as a vector of
+#'  latitude and longitude
 #' @param tolerance Tolerance distance on the search window for optimization,
 #'  given in km (left/right, top/bottom). Sets a hard limit on the search window
 #'  regardless of the step selection function used.
@@ -55,7 +56,11 @@
 #'
 #' # estimate locations with default values
 #' # and plot progress
-#' locations <- cc876 |> skytrackr(plot = TRUE)
+#' locations <- cc876 |> skytrackr(
+#'   plot = TRUE,
+#'   mask = mask,
+#'   step_selection = ssf,
+#'   start_location = c(50, 4))
 #' }
 
 skytrackr <- function(
@@ -79,17 +84,19 @@ skytrackr <- function(
 ) {
 
   if(missing(mask)){
-    cli::cli_alert_danger("
-        - please provide a base mask or grid of valid sample locations!
-          ")
-    stop()
+    cli::cli_abort(c(
+      "No grid mask is provided.",
+      "x" = "Please provide a base mask or grid of valid sample locations!"
+      )
+    )
   }
 
   if(missing(start_location)) {
-    cli::cli_alert_danger("
-        - No (approximate) start location provided, please provide a start location!
-        ")
-    stop()
+    cli::cli_abort(c("
+          No (approximate) start location provided.",
+          "x" = "Please provide a start location!"
+        )
+      )
   }
 
   # unravel the light data
