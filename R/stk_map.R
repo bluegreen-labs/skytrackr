@@ -57,6 +57,18 @@ stk_map <- function(
     dynamic = FALSE
     ) {
 
+   # check if not a {multidplyr} data frame
+   if(inherits(df, "multidplyr_party_df")){
+      cli::cli_abort(c(
+         "Provided data is a {{multidplyr}} data frame.",
+         "x" = "
+           Please convert to a standard data frame using:
+           df <- as.data.frame(df)
+         "
+         )
+      )
+   }
+
    # show dynamic plot
    if(dynamic){
 
