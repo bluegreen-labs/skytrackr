@@ -50,7 +50,7 @@ There is also a trade-off between the amount of data used in a location estimate
 
 ## Step-selection dynamics
 
-The step-selection function constrains the validity of a proposed location estimate. However, the function used is approximate only. It must also be noted that while an individual might move a long distance across a day (in absolute sense), it's position from day-to-day might not move much (e.g. in the most extreme case, there is no day-to-day movement if the individual returns to a nesting location). **The step-selection function should reflect short-distance ranging movements** (i.e. rapid decay) rather than long-distance migration movements.
+The step-selection function constrains the validity of a proposed location estimate. However, the function used is approximate only. It must also be noted that while an individual might move a long distance across a day (in absolute sense), its position from day-to-day might not move much (e.g. in the most extreme case, there is no day-to-day movement if the individual returns to a nesting location). **The step-selection function should reflect short-distance ranging movements** (i.e. rapid decay) rather than long-distance migration movements.
 
 # Post-processing
 

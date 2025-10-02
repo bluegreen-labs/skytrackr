@@ -63,7 +63,7 @@ n <- 2
 cluster <- new_cluster(n)
 ```
 
-Since every CPU processes the data in isolation you need to explicitly specify the libraries you wish to use. In this case, we provide the cluster with the {skytrackr} library (and it's dependencies).
+Since every CPU processes the data in isolation you need to explicitly specify the libraries you wish to use. In this case, we provide the cluster with the {skytrackr} library (and its dependencies).
 
 ```{r eval = FALSE}
 # Make sure the "skytrackr" library
