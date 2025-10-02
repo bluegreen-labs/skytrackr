@@ -48,7 +48,7 @@ stk_read_lux <- function(files, verbose = TRUE) {
     deg_file <- paste0(tools::file_path_sans_ext(file),".deg")
 
     if (file.exists(deg_file)) {
-      deg <- read_deg_lux(deg_file)
+      deg <- read_deg_lux(deg_file, verbose = verbose)
 
       if (verbose){
         cli::cli_alert_info(
