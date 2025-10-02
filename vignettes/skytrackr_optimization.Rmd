@@ -32,19 +32,28 @@ library(skytrackr)
 
 Geolocation by light is as much an art as it is a science, as certain decisions in your data workflow will affect the accuracy of your location estimates. It is therefore key to understand which decisions to be mindful of during your workflow. Below I'll briefly touch upon some of these aspects.
 
-# Data quality
+# Pre-processing
+
+Before you start an estimation location there are a number of steps you can undertake to maximize the quality of your results.
+
+## Data quality
 
 Invariably the quality of your location estimates will depend on the quality of your input (logger) data. This means that poor quality data (due to false twilights or nest visits during the day) will negatively affect a location estimate's accuracy. To remove the most common sources of error the `stk_screen_twl()` function is included. **Eliminating poor quality days will improve location estimates** as there is a temporal dependency between the current estimate and the previous one.
 
-# Data frequency
+## Data frequency
 
 Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By default only twilight data is used. However, in some cases it might be adventageous to use the full diurnal cycle by adjusting the `range` parameter to include more data. Including more data will increase the computational power, i.e. time, required for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. Always **inspect a daily light profile** to establish if a full diurnal cycle is recorded, and exclude any baseline and saturated values (i.e. fill values).
 
-# Optimization iterations
+## Optimization iterations
 
 There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is adviced to increase the number of optimization iterations. For **high quality** data **3000 iterations** generally yields good results, but increasing this number to **6000 might provide a more robust estimate** in some cases. It is adviced to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.
 
-# Step-selection dynamics
+## Step-selection dynamics
 
 The step-selection function constrains the validity of a proposed location estimate. However, the function used is approximate only. It must also be noted that while an individual might move a long distance across a day (in absolute sense), it's position from day-to-day might not move much (e.g. in the most extreme case, there is no day-to-day movement if the individual returns to a nesting location). **The step-selection function should reflect short-distance ranging movements** (i.e. rapid decay) rather than long-distance migration movements.
 
+# Post-processing
+
+After estimating locations you can inspect the location estimation data using the `stk_map()` function. This will give you an initial idea on the accuracy of the estimates. In particular, values of the `sky conditions` parameter should not be skewed dramatically to higher values. The latter suggests that the true parameter might be out of bounds. Dependent estimates of latitude and longitude will therefore be wrongly estimated. 
+
+Additionally, exploring uncertainty metrics such as the spread of the uncertainty on both longitude and latitude parameters helps determine the quality of the estimated locations. For most optimizer specified a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values < 1.05 are generally considered showing covergence of the parameter estimates.
