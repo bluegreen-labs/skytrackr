@@ -45,6 +45,12 @@ stk_profile <- function(
         )
   }
 
+  # round hour values
+  data <- data |>
+    dplyr::mutate(
+      hour = round(.data$hour, 4)
+    )
+
   p <- data |>
     dplyr::group_by(.data$measurement) |>
     dplyr::do(p = {
@@ -64,7 +70,7 @@ stk_profile <- function(
         ggplot2::geom_tile(
           ggplot2::aes(
             .data$date,
-            round(.data$hour,4),
+            .data$hour,
             fill = .data$value
           ),
           height = 0.25
