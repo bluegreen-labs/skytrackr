@@ -16,9 +16,6 @@ stk_cluster <- function(
     method = "kmeans"
     ) {
 
-  # set seed for reproducibility
-  set.seed(10)
-
   # convert from long to wide format
   df_wide <- df |>
     dplyr::filter(
