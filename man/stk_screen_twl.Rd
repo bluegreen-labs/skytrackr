@@ -33,6 +33,7 @@ Removes poor quality data based on twilight heuristics. Allows for quick
 screening of data containing "false" twilight values.
 }
 \examples{
+
 # set demo values artificially low as a demonstration
 library(dplyr)
 df <- cc876 |>

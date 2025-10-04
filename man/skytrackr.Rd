@@ -66,7 +66,8 @@ i.e. latitude and the location of the diurnal pattern -
 longitudinal displacement).
 }
 \examples{
-\dontrun{
+\donttest{
+
 # define land mask with a bounding box
 # and an off-shore buffer (in km), in addition
 # you can specify the resolution of the resulting raster
@@ -80,14 +81,21 @@ mask <- stk_mask(
   ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
-}
+  }
 
-# estimate locations with default values
-# and plot progress
+# estimate locations
 locations <- cc876 |> skytrackr(
   plot = TRUE,
   mask = mask,
   step_selection = ssf,
-  start_location = c(50, 4))
+  start_location = c(50, 4),
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+        iterations = 10, # change iterations
+         message = FALSE
+        )
+      )
+  )
 }
 }
