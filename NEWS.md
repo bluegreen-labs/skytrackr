@@ -1,5 +1,8 @@
-# skytrackr 1.1
+# skytrackr 1.0
 
+- removed seed from `stk_cluster()`
+- move dontrun -> donttest wrapper
+- added references to theory papers
 - support batch reading of files
 - support batch screening of data
 - verbose feedback on data reading
@@ -7,9 +10,6 @@
 - assign a placeholder "logger" name in the mapping function
 - vignette on parallel processing using {multidplyr}
 - vignette on optimization improvement strategies
-
-# skytrackr 1.0
-
 - CRAN compliant release
 
 # skytrackr 0.9

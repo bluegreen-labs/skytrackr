@@ -1,7 +1,7 @@
 Package: skytrackr
 Type: Package
 Title: A Sky Illuminance Location Tracker
-Version: 1.1
+Version: 1.0
 Authors@R: c(person(
                family = "Hufkens",
                given = "Koen",
@@ -12,7 +12,7 @@ Authors@R: c(person(
               role = c("cph", "fnd"))
                )
 Maintainer: Koen Hufkens <koen.hufkens@gmail.com>
-Description: A tool to calculate geolocation by light using sky
+Description: Calculate geolocation by light using sky
  illuminance values (in lux). The routine uses model optimization and parameter
  estimation to determine locations robustly using a template matching approach
  and behaviourly informed constraints (step-selection).
