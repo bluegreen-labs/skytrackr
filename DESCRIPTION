@@ -12,10 +12,10 @@ Authors@R: c(person(
               role = c("cph", "fnd"))
                )
 Maintainer: Koen Hufkens <koen.hufkens@gmail.com>
-Description: Calculate geolocation by light using sky
- illuminance values. The routine uses a calibration free model optimization 
- to determine locations robustly using a template matching approach,
- as described in Ekstrom (2004) <https://nipr.repo.nii.ac.jp/records/2496>, 
+Description: Calculate geolocations by light using template matching. 
+ The routine uses a calibration free optimization of a sky illuminance model to 
+ determine locations robustly using a template matching approach,
+ as described by Ekstrom (2004) <https://nipr.repo.nii.ac.jp/records/2496>,
  and behaviourly informed constraints (step-selection).
 URL: https://github.com/bluegreen-labs/skytrackr
 BugReports: https://github.com/bluegreen-labs/skytrackr/issues
