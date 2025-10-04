@@ -19,9 +19,8 @@
 #' @return A ggplot map of tracked locations or mapview dynamic overview.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
-#' #----- estimated locations on demo data ----
 #' # define land mask with a bounding box
 #' # and an off-shore buffer (in km), in addition
 #' # you can specify the resolution of the resulting raster
@@ -37,9 +36,20 @@
 #'   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 #' }
 #'
-#' # estimate locations with default values
-#' # and plot progress
-#' locations <- cc876 |> skytrackr(plot = FALSE)
+#' # estimate locations
+#' locations <- cc876 |> skytrackr(
+#'   plot = TRUE,
+#'   mask = mask,
+#'   step_selection = ssf,
+#'   start_location = c(50, 4),
+#'       control = list(
+#'         sampler = 'DEzs',
+#'         settings = list(
+#'         iterations = 10, # change iterations
+#'          message = FALSE
+#'         )
+#'       )
+#'   )
 #'
 #' #----- actual plotting routines ----
 #' # static plot, with required bounding box

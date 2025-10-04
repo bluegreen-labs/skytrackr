@@ -20,6 +20,7 @@
 #'  format).
 #' @export
 #' @examples
+#'
 #' # set demo values artificially low as a demonstration
 #' library(dplyr)
 #' df <- cc876 |>

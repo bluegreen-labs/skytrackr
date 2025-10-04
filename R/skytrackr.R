@@ -38,7 +38,8 @@
 #'  ancillary model parameters useful in quality control.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
+#'
 #' # define land mask with a bounding box
 #' # and an off-shore buffer (in km), in addition
 #' # you can specify the resolution of the resulting raster
@@ -52,15 +53,22 @@
 #'   ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
 #'   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
 #'   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
-#' }
+#'   }
 #'
-#' # estimate locations with default values
-#' # and plot progress
+#' # estimate locations
 #' locations <- cc876 |> skytrackr(
 #'   plot = TRUE,
 #'   mask = mask,
 #'   step_selection = ssf,
-#'   start_location = c(50, 4))
+#'   start_location = c(50, 4),
+#'       control = list(
+#'         sampler = 'DEzs',
+#'         settings = list(
+#'         iterations = 10, # change iterations
+#'          message = FALSE
+#'         )
+#'       )
+#'   )
 #' }
 
 skytrackr <- function(
@@ -92,8 +100,8 @@ skytrackr <- function(
   }
 
   if(missing(start_location)) {
-    cli::cli_abort(c("
-          No (approximate) start location provided.",
+    cli::cli_abort(c(
+          "No (approximate) start location provided.",
           "x" = "Please provide a start location!"
         )
       )
