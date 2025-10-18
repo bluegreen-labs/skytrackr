@@ -1,3 +1,7 @@
+# skytrackr 1.1
+
+- correction to the subsetting of the data to accommodate noisy data
+
 # skytrackr 1.0
 
 - removed seed from `stk_cluster()`
