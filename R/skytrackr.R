@@ -117,13 +117,44 @@ skytrackr <- function(
       values_from = "value"
     )
 
-  # subset data
+  # filter data
+  data <- data |>
+    dplyr::group_by(date) |>
+    dplyr::do({
+
+      first_low <- which(.data$lux > range[1])[1]
+      last_low <- tail(which(.data$lux > range[1]), 1)
+      first_high <- which(.data$lux >= range[2])[1]
+      last_high <- tail(which(.data$lux >= range[2]), 1)
+      idx <- 1:nrow(.data)
+
+      first_low <- ifelse(
+        is.na(first_low) || rlang::is_empty(first_low) , 1, first_low)
+      last_low <- ifelse(
+        is.na(last_low) || rlang::is_empty(last_low), nrow(.data), last_low)
+      first_high <- ifelse(
+        is.na(first_high) || rlang::is_empty(first_high), nrow(.data), first_high)
+      last_high <- ifelse(
+        is.na(last_high) || rlang::is_empty(last_high),
+        1, last_high)
+
+      df <- .data
+      df$idx <- idx
+      df$first_low <- first_low
+      df$first_high <- first_high
+      df$last_low <- last_low
+      df$last_high <- last_high
+
+      df
+    })
+
   data <- data |>
     dplyr::filter(
-      (.data$lux > range[1] & .data$lux < range[2])
+      (.data$idx > .data$first_low & .data$idx < .data$first_high) | (.data$idx > .data$last_high & .data$idx < .data$last_low),
+      .data$lux > range[1]
     ) |>
     dplyr::mutate(
-      lux = log(.data$lux)
+      lux = log(.data$lux) # convert to log lux
     )
 
   # unique dates
