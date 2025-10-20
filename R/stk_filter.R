@@ -11,6 +11,7 @@
 #'
 #' @param data a skytrackr compatible data frame
 #' @param range a range c(min, max) of valid values in lux
+#' @param plot plot daily profiles with the range filter applied
 #' @param filter if TRUE only twilight values are returned if
 #'  FALSE the data frame is returned with an annotation column
 #'  called 'twilight' for further processing.
@@ -20,7 +21,12 @@
 #'  or with an additional 'twilight' column to annotate these values.
 #' @export
 
-stk_filter <- function(data, range, filter = FALSE){
+stk_filter <- function(
+    data,
+    range,
+    plot = FALSE,
+    filter = FALSE
+){
 
   # unravel the light data
   data <- data |>
@@ -73,6 +79,29 @@ stk_filter <- function(data, range, filter = FALSE){
     dplyr::select(
       !dplyr::starts_with(c("first", "last","idx")),
     )
+
+  # plot
+  if(plot){
+    p <- data |>
+      ggplot2::ggplot() +
+      ggplot2::geom_point(
+        ggplot2::aes(
+          .data$hour,
+          log(.data$value),
+          colour = .data$twilight
+        )
+      ) +
+      ggplot2::labs(
+        x = "hour",
+        y = "log(lux)",
+        title = "Diurnal light profile"
+      ) +
+      ggplot2::scale_color_manual(
+        values = c("black","red")
+      ) +
+      ggplot2::theme_bw()
+    plot(p)
+  }
 
   # only retain twilight values
   if (filter){
