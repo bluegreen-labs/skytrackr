@@ -26,10 +26,13 @@
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
 #' @param mask Mask to constrain positions to land
+#' @param window_size use a moving window across x days during data processing,
+#'  this effectively smooths responses (default = 1, day-by-day processing)
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
 #' @param plot Plot a map during location estimation (updated every seven days)
-#' @param verbose Give feedback including a progress bar (TRUE or FALSE)
+#' @param verbose Give feedback including a progress bar (TRUE or FALSE,
+#'  default = TRUE)
 #'
 #' @importFrom rlang .data
 #' @import patchwork
@@ -80,11 +83,12 @@ skytrackr <- function(
     control = list(
       sampler = 'DEzs',
       settings = list(
-        burnin = 250,
+        burnin = 1000,
         iterations = 3000,
         message = FALSE
       )
     ),
+    window_size = 1,
     mask,
     step_selection,
     plot = TRUE,
@@ -107,54 +111,26 @@ skytrackr <- function(
       )
   }
 
+  if(window_size %% 2 == 0) {
+    cli::cli_abort(c(
+      "The chosen window size is even.",
+      "x" = "Please provide an uneven window size"
+    )
+    )
+  }
+
   # unravel the light data
   data <- data |>
-    dplyr::filter(
-      .data$measurement == "lux"
-    ) |>
+    skytrackr::stk_filter(range = range, filter = TRUE) |>
     tidyr::pivot_wider(
       names_from = "measurement",
       values_from = "value"
     )
 
-  # filter data
+  # convert to log lux
   data <- data |>
-    dplyr::group_by(date) |>
-    dplyr::do({
-
-      first_low <- which(.data$lux > range[1])[1]
-      last_low <- tail(which(.data$lux > range[1]), 1)
-      first_high <- which(.data$lux >= range[2])[1]
-      last_high <- tail(which(.data$lux >= range[2]), 1)
-      idx <- 1:nrow(.data)
-
-      first_low <- ifelse(
-        is.na(first_low) || rlang::is_empty(first_low) , 1, first_low)
-      last_low <- ifelse(
-        is.na(last_low) || rlang::is_empty(last_low), nrow(.data), last_low)
-      first_high <- ifelse(
-        is.na(first_high) || rlang::is_empty(first_high), nrow(.data), first_high)
-      last_high <- ifelse(
-        is.na(last_high) || rlang::is_empty(last_high),
-        1, last_high)
-
-      df <- .data
-      df$idx <- idx
-      df$first_low <- first_low
-      df$first_high <- first_high
-      df$last_low <- last_low
-      df$last_high <- last_high
-
-      df
-    })
-
-  data <- data |>
-    dplyr::filter(
-      (.data$idx > .data$first_low & .data$idx < .data$first_high) | (.data$idx > .data$last_high & .data$idx < .data$last_low),
-      .data$lux > range[1]
-    ) |>
     dplyr::mutate(
-      lux = log(.data$lux) # convert to log lux
+      lux = log(.data$lux)
     )
 
   # unique dates
@@ -238,8 +214,15 @@ skytrackr <- function(
     roi <- terra::mask(mask, pol) |>
       terra::crop(sf::st_bbox(pol))
 
-    # create a subset
-    subs <- data[which(data$date == dates[i]),]
+    # calculate first and last window positions
+    # trap begin and end exceptions
+    w <- window_size%/%2
+    w_f <- ifelse(i-w <= 0, 1, i-w)
+    w_l <- ifelse(i+w >= length(dates), length(dates), i+w)
+
+    # create a subset of the data to fit
+    # the skylight model to
+    subs <- data[which(data$date %in% dates[w_f:w_l]),]
 
     # fit model parameters for a given
     # day to estimate the location
@@ -271,15 +254,16 @@ skytrackr <- function(
     }
 
     if(plot & i %in% plot_update){
-
-      p <- stk_map(
+      p <- try(stk_map(
         locations,
         bbox = sf::st_bbox(mask),
         start_location = start_location,
         roi = pol # forward roi polygon / not raster
-      )
+      ))
 
-      plot(p)
+      if(!inherits(p, "try-error")){
+        plot(p)
+      }
     }
   }
 
