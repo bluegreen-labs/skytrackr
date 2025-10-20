@@ -99,7 +99,8 @@ stk_filter <- function(
       ggplot2::scale_color_manual(
         values = c("black","red")
       ) +
-      ggplot2::theme_bw()
+      ggplot2::theme_bw() +
+      ggplot2::facet_wrap(~.data$logger)
     plot(p)
   }
 
