@@ -42,7 +42,29 @@ Invariably the quality of your location estimates will depend on the quality of 
 
 ## Data frequency
 
-Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By default only twilight data is used. However, in some cases it might be adventageous to use the full diurnal cycle by adjusting the `range` parameter to include more data. Including more data will increase the computational power, i.e. time, required for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. Always **inspect a daily light profile** to establish if a full diurnal cycle is recorded, and exclude any baseline and saturated values (i.e. fill values).
+Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By default only twilight data is used. However, in some cases it might be advantageous to use the full diurnal cycle by adjusting the `range` parameter to include more data. Including more data will increase the required computational power, i.e. time, for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. Always **inspect a daily light profile** to establish if a full diurnal cycle is recorded, and exclude any baseline and saturated values (i.e. fill values).
+
+## The scale parameter
+
+The scale parameter attenuates the sky illuminance in the skylight model using the `sky condition` parameter in order to account for environmental conditions. For an unobstructed sky view this varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Attenuation can therefore be described as:
+
+total attenuation = Q_F(sky condition, LAI) + f_sensor(sky condition, coverage) + sensor error
+
+Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.
+
+Where light attenuates through a canopy according to the Beer–Lambert Law.
+
+Q_F = Q_0 e^{–kF}
+
+Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (m^2) per surface area (m^2). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
+
+Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get and attenuation of the original solar illuminance to about 5% of the original input. We can map the `sky condition` parameter to LAI (using a clear sky, and average sky as a reference). The relationship between LAI and the sky conditions scale factor is non-linear, and for most optimizations an upper scale limit of 10 to 50 should be considered. It is best to consult knowledge on the ecology of the species to make an informed decision.
+
+### Estimating the scale
+
+Working on the assumption that the sensor is correctly installed and exposed (not covered) and the sensor error is minimal we can estimate the total attenuation from the data itself using some assumptions. This would allow to set a data informed limit on the sky condition range. We can compare the maximum sun illuminance value across a year with all the recorded maximum values in the data record. Working on the assumption that individuals track favourable (high illuminance) summer conditions these values should give a crude estimate of the total attenuation (without a need for attribution). Generally, Migrate Technology Ltd. sensors track very close to true physical values. The included function `stk_calibrate()` returns both the quantiles on the attenuation factors across the data, as graphs showing a histogram of the values and their relation to LAI.
+
+In absence of (valid) midday values you can use the general mapping of 
 
 ## Optimization iterations
 
