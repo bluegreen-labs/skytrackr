@@ -269,14 +269,16 @@ stk_map <- function(
        ggplot2::aes(
          y = .data$date,
          xmin = .data$latitude_qt_5,
-         xmax = .data$latitude_qt_95
+         xmax = .data$latitude_qt_95,
+         group = .data$logger
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
-         x = .data$latitude_qt_50
+         x = .data$latitude_qt_50,
+         group = .data$logger
        )
      )  +
       ggplot2::labs(
@@ -289,14 +291,16 @@ stk_map <- function(
        ggplot2::aes(
          y = .data$date,
          xmin = .data$longitude_qt_5,
-         xmax = .data$longitude_qt_95
+         xmax = .data$longitude_qt_95,
+         group = .data$logger
        ),
        fill = "grey85"
      ) +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
-         x = .data$longitude_qt_50
+         x = .data$longitude_qt_50,
+         group = .data$logger
        )
      )  +
 
@@ -310,14 +314,16 @@ stk_map <- function(
          ggplot2::aes(
             y = .data$date,
             xmin = .data$sky_conditions_qt_5,
-            xmax = .data$sky_conditions_qt_95
+            xmax = .data$sky_conditions_qt_95,
+            group = .data$logger
          ),
          fill = "grey85"
       ) +
      ggplot2::geom_path(
        ggplot2::aes(
          y = .data$date,
-         x = .data$sky_conditions_qt_50
+         x = .data$sky_conditions_qt_50,
+         group = .data$logger
        )
      ) +
      ggplot2::labs(
