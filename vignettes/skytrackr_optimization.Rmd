@@ -46,7 +46,7 @@ To inspect data quality you can visualize the full light profile by using the `s
 # an overview profile
 cc876 |> stk_profile()
 ```
-You can also use the `stk_filter()` with the `plot` parameter set to TRUE (which gives you a diurnal profile). This function also allows you to set the `range` parameter, i.e. which values you consider to be twilight and want to include in the analysis.
+You can also use the `stk_filter()`, used to flag and filter the data to process using the `range` parameter, with the `plot` parameter set to TRUE. This returns a plot of the selected data as well as the annotated dataset.
 
 ```{r}
 # an overview profile
