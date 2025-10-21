@@ -275,6 +275,13 @@ skytrackr <- function(
     )
   }
 
+  # save setup
+  locations$tolerance <- tolerance
+  locations$range <- list(range)
+  locations$control <- list(control)
+  locations$scale <- list(scale)
+  locations$window_size <- window_size
+
   # return the data frame with
   # location
   return(locations)
