@@ -55,7 +55,7 @@ stk_calibrate <- function(
   # calculate daily maxima
   df_max <- df |>
     dplyr::filter(.data$measurement == "lux") |>
-    dplyr::group_by(.data$date) |>
+    dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
       max_illuminance = max(value, na.rm = TRUE)
     )
@@ -103,12 +103,13 @@ stk_calibrate <- function(
     scale_factor[which.min(abs(sky_att - a))]
   }) |> unlist()
 
-  # map scale factors to observed maxima
   obs_scale_factor <- lapply(obs_att, function(a){
     scale_factor[which.min(abs(sky_att - a))]
   }) |> unlist()
 
+  # calculate quantile
   qtl <- quantile(obs_scale_factor, 0.9)
+  qtl <- ifelse(qtl < 10, 10, qtl)
 
   if (plot){
     par(mfrow=c(2,1))
