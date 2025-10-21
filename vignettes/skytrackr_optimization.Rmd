@@ -46,29 +46,31 @@ Unlike a purely twilight based approach to location estimates the {skytrackr} pa
 
 ## The scale parameter
 
-The scale parameter attenuates the sky illuminance in the skylight model using the `sky condition` parameter in order to account for environmental conditions. For an unobstructed sky view this varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Attenuation can therefore be described as:
+The scale parameter sets the light loss of the sky illuminance in the skylight model using the `sky condition` parameter in order to account for environmental conditions. This parameter is estimated during optimization, but at times competes with the estimated latitude parameter (depending on the optimization setup and used data). This parameter therefore needs to be chosen carefully, to allow for enough flexibility to account for environmental factors.
 
-total attenuation = Q_F(sky condition, LAI) + f_sensor(sky condition, coverage) + sensor error
+These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Light loss can therefore be described as:
+
+light loss = Q_F(sky condition, LAI) + f_sensor(sky condition, coverage) + sensor error
 
 Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.
 
-Where light attenuates through a canopy according to the Beer–Lambert Law.
+Where light loss through a canopy is described according to the Beer–Lambert Law.
 
 Q_F = Q_0 e^{–kF}
 
 Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (m^2) per surface area (m^2). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
 
-Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get and attenuation of the original solar illuminance to about 5% of the original input. We can map the `sky condition` parameter to LAI (using a clear sky, and average sky as a reference). The relationship between LAI and the sky conditions scale factor is non-linear, and for most optimizations an upper scale limit of 10 to 50 should be considered. It is best to consult knowledge on the ecology of the species to make an informed decision.
+Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the `sky condition` parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor.
 
-### Estimating the scale
+### Estimating the scale from data
 
-Working on the assumption that the sensor is correctly installed and exposed (not covered) and the sensor error is minimal we can estimate the total attenuation from the data itself using some assumptions. This would allow to set a data informed limit on the sky condition range. We can compare the maximum sun illuminance value across a year with all the recorded maximum values in the data record. Working on the assumption that individuals track favourable (high illuminance) summer conditions these values should give a crude estimate of the total attenuation (without a need for attribution). Generally, Migrate Technology Ltd. sensors track very close to true physical values. The included function `stk_calibrate()` returns both the quantiles on the attenuation factors across the data, as graphs showing a histogram of the values and their relation to LAI.
+Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). 
 
-In absence of (valid) midday values you can use the general mapping of 
+Generally, Migrate Technology Ltd. sensors track close to true physical values (low sensor error). The included function `stk_calibrate()` returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in `skytrackr()`.
 
 ## Optimization iterations
 
-There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is adviced to increase the number of optimization iterations. For **high quality** data **3000 iterations** generally yields good results, but increasing this number to **6000 might provide a more robust estimate** in some cases. It is adviced to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.
+There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is advised to increase the number of optimization iterations. For **high quality** data **3000 iterations** generally yields good results, but increasing this number to **6000 might provide a more robust estimate** in some cases. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.
 
 ## Step-selection dynamics
 
@@ -76,6 +78,4 @@ The step-selection function constrains the validity of a proposed location estim
 
 # Post-processing
 
-After estimating locations you can inspect the location estimation data using the `stk_map()` function. This will give you an initial idea on the accuracy of the estimates. In particular, values of the `sky conditions` parameter should not be skewed dramatically to higher values. The latter suggests that the true parameter might be out of bounds. Dependent estimates of latitude and longitude will therefore be wrongly estimated. 
-
-Additionally, exploring uncertainty metrics such as the spread of the uncertainty on both longitude and latitude parameters helps determine the quality of the estimated locations. For most optimizer specified a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values < 1.05 are generally considered showing covergence of the parameter (location) estimates.
+After estimating locations you can inspect the location estimation data using the `stk_map()` function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values < 1.05 are generally considered showing convergence of the parameter (location) estimates.
