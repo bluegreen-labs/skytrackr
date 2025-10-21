@@ -40,9 +40,24 @@ Before you start an estimation location there are a number of steps you can unde
 
 Invariably the quality of your location estimates will depend on the quality of your input (logger) data. This means that poor quality data (due to false twilights or nest visits during the day) will negatively affect a location estimate's accuracy. To remove the most common sources of error the `stk_screen_twl()` function is included. **Eliminating poor quality days will improve location estimates** as there is a temporal dependency between the current estimate and the previous one.
 
+To inspect data quality you can visualize the full light profile by using the `stk_profile()` function.
+
+```{r}
+# an overview profile
+cc876 |> stk_profile()
+```
+You can also use the `stk_filter()` with the `plot` parameter set to TRUE (which gives you a diurnal profile). This function also allows you to set the `range` parameter, i.e. which values you consider to be twilight and want to include in the analysis.
+
+```{r}
+# an overview profile
+cc876 |> stk_filter(range = c(0.09, 400), plot = TRUE)
+```
+
 ## Data frequency
 
-Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By default only twilight data is used. However, in some cases it might be advantageous to use the full diurnal cycle by adjusting the `range` parameter to include more data. Including more data will increase the required computational power, i.e. time, for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. Always **inspect a daily light profile** to establish if a full diurnal cycle is recorded, and exclude any baseline and saturated values (i.e. fill values).
+Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By adjusting the `range` parameter you can include more or less data. Depending on the quality of the data including more data, outside the strict twilight range can be beneficial. You can explore the influence of your range parameter using the `stk_filter()` function (see above).
+
+Including more data will increase the required computational power, i.e. time, for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. In short, always **inspect a daily light profile** to establish if a full diurnal cycle is recorded, to exclude any baseline and saturated values (i.e. fill values), and assess the quality (noise) of the data.
 
 ## The scale parameter
 
@@ -50,15 +65,15 @@ The scale parameter sets the light loss of the sky illuminance in the skylight m
 
 These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Light loss can therefore be described as:
 
-light loss = Q_F(sky condition, LAI) + f_sensor(sky condition, coverage) + sensor error
+light loss = $Q_F(sky condition, LAI)$ + $f_sensor(sky condition, coverage)$ + $\epsilon$
 
 Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.
 
 Where light loss through a canopy is described according to the Beer–Lambert Law.
 
-Q_F = Q_0 e^{–kF}
+$Q_F$ = $Q_0 e^{–kF}$
 
-Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (m^2) per surface area (m^2). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
+Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves ($m^2$) per surface area ($m^2$). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
 
 Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the `sky condition` parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor.
 
