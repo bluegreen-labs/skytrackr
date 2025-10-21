@@ -108,7 +108,7 @@ stk_calibrate <- function(
     scale_factor[which.min(abs(sky_att - a))]
   }) |> unlist()
 
-  qtl <- quantile(obs_scale_factor, 0.75)
+  qtl <- quantile(obs_scale_factor, 0.9)
 
   if (plot){
     par(mfrow=c(2,1))
@@ -141,5 +141,5 @@ stk_calibrate <- function(
       "the suggested upper scale parameter is: {.strong {qtl}}!")
   }
 
-  invisible(return(qtl))
+  invisible(return(as.numeric(qtl)))
 }
