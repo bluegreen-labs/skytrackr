@@ -8,6 +8,8 @@
 #' values)
 #'
 #' @param df a skytrackr dataframe
+#' @param percentile percentile of the spread of data to use in scale value
+#'  evaluation
 #' @param floor threshold to remove low (nighttime) values
 #' @param sky_condition reference sky conditions, by default set
 #'  to three (3), an average sky with ~30% cloud cover. One (1)
@@ -22,6 +24,7 @@
 
 stk_calibrate <- function(
     df,
+    percentile = 95,
     floor = 1.5,
     sky_condition = 3,
     plot = TRUE,
@@ -108,7 +111,7 @@ stk_calibrate <- function(
   }) |> unlist()
 
   # calculate quantile
-  qtl <- quantile(obs_scale_factor, 0.9)
+  qtl <- round(quantile(obs_scale_factor, (percentile/100)), 4)
   qtl <- ifelse(qtl < 10, 10, qtl)
 
   if (plot){
@@ -116,6 +119,7 @@ stk_calibrate <- function(
     hist(
       obs_scale_factor,
       breaks = 20,
+      main = "",
       xlab = "Observed scale"
     )
 
