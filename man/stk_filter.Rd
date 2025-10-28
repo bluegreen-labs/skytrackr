@@ -32,3 +32,11 @@ selected (filtered out).
 Generally used for internal process, but can be
 useful for visualizations of profiles as well.
 }
+\examples{
+
+# filter values using the preset range, only annotate
+df <- cc876 |> stk_filter(range = c(1.5, 400))
+
+# filter values using the preset range, only retain filtered values
+df <- cc876 |> stk_filter(range = c(1.5, 400), filter = TRUE)
+}

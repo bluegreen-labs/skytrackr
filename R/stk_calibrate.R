@@ -21,6 +21,10 @@
 #'
 #' @returns an estimated scale value to be used in optimization
 #' @export
+#' @examples
+#'
+#' # Estimate the upper scale value for fitting routine
+#' upper_scale_value <- cc876 |> stk_calibrate()
 
 stk_calibrate <- function(
     df,

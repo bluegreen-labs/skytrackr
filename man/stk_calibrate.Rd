@@ -41,3 +41,8 @@ requires midday values and will not work on
 loggers with a capped value (only recording twilight
 values)
 }
+\examples{
+
+# Estimate the upper scale value for fitting routine
+upper_scale_value <- cc876 |> stk_calibrate()
+}

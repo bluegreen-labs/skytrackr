@@ -20,6 +20,13 @@
 #'  to only include twilight values selected by the range parameter
 #'  or with an additional 'twilight' column to annotate these values.
 #' @export
+#' @examples
+#'
+#' # filter values using the preset range, only annotate
+#' df <- cc876 |> stk_filter(range = c(1.5, 400))
+#'
+#' # filter values using the preset range, only retain filtered values
+#' df <- cc876 |> stk_filter(range = c(1.5, 400), filter = TRUE)
 
 stk_filter <- function(
     data,
