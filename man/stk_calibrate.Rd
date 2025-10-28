@@ -4,10 +4,20 @@
 \alias{stk_calibrate}
 \title{Estimate upper scale value}
 \usage{
-stk_calibrate(df, floor = 1.5, sky_condition = 3, plot = TRUE, verbose = TRUE)
+stk_calibrate(
+  df,
+  percentile = 95,
+  floor = 1.5,
+  sky_condition = 3,
+  plot = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{df}{a skytrackr dataframe}
+
+\item{percentile}{percentile of the spread of data to use in scale value
+evaluation}
 
 \item{floor}{threshold to remove low (nighttime) values}
 

@@ -16,7 +16,8 @@ skytrackr(
   mask,
   step_selection,
   plot = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  debug = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ move, step selection is specified on distance (in km) basis.}
 
 \item{verbose}{Give feedback including a progress bar (TRUE or FALSE,
 default = TRUE)}
+
+\item{debug}{debugging info and plots}
 }
 \value{
 A data frame with location estimate, their uncertainties, and
