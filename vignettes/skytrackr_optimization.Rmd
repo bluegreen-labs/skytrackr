@@ -42,13 +42,13 @@ Invariably the quality of your location estimates will depend on the quality of 
 
 To inspect data quality you can visualize the full light profile by using the `stk_profile()` function.
 
-```{r out.width="85%"}
+```{r out.width="85%", fig.width = 10, fig.height = 5}
 # an overview profile
 cc876 |> stk_profile()
 ```
 You can also use the `stk_filter()`, used to flag and filter the data to process using the `range` parameter, with the `plot` parameter set to TRUE. This returns a plot of the selected data as well as the annotated dataset.
 
-```{r out.width="85%"}
+```{r out.width="85%", fig.width = 10, fig.height = 5}
 # an overview profile
 cc876 |> stk_filter(range = c(0.09, 400), plot = TRUE)
 ```
@@ -77,7 +77,7 @@ Where light loss through a canopy is described according to the Beer–Lambert L
 
 $Q_F$ = $Q_0 e^{–kF}$
 
-Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves ($m^2$) per surface area ($m^2$). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
+Where $Q_{F}$ is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves ($m^2$) per surface area ($m^2$). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
 
 Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the `sky condition` parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor, under ideal conditions.
 
