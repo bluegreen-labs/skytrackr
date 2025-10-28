@@ -10,12 +10,14 @@ skytrackr(
   tolerance = 1500,
   range = c(0.09, 148),
   scale = log(c(1e-05, 50)),
-  control = list(sampler = "DEzs", settings = list(burnin = 250, iterations = 3000,
+  control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 3000,
     message = FALSE)),
+  window_size = 1,
   mask,
   step_selection,
   plot = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  debug = FALSE
 )
 }
 \arguments{
@@ -42,6 +44,9 @@ to be provided on a log scale (default = log(c(0.00001, 50)))}
 should not be altered (defaults to a Monte Carlo method). For detailed
 information I refer to the BayesianTools package documentation.}
 
+\item{window_size}{use a moving window across x days during data processing,
+this effectively smooths responses (default = 1, day-by-day processing)}
+
 \item{mask}{Mask to constrain positions to land}
 
 \item{step_selection}{A step selection function on the distance of a proposed
@@ -49,7 +54,10 @@ move, step selection is specified on distance (in km) basis.}
 
 \item{plot}{Plot a map during location estimation (updated every seven days)}
 
-\item{verbose}{Give feedback including a progress bar (TRUE or FALSE)}
+\item{verbose}{Give feedback including a progress bar (TRUE or FALSE,
+default = TRUE)}
+
+\item{debug}{debugging info and plots}
 }
 \value{
 A data frame with location estimate, their uncertainties, and

@@ -128,7 +128,7 @@ locations <- data |>
       control = list(
         sampler = 'DEzs',
         settings = list(
-          burnin = 250,
+          burnin = 1000,
           iterations = 3000,
           message = FALSE
         )
@@ -172,7 +172,7 @@ locations <- data |>
         control = list(
           sampler = 'DEzs',
           settings = list(
-            burnin = 250,
+            burnin = 1000,
             iterations = 3000,
             message = FALSE
           )

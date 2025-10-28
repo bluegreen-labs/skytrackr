@@ -44,10 +44,11 @@ stk_screen_twl <- function(
 
   # no summarize feedback
   options(dplyr.summarise.inform = FALSE)
+  options(dplyr.show_progress = FALSE)
 
   # for all dates calculate twilight values based upon
   # a threshold, commonly 1.5
-  twl <- df |>
+  twl <- suppressWarnings(df |>
     dplyr::filter(
       .data$measurement == "lux"
     ) |>
@@ -60,7 +61,7 @@ stk_screen_twl <- function(
       roost = length(
         which(.data$value[.data$hour > .data$dawn & .data$hour < .data$dusk] < threshold)
         ) > dips
-    )
+    ))
 
   df_out <- dplyr::left_join(
     df,

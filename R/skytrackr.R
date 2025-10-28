@@ -26,10 +26,14 @@
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
 #' @param mask Mask to constrain positions to land
+#' @param window_size use a moving window across x days during data processing,
+#'  this effectively smooths responses (default = 1, day-by-day processing)
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
 #' @param plot Plot a map during location estimation (updated every seven days)
-#' @param verbose Give feedback including a progress bar (TRUE or FALSE)
+#' @param verbose Give feedback including a progress bar (TRUE or FALSE,
+#'  default = TRUE)
+#' @param debug debugging info and plots
 #'
 #' @importFrom rlang .data
 #' @import patchwork
@@ -80,16 +84,22 @@ skytrackr <- function(
     control = list(
       sampler = 'DEzs',
       settings = list(
-        burnin = 250,
+        burnin = 1000,
         iterations = 3000,
         message = FALSE
       )
     ),
+    window_size = 1,
     mask,
     step_selection,
     plot = TRUE,
-    verbose = TRUE
+    verbose = TRUE,
+    debug = FALSE
 ) {
+
+  if(debug){
+    plot = FALSE
+  }
 
   if(missing(mask)){
     cli::cli_abort(c(
@@ -107,21 +117,24 @@ skytrackr <- function(
       )
   }
 
+  if(window_size %% 2 == 0) {
+    cli::cli_abort(c(
+      "The chosen window size is even.",
+      "x" = "Please provide an uneven window size"
+    )
+    )
+  }
+
   # unravel the light data
   data <- data |>
-    dplyr::filter(
-      .data$measurement == "lux"
-    ) |>
+    skytrackr::stk_filter(range = range, filter = TRUE) |>
     tidyr::pivot_wider(
       names_from = "measurement",
       values_from = "value"
     )
 
-  # subset data
+  # convert to log lux
   data <- data |>
-    dplyr::filter(
-      (.data$lux > range[1] & .data$lux < range[2])
-    ) |>
     dplyr::mutate(
       lux = log(.data$lux)
     )
@@ -207,8 +220,15 @@ skytrackr <- function(
     roi <- terra::mask(mask, pol) |>
       terra::crop(sf::st_bbox(pol))
 
-    # create a subset
-    subs <- data[which(data$date == dates[i]),]
+    # calculate first and last window positions
+    # trap begin and end exceptions
+    w <- window_size%/%2
+    w_f <- ifelse(i-w <= 0, 1, i-w)
+    w_l <- ifelse(i+w >= length(dates), length(dates), i+w)
+
+    # create a subset of the data to fit
+    # the skylight model to
+    subs <- data[which(data$date %in% dates[w_f:w_l]),]
 
     # fit model parameters for a given
     # day to estimate the location
@@ -221,8 +241,39 @@ skytrackr <- function(
         step_selection = step_selection
       )
 
+    if (debug){
+      subs <- subs |>
+        dplyr::select(date_time, lux) |>
+        dplyr::rename(
+          date = date_time
+        ) |>
+        dplyr::mutate(
+          latitude = out$latitude,
+          longitude = out$longitude
+        )
+
+      subs$sun_illuminance <- log(
+        skylight::skylight(
+          subs,
+          sky_condition = out$sky_conditions,
+        )$sun_illuminance
+      )
+
+      par(mfrow=c(1,1))
+      plot(
+        subs$date, subs$lux, ylim = c(-5, 12),
+        main = paste(
+          round(out$latitude,3),
+          round(out$longitude,3),
+          round(out$sky_conditions,3)
+          )
+        )
+      lines(subs$date, subs$sun_illuminance, col = "red")
+    }
+
     # set date
     out$date <- dates[i]
+    out$logger <- data$logger[1]
 
     # equinox flag
     doy <- as.numeric(format(out$date, "%j"))
@@ -240,15 +291,16 @@ skytrackr <- function(
     }
 
     if(plot & i %in% plot_update){
-
-      p <- stk_map(
+      p <- try(stk_map(
         locations,
         bbox = sf::st_bbox(mask),
         start_location = start_location,
         roi = pol # forward roi polygon / not raster
-      )
+      ))
 
-      plot(p)
+      if(!inherits(p, "try-error")){
+        plot(p)
+      }
     }
   }
 
@@ -259,6 +311,13 @@ skytrackr <- function(
       "Data processing done ..."
     )
   }
+
+  # save setup
+  locations$tolerance <- tolerance
+  locations$range <- list(range)
+  locations$control <- list(control)
+  locations$scale <- list(scale)
+  locations$window_size <- window_size
 
   # return the data frame with
   # location

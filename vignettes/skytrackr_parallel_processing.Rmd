@@ -30,13 +30,13 @@ library(skytrackr)
 
 # Introduction
 
-Light loggers are often deployed in bulk. In order to speed up processing you can easily convert a standard serial {dplyr} based processing to a parallel one using the {multidplyr} package. To demonstrate this I'll use a fake dataset with two loggers (using the included demo data).
+Light loggers are often deployed in bulk. In order to speed up processing you can easily convert a standard serial {dplyr} based processing by using the {multidplyr} package. To demonstrate this I'll use a demonstration dataset with two loggers (using the included demo data).
 
 # Data setup
 
 For this exercise you will need {skytrackr} and {multidplyr} libraries loaded. I use the included demo dataset `cc876` and load it into two different data frames, while renaming the logger in one of them. I then merge both data frames. This will create a dataset with two loggers (although containing the same information), suitable to demonstrate parallel processing.
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 library(skytrackr)
 library(dplyr)
 library(multidplyr)
@@ -50,9 +50,11 @@ df2 <- skytrackr::cc876
 df <- bind_rows(df1,df2)
 ```
 
-Next I'll define the cluster setup using the `new_cluster()` function. In general you can safely use all but one of your cores on your local machine (n - 1). To detect the number of cores on your machine you can use `parallel::detectCores()`. In most modern computers there are at least four (4) local cores. In our case, with two datasets to process, one core will go unused. If more data is presented it will be distributed over the available cores.
+# {multidplyr}
 
-```{r eval = TRUE}
+To parallelize processing using {multidplyr} you need to manually define your processing cluster. I'll define the cluster setup using the `new_cluster()` function. In general you can safely use all but one of your cores on your local machine (n - 1). To detect the number of cores on your machine you can use `parallel::detectCores()`. In most modern computers there are at least four (4) local cores. In our case, with two datasets to process, one core will go unused. If more data is presented it will be distributed over the available cores.
+
+```{r eval = FALSE}
 # detect number of cores automatically
 # n <- parallel::detectCores() - 1
 
@@ -73,7 +75,7 @@ cluster_library(cluster, "skytrackr")
 
 With the cluster details specified I can now partition the data for distribution to the different CPUs. The partitioning of data is done by the standard {dplyr} `group_by()` function, followed by the {multidplyr} `partition()` function using the cluster specifications as an argument. This will transform the `tibble` data frame into a partitioned data frame, or `party_df`.
 
-```{r eval = TRUE}
+```{r eval = FALSE}
 # split tasks by logger
 # across cluster partitions
 df_logger <- df |>
@@ -83,7 +85,9 @@ df_logger <- df |>
 print(df_logger)
 ```
 
-# Parallel processing
+## Parallel processing
+
+> Note: Before starting large batch jobs it is best to validate the processing on a representative light profile in order to verify the correct parameters.
 
 Finally, after the setup we can now call the main parallel routine to be executed. The setup follows the routine specified in the main README with a few exceptions. Mainly, the generation of the mask, step-selection function and setting the random seed must be included in the `do()` statement. The parallel sessions do not have access to shared memory. As such, we have to define the mask, step-selection function and random seed for each run (logger) separately.
 
