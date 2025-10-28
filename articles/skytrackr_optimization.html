@@ -43,7 +43,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.0</small></i>
+           <i>skytrackr <small>v1.1</small></i>
         </a>
       </div>
     </div>
@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Koen Hufkens</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/v1.0/vignettes/skytrackr_optimization.Rmd" class="external-link"><code>vignettes/skytrackr_optimization.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/vignettes/skytrackr_optimization.Rmd" class="external-link"><code>vignettes/skytrackr_optimization.Rmd</code></a></small>
       <div class="hidden name"><code>skytrackr_optimization.Rmd</code></div>
 
     </div>
@@ -121,22 +121,67 @@
 <span class="header-section-number">2.1</span> Data quality<a class="anchor" aria-label="anchor" href="#data-quality"></a>
 </h3>
 <p>Invariably the quality of your location estimates will depend on the quality of your input (logger) data. This means that poor quality data (due to false twilights or nest visits during the day) will negatively affect a location estimate’s accuracy. To remove the most common sources of error the <code><a href="../reference/stk_screen_twl.html">stk_screen_twl()</a></code> function is included. <strong>Eliminating poor quality days will improve location estimates</strong> as there is a temporal dependency between the current estimate and the previous one.</p>
+<p>To inspect data quality you can visualize the full light profile by using the <code><a href="../reference/stk_profile.html">stk_profile()</a></code> function.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># an overview profile</span></span>
+<span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;">
+You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</a></code>, used to flag and filter the data to process using the <code>range</code> parameter, with the <code>plot</code> parameter set to TRUE. This returns a plot of the selected data as well as the annotated dataset.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># an overview profile</span></span>
+<span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_filter.html">stk_filter</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,640 × 7</span></span></span>
+<span><span class="co">#&gt;    logger date_time           date         hour measurement value twilight</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08 FALSE   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,630 more rows</span></span></span></code></pre>
 </div>
 <div class="section level3" number="2.2">
 <h3 id="data-frequency">
 <span class="header-section-number">2.2</span> Data frequency<a class="anchor" aria-label="anchor" href="#data-frequency"></a>
 </h3>
-<p>Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By default only twilight data is used. However, in some cases it might be adventageous to use the full diurnal cycle by adjusting the <code>range</code> parameter to include more data. Including more data will increase the computational power, i.e. time, required for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. Always <strong>inspect a daily light profile</strong> to establish if a full diurnal cycle is recorded, and exclude any baseline and saturated values (i.e. fill values).</p>
+<p>Unlike a purely twilight based approach to location estimates the {skytrackr} package uses all, or part of, the measured diurnal light cycle. By adjusting the <code>range</code> parameter you can include more or less data. Depending on the quality of the data including more data, outside the strict twilight range can be beneficial. You can explore the influence of your range parameter using the <code><a href="../reference/stk_filter.html">stk_filter()</a></code> function (see above).</p>
+<p>Including more data will increase the required computational power, i.e. time, for a good estimate. It is also important to note that some loggers (e.g. those by the Swiss ornithological society) do not register a full diurnal profile. In short, always <strong>inspect a daily light profile</strong> to establish if a full diurnal cycle is recorded, to exclude any baseline and saturated values (i.e. fill values), and assess the quality (noise) of the data.</p>
 </div>
 <div class="section level3" number="2.3">
-<h3 id="optimization-iterations">
-<span class="header-section-number">2.3</span> Optimization iterations<a class="anchor" aria-label="anchor" href="#optimization-iterations"></a>
+<h3 id="the-scale-parameter">
+<span class="header-section-number">2.3</span> The scale parameter<a class="anchor" aria-label="anchor" href="#the-scale-parameter"></a>
 </h3>
-<p>There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is adviced to increase the number of optimization iterations. For <strong>high quality</strong> data <strong>3000 iterations</strong> generally yields good results, but increasing this number to <strong>6000 might provide a more robust estimate</strong> in some cases. It is adviced to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.</p>
+<p>The scale parameter sets the light loss of the sky illuminance in the skylight model using the <code>sky condition</code> parameter in order to account for environmental conditions. This parameter is estimated during optimization, but at times competes with the estimated latitude parameter (depending on the optimization setup and used data). This parameter therefore needs to be chosen carefully, to allow for enough flexibility to account for environmental factors.</p>
+<p>These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Light loss can therefore be described as:</p>
+<p>light loss = <span class="math inline">\(Q_F(sky condition, LAI)\)</span> + <span class="math inline">\(f_sensor(sky condition, coverage)\)</span> + <span class="math inline">\(\epsilon\)</span></p>
+<p>Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.</p>
+<p>Where light loss through a canopy is described according to the Beer–Lambert Law.</p>
+<p><span class="math inline">\(Q_F\)</span> = <span class="math inline">\(Q_0 e^{–kF}\)</span></p>
+<p>Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (<span class="math inline">\(m^2\)</span>) per surface area (<span class="math inline">\(m^2\)</span>). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.</p>
+<p>Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the <code>sky condition</code> parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor.</p>
+<div class="section level4" number="2.3.1">
+<h4 id="estimating-the-scale-from-data">
+<span class="header-section-number">2.3.1</span> Estimating the scale from data<a class="anchor" aria-label="anchor" href="#estimating-the-scale-from-data"></a>
+</h4>
+<p>Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions).</p>
+<p>Generally, Migrate Technology Ltd. sensors track close to true physical values (low sensor error). The included function <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in <code><a href="../reference/skytrackr.html">skytrackr()</a></code>.</p>
+</div>
 </div>
 <div class="section level3" number="2.4">
+<h3 id="optimization-iterations">
+<span class="header-section-number">2.4</span> Optimization iterations<a class="anchor" aria-label="anchor" href="#optimization-iterations"></a>
+</h3>
+<p>There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is advised to increase the number of optimization iterations. For <strong>high quality</strong> data <strong>3000 iterations</strong> generally yields good results, but increasing this number to <strong>6000 might provide a more robust estimate</strong> in some cases. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.</p>
+</div>
+<div class="section level3" number="2.5">
 <h3 id="step-selection-dynamics">
-<span class="header-section-number">2.4</span> Step-selection dynamics<a class="anchor" aria-label="anchor" href="#step-selection-dynamics"></a>
+<span class="header-section-number">2.5</span> Step-selection dynamics<a class="anchor" aria-label="anchor" href="#step-selection-dynamics"></a>
 </h3>
 <p>The step-selection function constrains the validity of a proposed location estimate. However, the function used is approximate only. It must also be noted that while an individual might move a long distance across a day (in absolute sense), its position from day-to-day might not move much (e.g. in the most extreme case, there is no day-to-day movement if the individual returns to a nesting location). <strong>The step-selection function should reflect short-distance ranging movements</strong> (i.e. rapid decay) rather than long-distance migration movements.</p>
 </div>
@@ -145,8 +190,7 @@
 <h2 id="post-processing">
 <span class="header-section-number">3</span> Post-processing<a class="anchor" aria-label="anchor" href="#post-processing"></a>
 </h2>
-<p>After estimating locations you can inspect the location estimation data using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function. This will give you an initial idea on the accuracy of the estimates. In particular, values of the <code>sky conditions</code> parameter should not be skewed dramatically to higher values. The latter suggests that the true parameter might be out of bounds. Dependent estimates of latitude and longitude will therefore be wrongly estimated.</p>
-<p>Additionally, exploring uncertainty metrics such as the spread of the uncertainty on both longitude and latitude parameters helps determine the quality of the estimated locations. For most optimizer specified a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing covergence of the parameter (location) estimates.</p>
+<p>After estimating locations you can inspect the location estimation data using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing convergence of the parameter (location) estimates.</p>
 </div>
   </div>
 

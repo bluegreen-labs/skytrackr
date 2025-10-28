@@ -21,7 +21,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.0</small></i>
+           <i>skytrackr <small>v1.1</small></i>
         </a>
       </div>
     </div>
@@ -65,9 +65,17 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/v1.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1" id="skytrackr-11">skytrackr 1.1<a class="anchor" aria-label="anchor" href="#skytrackr-11"></a></h2>
+<p>Where release 1.0 was tuned for use on the common swift (an ideal light logger species) this release sees improvements in which cover expanding the methodology to species which have less than optimal (noisy) light logger data. It provides new methods to correctly estimate parameter ranges (attenuation factors due to preferred secluded habitats).</p>
+<ul><li>introduction of a filter function <code><a href="../reference/stk_filter.html">stk_filter()</a></code>, but helpful in visualizing data</li>
+<li>introduction of the <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> function to estimate scale factors for optimization</li>
+<li>correction to the subsetting of the data (see <code><a href="../reference/stk_filter.html">stk_filter()</a></code>) to accommodate noisy data</li>
+<li>trap rendering error on intermediate plots, which corrupts optimization</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0" id="skytrackr-10">skytrackr 1.0<small>2025-10-08</small><a class="anchor" aria-label="anchor" href="#skytrackr-10"></a></h2>
 <ul><li>removed seed from <code><a href="../reference/stk_cluster.html">stk_cluster()</a></code>

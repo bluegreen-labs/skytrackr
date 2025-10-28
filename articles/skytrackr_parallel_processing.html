@@ -43,7 +43,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.0</small></i>
+           <i>skytrackr <small>v1.1</small></i>
         </a>
       </div>
     </div>
@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Koen Hufkens</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/v1.0/vignettes/skytrackr_parallel_processing.Rmd" class="external-link"><code>vignettes/skytrackr_parallel_processing.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/vignettes/skytrackr_parallel_processing.Rmd" class="external-link"><code>vignettes/skytrackr_parallel_processing.Rmd</code></a></small>
       <div class="hidden name"><code>skytrackr_parallel_processing.Rmd</code></div>
 
     </div>
@@ -109,7 +109,7 @@
 <h2 id="introduction">
 <span class="header-section-number">1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Light loggers are often deployed in bulk. In order to speed up processing you can easily convert a standard serial {dplyr} based processing to a parallel one using the {multidplyr} package. To demonstrate this I’ll use a fake dataset with two loggers (using the included demo data).</p>
+<p>Light loggers are often deployed in bulk. In order to speed up processing you can easily convert a standard serial {dplyr} based processing by using the {multidplyr} package. To demonstrate this I’ll use a demonstration dataset with two loggers (using the included demo data).</p>
 </div>
 <div class="section level2" number="2">
 <h2 id="data-setup">
@@ -128,7 +128,12 @@
 <span><span class="va">df1</span><span class="op">$</span><span class="va">logger</span> <span class="op">&lt;-</span> <span class="st">"CC888"</span></span>
 <span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu">skytrackr</span><span class="fu">::</span><span class="va"><a href="../reference/cc876.html">cc876</a></span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">df1</span>,<span class="va">df2</span><span class="op">)</span></span></code></pre></div>
-<p>Next I’ll define the cluster setup using the <code><a href="https://multidplyr.tidyverse.org/reference/new_cluster.html" class="external-link">new_cluster()</a></code> function. In general you can safely use all but one of your cores on your local machine (n - 1). To detect the number of cores on your machine you can use <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code>. In most modern computers there are at least four (4) local cores. In our case, with two datasets to process, one core will go unused. If more data is presented it will be distributed over the available cores.</p>
+</div>
+<div class="section level2" number="3">
+<h2 id="multidplyr">
+<span class="header-section-number">3</span> {multidplyr}<a class="anchor" aria-label="anchor" href="#multidplyr"></a>
+</h2>
+<p>To parallelize processing using {multidplyr} you need to manually define your processing cluster. I’ll define the cluster setup using the <code><a href="https://multidplyr.tidyverse.org/reference/new_cluster.html" class="external-link">new_cluster()</a></code> function. In general you can safely use all but one of your cores on your local machine (n - 1). To detect the number of cores on your machine you can use <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code>. In most modern computers there are at least four (4) local cores. In our case, with two datasets to process, one core will go unused. If more data is presented it will be distributed over the available cores.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># detect number of cores automatically</span></span>
 <span><span class="co"># n &lt;- parallel::detectCores() - 1</span></span>
@@ -151,26 +156,14 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">logger</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://multidplyr.tidyverse.org/reference/partition.html" class="external-link">partition</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_logger</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Source: party_df [17,280 x 6]</span></span>
-<span><span class="co">#&gt; Groups: logger</span></span>
-<span><span class="co">#&gt; Shards: 2 [8,640--8,640 rows]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A data frame: 17,280 × 6</span></span></span>
-<span><span class="co">#&gt;   logger date_time           date         hour measurement value</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 17,274 more rows</span></span></span></code></pre></div>
-</div>
-<div class="section level2" number="3">
-<h2 id="parallel-processing">
-<span class="header-section-number">3</span> Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
-</h2>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_logger</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3" number="3.1">
+<h3 id="parallel-processing">
+<span class="header-section-number">3.1</span> Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h3>
+<blockquote>
+<p>Note: Before starting large batch jobs it is best to validate the processing on a representative light profile in order to verify the correct parameters.</p>
+</blockquote>
 <p>Finally, after the setup we can now call the main parallel routine to be executed. The setup follows the routine specified in the main README with a few exceptions. Mainly, the generation of the mask, step-selection function and setting the random seed must be included in the <code><a href="https://dplyr.tidyverse.org/reference/do.html" class="external-link">do()</a></code> statement. The parallel sessions do not have access to shared memory. As such, we have to define the mask, step-selection function and random seed for each run (logger) separately.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run the analysis in parallel</span></span>
@@ -231,6 +224,7 @@
 <code class="sourceCode R"><span><span class="co"># drop the parallel processing info</span></span>
 <span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">locations</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
   </div>
 

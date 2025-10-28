@@ -22,7 +22,7 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987)."><me
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.0</small></i>
+           <i>skytrackr <small>v1.1</small></i>
         </a>
       </div>
     </div>
@@ -66,7 +66,7 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987)."><me
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sky (illuminance) location estimation routine</h1>
-    <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/v1.0/R/skytrackr.R" class="external-link"><code>R/skytrackr.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/R/skytrackr.R" class="external-link"><code>R/skytrackr.R</code></a></small>
     <div class="hidden name"><code>skytrackr.Rd</code></div>
     </div>
 
@@ -82,12 +82,14 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987).</p>
 <span>  tolerance <span class="op">=</span> <span class="fl">1500</span>,</span>
 <span>  range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">148</span><span class="op">)</span>,</span>
 <span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1e-05</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burnin <span class="op">=</span> <span class="fl">250</span>, iterations <span class="op">=</span> <span class="fl">3000</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burnin <span class="op">=</span> <span class="fl">1000</span>, iterations <span class="op">=</span> <span class="fl">3000</span>,</span>
 <span>    message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">mask</span>,</span>
 <span>  <span class="va">step_selection</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  debug <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -130,6 +132,11 @@ should not be altered (defaults to a Monte Carlo method). For detailed
 information I refer to the BayesianTools package documentation.</p></dd>
 
 
+<dt id="arg-window-size">window_size<a class="anchor" aria-label="anchor" href="#arg-window-size"></a></dt>
+<dd><p>use a moving window across x days during data processing,
+this effectively smooths responses (default = 1, day-by-day processing)</p></dd>
+
+
 <dt id="arg-mask">mask<a class="anchor" aria-label="anchor" href="#arg-mask"></a></dt>
 <dd><p>Mask to constrain positions to land</p></dd>
 
@@ -144,7 +151,12 @@ move, step selection is specified on distance (in km) basis.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Give feedback including a progress bar (TRUE or FALSE)</p></dd>
+<dd><p>Give feedback including a progress bar (TRUE or FALSE,
+default = TRUE)</p></dd>
+
+
+<dt id="arg-debug">debug<a class="anchor" aria-label="anchor" href="#arg-debug"></a></dt>
+<dd><p>debugging info and plots</p></dd>
 
 </dl></div>
     <div id="value">
@@ -194,18 +206,17 @@ longitudinal displacement).</p>
 <span class="r-in"><span>        <span class="op">)</span></span></span>
 <span class="r-in"><span>      <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating locations</span><span style="color: #9E9E9E;"> ══════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.0</span><span style="color: #9E9E9E;"> ══</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating locations</span><span style="color: #9E9E9E;"> ══════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.1</span><span style="color: #9E9E9E;"> ══</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing logger: <span style="font-weight: bold;">CC876</span>!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> (preview plot will update every 7 days)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■                              </span>   3% | ETA: 45s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■                              </span>   3% | ETA: 46s</span>
 <span class="r-plt img"><img src="skytrackr-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■                            </span>  10% | ETA: 27s</span>
 <span class="r-plt img"><img src="skytrackr-2.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% | ETA:  5s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■                     </span>  33% | ETA: 11s</span>
 <span class="r-plt img"><img src="skytrackr-3.png" alt="" width="700" height="433"></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■          </span>  70% | ETA:  3s</span>
 <span class="r-plt img"><img src="skytrackr-4.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■      </span>  83% | ETA:  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 100% | ETA:  0s</span>
 <span class="r-plt img"><img src="skytrackr-5.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data processing done ...</span>
