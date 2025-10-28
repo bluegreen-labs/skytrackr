@@ -99,10 +99,8 @@ test_that("read from file and optimize", {
       ),
       step_selection = ssf
     )
-  expect_type(location, "list")
+  expect_s3_class(location, "data.frame")
 })
-
-
 
 test_that("test reading data", {
   df <- skytrackr::stk_read_lux(
@@ -117,9 +115,23 @@ test_that("test plots", {
      system.file("extdata/cc876.lux", package="skytrackr")
      )
 
-  p <- stk_profile(df)
-  p_night <- stk_profile(df, center = "night")
+  p <- skytrackr::stk_profile(df)
+  p_night <- skytrackr::stk_profile(df, center = "night")
 
   expect_s3_class(p, "ggplot")
   expect_s3_class(p_night, "ggplot")
+})
+
+test_that("test calibration", {
+  df <- skytrackr::cc876 |> stk_calibrate()
+  expect_is(df, "numeric")
+})
+
+test_that("test filter", {
+  df <- skytrackr::cc876 |> stk_filter(
+    range = c(1.5, 400),
+    plot = TRUE,
+    filter = TRUE
+  )
+  expect_s3_class(df, "data.frame")
 })
