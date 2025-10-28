@@ -41,3 +41,6 @@ vignettes/*.pdf
 
 # ignore local data
 /data-raw/
+
+# ignore CRAN-SUBMISSION hash
+CRAN-SUBMISSION
