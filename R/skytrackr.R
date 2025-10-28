@@ -33,6 +33,7 @@
 #' @param plot Plot a map during location estimation (updated every seven days)
 #' @param verbose Give feedback including a progress bar (TRUE or FALSE,
 #'  default = TRUE)
+#' @param debug debugging info and plots
 #'
 #' @importFrom rlang .data
 #' @import patchwork
@@ -92,8 +93,13 @@ skytrackr <- function(
     mask,
     step_selection,
     plot = TRUE,
-    verbose = TRUE
+    verbose = TRUE,
+    debug = FALSE
 ) {
+
+  if(debug){
+    plot = FALSE
+  }
 
   if(missing(mask)){
     cli::cli_abort(c(
@@ -235,8 +241,39 @@ skytrackr <- function(
         step_selection = step_selection
       )
 
+    if (debug){
+      subs <- subs |>
+        dplyr::select(date_time, lux) |>
+        dplyr::rename(
+          date = date_time
+        ) |>
+        dplyr::mutate(
+          latitude = out$latitude,
+          longitude = out$longitude
+        )
+
+      subs$sun_illuminance <- log(
+        skylight::skylight(
+          subs,
+          sky_condition = out$sky_conditions,
+        )$sun_illuminance
+      )
+
+      par(mfrow=c(1,1))
+      plot(
+        subs$date, subs$lux, ylim = c(-5, 12),
+        main = paste(
+          round(out$latitude,3),
+          round(out$longitude,3),
+          round(out$sky_conditions,3)
+          )
+        )
+      lines(subs$date, subs$sun_illuminance, col = "red")
+    }
+
     # set date
     out$date <- dates[i]
+    out$logger <- data$logger[1]
 
     # equinox flag
     doy <- as.numeric(format(out$date, "%j"))
