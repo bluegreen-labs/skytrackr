@@ -4,7 +4,7 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, roi, loc, scale, control, step_selection)
+stk_fit(data, roi, loc, scale, control, step_selection, clip)
 }
 \arguments{
 \item{data}{A skytrackr data frame}
@@ -26,6 +26,10 @@ information I refer to the BayesianTools package documentation.}
 
 \item{step_selection}{A step selection function on the distance of a proposed
 move, step selection is specified on distance (in km) basis.}
+
+\item{clip}{value over which lux values are clipped, to be set to the
+saturation value of your system when using the full diurnal profile (not only
+twilight) (default = NULL)}
 }
 \value{
 An estimated illuminance based location (and its uncertainties).
