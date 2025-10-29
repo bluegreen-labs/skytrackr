@@ -28,14 +28,14 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 95,
+    percentile = 90,
     floor = 1.5,
     sky_condition = 3,
     plot = TRUE,
     verbose = TRUE
 ){
 
-  # create progress bar
+  # verbose feedback
   if(verbose) {
 
     cli::cli_div(
@@ -55,7 +55,8 @@ stk_calibrate <- function(
     cli::cli_end()
   }
 
-  # pre-process the data
+  # pre-process the data, only retaining
+  # a subset of "daytime" data
   df <- df |>
     stk_filter(range = c(floor, 150000), filter = TRUE)
 
@@ -66,6 +67,19 @@ stk_calibrate <- function(
     dplyr::summarize(
       max_illuminance = max(value, na.rm = TRUE)
     )
+
+  # check if overall max is within a reasonable range
+  # if not exit with a warning regarding the range of
+  # values and manual checks
+  total_max <- max(df_max$max_illuminance, na.rm = TRUE)
+  if( total_max < 10000){
+    cli::cli_abort(c(
+      "No estimate can be made on the provided data.",
+      "x" = "Maximum light value of {total_max} (< 10000).",
+      "i" = "Data suggests severly clipped values. The suggested range values in this case are 0.00001 to 50."
+      )
+    )
+  }
 
   # generate a reference
   reference <- skylight::skylight(
@@ -85,7 +99,7 @@ stk_calibrate <- function(
   # set the range of scale factors
   scale_factor <- seq(1, 2000, by = 1)
 
-  # calculate "sky condition" based attentuation values
+  # calculate "sky condition" based attenuation values
   sky_att <- lapply(scale_factor, function(i){
     ideal <- skylight::skylight(
       date = as.POSIXct("2022-01-01 12:00:00"),
@@ -139,15 +153,17 @@ stk_calibrate <- function(
 
   # cleanup of progress bar
   if(verbose) {
-
     cli::cli_alert(c(
       "Given ambient sky conditions of {.strong {sky_condition}}!",
       "x" = "
            [with 1 being clear sky, 3 being an average sky, and 10 being a very grey rainy sky]
          "
-    ))
-    cli::cli_alert_info(
-      "the suggested upper scale parameter is: {.strong {qtl}}!")
+      )
+    )
+    cli::cli_bullets(c(
+      ">" = "The suggested upper scale parameter is: {.strong {qtl}}!\n"
+      )
+    )
   }
 
   invisible(return(as.numeric(qtl)))
