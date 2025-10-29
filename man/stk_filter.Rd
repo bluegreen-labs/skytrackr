@@ -4,12 +4,17 @@
 \alias{stk_filter}
 \title{Filter twilight values by range}
 \usage{
-stk_filter(data, range, plot = FALSE, filter = FALSE)
+stk_filter(data, range, smooth = TRUE, plot = FALSE, filter = FALSE)
 }
 \arguments{
 \item{data}{a skytrackr compatible data frame}
 
 \item{range}{a range c(min, max) of valid values in lux}
+
+\item{smooth}{smooth the data using a hampel filter with a window size
+of 3, and a multiplier of the MAD of 3. Original values are substituted,
+the values replaced are flagged in an `outlier` column in the returned
+data frame (default = TRUE)}
 
 \item{plot}{plot daily profiles with the range filter applied}
 

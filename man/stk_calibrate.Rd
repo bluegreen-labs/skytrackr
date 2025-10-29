@@ -6,7 +6,7 @@
 \usage{
 stk_calibrate(
   df,
-  percentile = 95,
+  percentile = 90,
   floor = 1.5,
   sky_condition = 3,
   plot = TRUE,
