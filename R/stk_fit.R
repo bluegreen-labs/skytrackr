@@ -17,6 +17,9 @@
 #'  information I refer to the BayesianTools package documentation.
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
+#' @param clip value over which lux values are clipped, to be set to the
+#'  saturation value of your system when using the full diurnal profile (not only
+#'  twilight) (default = NULL)
 #'
 #' @return An estimated illuminance based location (and its uncertainties).
 #' @export
@@ -27,7 +30,8 @@ stk_fit <- function(
   loc,
   scale,
   control,
-  step_selection
+  step_selection,
+  clip
   ) {
 
   # bbox
@@ -48,7 +52,8 @@ stk_fit <- function(
                    model = "log_lux",
                    loc = loc,
                    roi = roi,
-                   step_selection = step_selection
+                   step_selection = step_selection,
+                   clip = clip
               ))},
     # include an additional parameter
     # range for data uncertainty

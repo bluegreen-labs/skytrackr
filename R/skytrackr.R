@@ -33,6 +33,9 @@
 #' @param plot Plot a map during location estimation (updated every seven days)
 #' @param verbose Give feedback including a progress bar (TRUE or FALSE,
 #'  default = TRUE)
+#' @param clip value over which lux values are clipped, to be set to the
+#'  saturation value of your system when using the full diurnal profile (not only
+#'  twilight) (default = NULL)
 #' @param debug debugging info and plots
 #'
 #' @importFrom rlang .data
@@ -92,6 +95,7 @@ skytrackr <- function(
     window_size = 1,
     mask,
     step_selection,
+    clip = NULL,
     plot = TRUE,
     verbose = TRUE,
     debug = FALSE
@@ -238,7 +242,8 @@ skytrackr <- function(
         loc = sf::st_coordinates(loc),
         scale = scale,
         control = control,
-        step_selection = step_selection
+        step_selection = step_selection,
+        clip = clip
       )
 
     if (debug){
@@ -258,6 +263,13 @@ skytrackr <- function(
           sky_condition = out$sky_conditions,
         )$sun_illuminance
       )
+
+      if(!is.null(clip)){
+        subs <- subs |>
+          mutate(
+            sun_illuminance = ifelse(sun_illuminance > log(clip), log(clip), sun_illuminance)
+          )
+      }
 
       par(mfrow=c(1,1))
       plot(
@@ -318,6 +330,7 @@ skytrackr <- function(
   locations$control <- list(control)
   locations$scale <- list(scale)
   locations$window_size <- window_size
+  locations$clip <- clip
 
   # return the data frame with
   # location
