@@ -4,7 +4,7 @@
 \alias{likelihood}
 \title{Log likelihood cost function}
 \usage{
-likelihood(par, data, model, loc, roi, step_selection, ...)
+likelihood(par, data, model, loc, roi, step_selection, clip = NULL, ...)
 }
 \arguments{
 \item{par}{A vector of parameter values, including one for the uncertainty
@@ -19,6 +19,8 @@ on the target values.}
 \item{roi}{A region of interest with valid sampling locations.}
 
 \item{step_selection}{A step selection function on the distance of a proposed move.}
+
+\item{clip}{value over which lux values are clipped (default = NULL)}
 
 \item{...}{extra arguments to pass to the function}
 }
