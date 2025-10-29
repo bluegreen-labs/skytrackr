@@ -49,7 +49,7 @@ stk_filter <- function(
   # hampel value with a window of 3
   if (smooth){
     window <- 3
-    median <- rollmedian(data$value, window, fill = NA)
+    median <- zoo::rollmedian(data$value, window, fill = NA)
     mad <- zoo::rollapply(
       data$value,
       window,
