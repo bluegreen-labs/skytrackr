@@ -22,7 +22,7 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 98,
+    percentile = 100,
     floor = 1.5,
     verbose = TRUE
 ){
@@ -81,7 +81,7 @@ stk_calibrate <- function(
 
     # calculate the observed attenuation
     obs_att <- 100 - (df_max$max_illuminance/reference) * 100
-    i <- quantile(obs_att, percentile/100)
+    i <- stats::quantile(obs_att, percentile/100)
   }
 
   # feedback
