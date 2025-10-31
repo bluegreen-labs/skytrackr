@@ -193,3 +193,9 @@ locations <- data |>
       )
     })
 ```
+
+## Reasonable expectations and limitations
+
+The method proposed in {skytrackr} is `quasi` calibration free. It balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as [described in the vignette](), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. For example, providing an unrealistic step selection function or upper scale factor (maximum light loss) will lead to unstable results. As with any optimization method used in location estimation there will be variation between optimization runs if no explicit random seed is set (but the general pattern should hold).
+
+
