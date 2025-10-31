@@ -19,6 +19,7 @@
 #' @param filter if TRUE only twilight values are returned if
 #'  FALSE the data frame is returned with an annotation column
 #'  called 'twilight' for further processing.
+#' @param verbose Give detailed feedback (TRUE or FALSE, default = TRUE)
 #'
 #' @returns a skytrackr compatible data frame, either filtered
 #'  to only include twilight values selected by the range parameter
@@ -37,7 +38,8 @@ stk_filter <- function(
     range,
     smooth = TRUE,
     plot = FALSE,
-    filter = FALSE
+    filter = FALSE,
+    verbose = TRUE
 ){
 
   # unravel the light data
@@ -46,8 +48,18 @@ stk_filter <- function(
       .data$measurement == "lux"
     )
 
-  # hampel value with a window of 3
+  # Hampel value with a window of 3
   if (smooth){
+    if(verbose){
+      cli::cli_alert(c(
+        "Smoothing the data using a Hampel filter",
+        "i" = "
+           [outliers will be replaced with interpolated values]
+         "
+      )
+      )
+    }
+
     window <- 3
     median <- zoo::rollmedian(data$value, window, fill = NA)
     mad <- zoo::rollapply(
@@ -65,7 +77,7 @@ stk_filter <- function(
     # substitute original values with median
     data <- data |>
       dplyr::mutate(
-        value = ifelse(outlier, median, .data$value)
+        value = ifelse(.data$outlier, median, .data$value)
       )
   }
 
@@ -75,9 +87,9 @@ stk_filter <- function(
     dplyr::do({
 
       first_low <- which(.data$value > range[1])[1]
-      last_low <- tail(which(.data$value > range[1]), 1)
+      last_low <- utils::tail(which(.data$value > range[1]), 1)
       first_high <- which(.data$value > range[2])[1] - 1
-      last_high <- tail(which(.data$value > range[2]), 1) + 1
+      last_high <- utils::tail(which(.data$value > range[2]), 1) + 1
       idx <- 1:nrow(.data)
 
       first_low <- ifelse(

@@ -30,12 +30,14 @@
 #'  this effectively smooths responses (default = 1, day-by-day processing)
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
-#' @param plot Plot a map during location estimation (updated every seven days)
-#' @param verbose Give feedback including a progress bar (TRUE or FALSE,
-#'  default = TRUE)
+#' @param smooth smooth the data before processing (default = TRUE)
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
 #'  twilight) (default = NULL)
+#' @param plot Plot a map during location estimation (updated every seven days)
+#' @param verbose Give feedback including a progress bar (TRUE or FALSE,
+#'  default = TRUE)
+
 #' @param debug debugging info and plots
 #'
 #' @importFrom rlang .data
@@ -95,6 +97,7 @@ skytrackr <- function(
     window_size = 1,
     mask,
     step_selection,
+    smooth = TRUE,
     clip = NULL,
     plot = TRUE,
     verbose = TRUE,
@@ -103,6 +106,27 @@ skytrackr <- function(
 
   if(debug){
     plot = FALSE
+  }
+
+  if(verbose){
+    cli::cli_div(
+      theme = list(
+        rule = list(
+          color = "darkgrey",
+          "line-type" = "double",
+          "margin-bottom" = 1,
+          "margin-top" = 1
+        ),
+        span.strong = list(color = "black"))
+    )
+    cli::cli_rule(
+      left = "{.strong Estimating locations}",
+      right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
+
+    )
+    cli::cli_end()
+    cli::cli_alert_info(
+      "Processing logger: {.strong {data$logger[1]}}!")
   }
 
   if(missing(mask)){
@@ -131,7 +155,7 @@ skytrackr <- function(
 
   # unravel the light data
   data <- data |>
-    skytrackr::stk_filter(range = range, filter = TRUE) |>
+    skytrackr::stk_filter(range = range, filter = TRUE, verbose = verbose) |>
     tidyr::pivot_wider(
       names_from = "measurement",
       values_from = "value"
@@ -152,26 +176,8 @@ skytrackr <- function(
   # create progress bar
   if(verbose) {
 
-    cli::cli_div(
-      theme = list(
-        rule = list(
-          color = "darkgrey",
-          "line-type" = "double",
-          "margin-bottom" = 1
-          ),
-        span.strong = list(color = "black"))
-        )
-    cli::cli_rule(
-      left = "{.strong Estimating locations}",
-      right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
-
-      )
-    cli::cli_end()
-    cli::cli_alert_info(
-        "Processing logger: {.strong {data$logger[1]}}!")
-
     if(plot){
-    cli::cli_alert_info(
+      cli::cli_alert_info(
         "(preview plot will update every 7 days)"
       )
     }
@@ -246,11 +252,12 @@ skytrackr <- function(
         clip = clip
       )
 
+    # plot debugging graph of fit curve for every day / period
     if (debug){
       subs <- subs |>
-        dplyr::select(date_time, lux) |>
+        dplyr::select(.data$date_time, .data$lux) |>
         dplyr::rename(
-          date = date_time
+          date = .data$date_time
         ) |>
         dplyr::mutate(
           latitude = out$latitude,
@@ -266,12 +273,12 @@ skytrackr <- function(
 
       if(!is.null(clip)){
         subs <- subs |>
-          mutate(
-            sun_illuminance = ifelse(sun_illuminance > log(clip), log(clip), sun_illuminance)
+          dplyr::mutate(
+            sun_illuminance = ifelse(.data$sun_illuminance > log(clip), log(clip), .data$sun_illuminance)
           )
       }
 
-      par(mfrow=c(1,1))
+      graphics::par(mfrow=c(1,1))
       plot(
         subs$date, subs$lux, ylim = c(-5, 12),
         main = paste(
@@ -280,7 +287,7 @@ skytrackr <- function(
           round(out$sky_conditions,3)
           )
         )
-      lines(subs$date, subs$sun_illuminance, col = "red")
+      graphics::lines(subs$date, subs$sun_illuminance, col = "red")
     }
 
     # set date
@@ -331,6 +338,9 @@ skytrackr <- function(
   locations$scale <- list(scale)
   locations$window_size <- window_size
   locations$clip <- clip
+
+  # add version
+  locations$version <- packageVersion('skytrackr')
 
   # return the data frame with
   # location
