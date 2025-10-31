@@ -25,7 +25,8 @@ stk_read_lux <- function(files, verbose = TRUE) {
         rule = list(
           color = "darkgrey",
           "line-type" = "double",
-          "margin-bottom" = 1
+          "margin-bottom" = 1,
+          "margin-top" = 1
         ),
         span.strong = list(color = "black"))
     )
