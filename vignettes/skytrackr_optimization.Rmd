@@ -42,13 +42,13 @@ Invariably the quality of your location estimates will depend on the quality of 
 
 To inspect data quality you can visualize the full light profile by using the `stk_profile()` function.
 
-```{r}
+```{r out.width="85%", fig.width = 10, fig.height = 5}
 # an overview profile
 cc876 |> stk_profile()
 ```
 You can also use the `stk_filter()`, used to flag and filter the data to process using the `range` parameter, with the `plot` parameter set to TRUE. This returns a plot of the selected data as well as the annotated dataset.
 
-```{r}
+```{r out.width="85%", fig.width = 10, fig.height = 5}
 # an overview profile
 cc876 |> stk_filter(range = c(0.09, 400), plot = TRUE)
 ```
@@ -63,25 +63,75 @@ Including more data will increase the required computational power, i.e. time, f
 
 The scale parameter sets the light loss of the sky illuminance in the skylight model using the `sky condition` parameter in order to account for environmental conditions. This parameter is estimated during optimization, but at times competes with the estimated latitude parameter (depending on the optimization setup and used data). This parameter therefore needs to be chosen carefully, to allow for enough flexibility to account for environmental factors.
 
-These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Light loss can therefore be described as:
+These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. 
 
-light loss = $Q_F(sky condition, LAI)$ + $f_sensor(sky condition, coverage)$ + $\epsilon$
+### Light loss theory
 
-Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.
+Light loss can be described as:
+
+light loss = $Q_{F}(sky condition, LAI)$ + $f_{sensor}(sky condition, coverage)$ + $\epsilon$
+
+Where both $Q_{F}()$ and $f_{sensor}(coverage)$ are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.
 
 Where light loss through a canopy is described according to the Beer–Lambert Law.
 
 $Q_F$ = $Q_0 e^{–kF}$
 
-Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves ($m^2$) per surface area ($m^2$). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
+Where $Q_{F}$ is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves ($m^2$) per surface area ($m^2$). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.
 
-Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the `sky condition` parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor.
+Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the `sky condition` parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor, under ideal conditions. The below graph shows the relationship between the scale factor and LAI for an average sky (sky conditions of 3 in the {skylight} model). Working on the assumption that most dense vegetation have a LAI of four to six, one can expect the scale factor to rarely exceed 50 unless other factors are at play.
+
+```{r  out.width="85%", fig.width = 10, fig.height = 4}
+# calculate the attenuation Beer-Lambert for LAI
+lai_range <- seq(0, 10, by = 0.1)
+lai_att <- 100 - (exp(-0.5 * lai_range) * 100)
+
+# set the range of scale factors
+scale_factor <- seq(1, 2000, by = 1)
+
+# calculate "sky condition" based attenuation values
+sky_att <- lapply(scale_factor, function(i){
+  ideal <- skylight::skylight(
+    date = as.POSIXct("2022-01-01 12:00:00"),
+    latitude = 0,
+    longitude = 0,
+    sky_condition = 3
+  )$sun_illuminance
+
+  c <- skylight::skylight(
+    date = as.POSIXct("2022-01-01 12:00:00"),
+    latitude = 0,
+    longitude = 0,
+    sky_condition = i
+  )$sun_illuminance / ideal
+
+  c <- c * 100
+  c <- ifelse(c > 100, NA, c)
+  c <- 100 - c
+}) |> unlist()
+
+  lai_scale_factor <- lapply(lai_att, function(a){
+    scale_factor[which.min(abs(sky_att - a))]
+  }) |> unlist()
+
+ggplot() +
+  geom_line(
+    aes(
+    lai_range,
+    lai_scale_factor
+    )
+  ) +
+  labs(
+    title = "LAI ~ scale factors",
+    x = "LAI",
+    y = "scale factor"
+  ) +
+  theme_minimal()
+```
 
 ### Estimating the scale from data
 
-Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). 
-
-Generally, Migrate Technology Ltd. sensors track close to true physical values (low sensor error). The included function `stk_calibrate()` returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in `skytrackr()`.
+Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). Generally, Migrate Technology Ltd. sensors track close to true physical values. The included function `stk_calibrate()` returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in `skytrackr()`.
 
 ## Optimization iterations
 

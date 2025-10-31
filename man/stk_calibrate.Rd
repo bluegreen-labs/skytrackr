@@ -2,16 +2,9 @@
 % Please edit documentation in R/stk_calibrate.R
 \name{stk_calibrate}
 \alias{stk_calibrate}
-\title{Estimate upper scale value}
+\title{Estimate scale the scale range}
 \usage{
-stk_calibrate(
-  df,
-  percentile = 95,
-  floor = 1.5,
-  sky_condition = 3,
-  plot = TRUE,
-  verbose = TRUE
-)
+stk_calibrate(df, percentile = 100, floor = 1.5, verbose = TRUE)
 }
 \arguments{
 \item{df}{a skytrackr dataframe}
@@ -21,23 +14,20 @@ evaluation}
 
 \item{floor}{threshold to remove low (nighttime) values}
 
-\item{sky_condition}{reference sky conditions, by default set
-to three (3), an average sky with ~30% cloud cover. One (1)
-is a clear sky, while a value of ten (10) is an extremely dark
-sky under stormy / rainy conditions (uncommon).}
-
-\item{plot}{Plot statistical information on the suggested scale estimate}
-
-\item{verbose}{Give feedback including a progress bar (TRUE or FALSE,
-default = TRUE)}
+\item{verbose}{Give detailed feedback (TRUE or FALSE, default = TRUE)}
 }
 \value{
 an estimated scale value to be used in optimization
 }
 \description{
-Estimates the upper scale value based upon
-midday values of the data itself. The method
-requires midday values and will not work on
-loggers with a capped value (only recording twilight
-values)
+Provides a rough estimate on the light loss and corresponding
+range of scale values to consider during optimization. The full
+range is reported, but a percentile parameter can be provided
+to remove outliers. It is recommended to first use `st_screen_twl()`
+to remove "odd" days.
+}
+\examples{
+
+# Estimate the upper scale value for fitting routine
+upper_scale_value <- cc876 |> stk_calibrate()
 }

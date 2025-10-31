@@ -32,6 +32,7 @@ Imports:
     BayesianTools,
     cli,
     utils,
+    zoo,
     memoise,
     stats,
     rlang,

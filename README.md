@@ -99,9 +99,7 @@ Further sub-setting can be done from this point, but if a bird is known to remai
 
 To track movements by light using {skytrackr} you will need a few additional parameters. First, you will need to define the methodology used to find an optimal solution. The underlying BayesianTools package used in optimization allows for the specification of optimization techniques using the 'control' statement. The same argument can be used in the main `skytrackr()` routine.
 
-In addition, care should be taken to specify the start location and tolerance (maximum degrees covered in a single flight - in km). The routine also needs you to specify an applicable land mask for land bound species. This land mask can be buffered extending somewhat offshore if desired. Finally, there is a behavioural component to the optimization routine used through the use of a step-selection function. This step-selection function determines the probability that a certain distance is covered based upon a probability density distribution provided by the user. Common distributions within movement ecology are for example a gamma or weibull distribution. Ideally these distributions are fit to previously collected data (either light-logger or GPS based), or based on common sense.
-
-All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
+In addition, care should be taken to specify the **start location** and **tolerance** (maximum degrees covered in a single flight - in km). The routine also needs you to specify an applicable **land mask** for land bound species. This land mask can be buffered extending somewhat offshore if desired. Finally, there is a behavioural component to the optimization routine used through the use of a step-selection function. This **step-selection function** determines the probability that a certain distance is covered based upon a probability density distribution provided by the user. Common distributions within movement ecology are for example a gamma or weibull distribution. Ideally these distributions are fit to previously collected data (either light-logger or GPS based), or based on common sense.
 
 ```r
 # define land mask with a bounding box
@@ -118,12 +116,24 @@ ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 }
+```
 
+In addition, the range of the `scale` parameter determines the range of light loss due to environmental conditions. If you are used to 
+
+This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the `stk_calibrate()` function to estimate the upper scale parameter. For more details on these optimization settings I refer to the [optimization vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html). Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).
+
+```r
+upper_scale <- data |> stk_calibrate()
+```
+
+All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
+
+```r
 locations <- data |>
     skytrackr(
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
-      scale = log(c(0.00001,50)), # default range
+      scale = log(c(1, upper_scale)), # default range
       range = c(0.09, 148), # default range
       control = list(
         sampler = 'DEzs',
@@ -183,3 +193,9 @@ locations <- data |>
       )
     })
 ```
+
+## Reasonable expectations and limitations
+
+The method proposed in {skytrackr} is `quasi` calibration free. It balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as [described in the vignette](), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. For example, providing an unrealistic step selection function or upper scale factor (maximum light loss) will lead to unstable results. As with any optimization method used in location estimation there will be variation between optimization runs if no explicit random seed is set (but the general pattern should hold).
+
+

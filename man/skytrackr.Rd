@@ -15,6 +15,8 @@ skytrackr(
   window_size = 1,
   mask,
   step_selection,
+  smooth = TRUE,
+  clip = NULL,
   plot = TRUE,
   verbose = TRUE,
   debug = FALSE
@@ -51,6 +53,12 @@ this effectively smooths responses (default = 1, day-by-day processing)}
 
 \item{step_selection}{A step selection function on the distance of a proposed
 move, step selection is specified on distance (in km) basis.}
+
+\item{smooth}{smooth the data before processing (default = TRUE)}
+
+\item{clip}{value over which lux values are clipped, to be set to the
+saturation value of your system when using the full diurnal profile (not only
+twilight) (default = NULL)}
 
 \item{plot}{Plot a map during location estimation (updated every seven days)}
 

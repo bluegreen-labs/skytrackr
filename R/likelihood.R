@@ -10,7 +10,9 @@
 #' @param loc The previous modeled step location.
 #' @param roi A region of interest with valid sampling locations.
 #' @param step_selection A step selection function on the distance of a proposed move.
+#' @param clip value over which lux values are clipped (default = NULL)
 #' @param ... extra arguments to pass to the function
+#'
 #' @return The single log-likelihood cost of a proposed parameter set.
 #' @export
 
@@ -21,6 +23,7 @@ likelihood <- function(
     loc,
     roi,
     step_selection,
+    clip = NULL,
     ...
 ) {
 
@@ -53,6 +56,11 @@ likelihood <- function(
       ...
     )
   )
+
+  # clip output values
+  if (!is.null(clip)){
+    predicted[predicted >= log(clip)] <- log(clip)
+  }
 
   # singlelikelihood
   singlelikelihoods <- stats::dnorm(
