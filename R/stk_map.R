@@ -229,13 +229,19 @@ stk_map <- function(
          ggplot2::geom_sf(
             data = points,
             ggplot2::aes(
-               shape = .data$equinox
+               shape = .data$equinox,
+               colour = ifelse(.data$grd < 1.2, "good","poor")
             ),
-            colour = "grey25"
+            alpha = 0.8
          ) +
          ggplot2::scale_shape_manual(
             values = c(19, 1)
           ) +
+         ggplot2::scale_colour_manual(
+            values = c("#a50026","#313695"),
+            name = "fit",
+            na.value = NA
+         ) +
          ggplot2::geom_sf(
             data = points |> dplyr::filter(date == date[nrow(points)]),
             colour = "black",
@@ -331,10 +337,28 @@ stk_map <- function(
      ) +
      ggplot2::theme_bw()
 
-   p_final <- p + p_lat + p_lon + p_sky +
+   p_grd <- ggplot2::ggplot(df) +
+      ggplot2::geom_point(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$grd,
+            group = .data$logger
+         ),
+         colour = "grey25"
+      ) +
+      ggplot2::geom_vline(xintercept = 1.2) +
+      ggplot2::labs(
+         x = "Gelman-Rubin\n diagnostic"
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(
+         legend.position = "bottom"
+      )
+
+   p_final <- p + p_lat + p_lon + p_sky + p_grd +
      patchwork::plot_layout(
-       ncol = 4,
-       widths = c(4, 1, 1, 1),
+       ncol = 5,
+       widths = c(4, 1, 1, 1, 1),
        axis_titles = "collect_y"
      )
 
