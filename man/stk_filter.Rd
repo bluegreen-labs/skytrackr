@@ -4,7 +4,14 @@
 \alias{stk_filter}
 \title{Filter twilight values by range}
 \usage{
-stk_filter(data, range, smooth = TRUE, plot = FALSE, filter = FALSE)
+stk_filter(
+  data,
+  range,
+  smooth = TRUE,
+  plot = FALSE,
+  filter = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data}{a skytrackr compatible data frame}
@@ -21,6 +28,8 @@ data frame (default = TRUE)}
 \item{filter}{if TRUE only twilight values are returned if
 FALSE the data frame is returned with an annotation column
 called 'twilight' for further processing.}
+
+\item{verbose}{Give detailed feedback (TRUE or FALSE, default = TRUE)}
 }
 \value{
 a skytrackr compatible data frame, either filtered

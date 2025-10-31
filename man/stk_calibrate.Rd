@@ -4,14 +4,7 @@
 \alias{stk_calibrate}
 \title{Estimate upper scale value}
 \usage{
-stk_calibrate(
-  df,
-  percentile = 90,
-  floor = 1.5,
-  sky_condition = 3,
-  plot = TRUE,
-  verbose = TRUE
-)
+stk_calibrate(df, percentile = 100, floor = 1.5, verbose = TRUE)
 }
 \arguments{
 \item{df}{a skytrackr dataframe}
@@ -21,15 +14,7 @@ evaluation}
 
 \item{floor}{threshold to remove low (nighttime) values}
 
-\item{sky_condition}{reference sky conditions, by default set
-to three (3), an average sky with ~30% cloud cover. One (1)
-is a clear sky, while a value of ten (10) is an extremely dark
-sky under stormy / rainy conditions (uncommon).}
-
-\item{plot}{Plot statistical information on the suggested scale estimate}
-
-\item{verbose}{Give feedback including a progress bar (TRUE or FALSE,
-default = TRUE)}
+\item{verbose}{Give detailed feedback (TRUE or FALSE, default = TRUE)}
 }
 \value{
 an estimated scale value to be used in optimization
