@@ -60,6 +60,7 @@ stk_filter <- function(
       )
     }
 
+    # calculate metrics for the Hampel filter
     window <- 3
     median <- zoo::rollmedian(data$value, window, fill = NA)
     mad <- zoo::rollapply(
