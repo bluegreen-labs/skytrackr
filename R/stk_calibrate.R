@@ -3,19 +3,19 @@
 #'
 #' Provides a rough estimate on the light loss and corresponding
 #' range of scale values to consider during optimization. The full
-#' range is reported, but a percentile parameter can be provided
-#' to remove outliers. It is recommended to first use `st_screen_twl()`
-#' to remove "odd" days.
+#' A percentile parameter can be provided to remove outliers. It is
+#' recommended to first use `st_screen_twl()` to remove poor quality days.
 #'
 #' @param df a skytrackr dataframe
 #' @param percentile percentile of the spread of data to use in scale value
-#'  evaluation
+#'  evaluation (default = 100, the full range of values is considered)
 #' @param floor threshold to remove low (nighttime) values
 #' @param verbose Give detailed feedback (TRUE or FALSE, default = TRUE)
 #'
 #' @importFrom utils packageVersion
 #'
-#' @returns an estimated scale value to be used in optimization
+#' @returns An estimated range of scale values to be used in optimization.
+#'  Values are not log transformed.
 #' @export
 #' @examples
 #'
@@ -43,7 +43,7 @@ stk_calibrate <- function(
         span.strong = list(color = "black"))
     )
     cli::cli_rule(
-      left = "{.strong Estimating suggested scale value}",
+      left = "{.strong Estimating suggested scale range}",
       right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
 
     )
@@ -64,7 +64,8 @@ stk_calibrate <- function(
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE)
+      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE),
+      .groups = "drop"
     )
 
   i <- 1
@@ -93,13 +94,16 @@ stk_calibrate <- function(
   # feedback
   if(verbose) {
     cli::cli_bullets(c(
-      ">" = "The suggested upper scale parameter is {.strong {upper}}!",
-      ">" = "The suggested lower scale parameter is {.strong {lower}}!",
-      "i" = "Note, these estimates are approximations!"
+      ">" = "The suggested scale range is {.strong {lower} - {upper}}!",
+      "i" = "Note, these estimates are approximations! Always inspect your
+      data (e.g. by using stk_filter()) and consider using the stk_screen_twl()
+      to remove days with poor twilight and other characteristics.",
+      "i" = "Scale range values are not log transformed. You will need to take
+      the log() of the scale range for use in skytrackr()"
       )
     )
   }
 
   # return estimated values invisible
-  invisible(c(lower, upper))
+  return(c(lower, upper))
 }
