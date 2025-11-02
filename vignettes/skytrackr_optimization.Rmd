@@ -26,6 +26,7 @@ set.seed(0)
 library(dplyr)
 library(multidplyr)
 library(skytrackr)
+library(ggplot2)
 ```
 
 # Introduction
