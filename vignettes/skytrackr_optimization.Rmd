@@ -115,19 +115,19 @@ sky_att <- lapply(scale_factor, function(i){
     scale_factor[which.min(abs(sky_att - a))]
   }) |> unlist()
 
-ggplot() +
-  geom_line(
+ggplot2::ggplot() +
+  ggplot2::geom_line(
     aes(
     lai_range,
     lai_scale_factor
     )
   ) +
-  labs(
+  ggplot2::labs(
     title = "LAI ~ scale factors",
     x = "LAI",
     y = "scale factor"
   ) +
-  theme_minimal()
+  ggplot2::theme_minimal()
 ```
 
 ### Estimating the scale from data
