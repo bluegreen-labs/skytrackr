@@ -44,3 +44,6 @@ vignettes/*.pdf
 
 # ignore CRAN-SUBMISSION hash
 CRAN-SUBMISSION
+
+# ignore renders test
+/tests/testthat/*.pdf
