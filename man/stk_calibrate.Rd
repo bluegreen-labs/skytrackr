@@ -10,21 +10,21 @@ stk_calibrate(df, percentile = 100, floor = 1.5, verbose = TRUE)
 \item{df}{a skytrackr dataframe}
 
 \item{percentile}{percentile of the spread of data to use in scale value
-evaluation}
+evaluation (default = 100, the full range of values is considered)}
 
 \item{floor}{threshold to remove low (nighttime) values}
 
 \item{verbose}{Give detailed feedback (TRUE or FALSE, default = TRUE)}
 }
 \value{
-an estimated scale value to be used in optimization
+An estimated range of scale values to be used in optimization.
+ Values are not log transformed.
 }
 \description{
 Provides a rough estimate on the light loss and corresponding
 range of scale values to consider during optimization. The full
-range is reported, but a percentile parameter can be provided
-to remove outliers. It is recommended to first use `st_screen_twl()`
-to remove "odd" days.
+A percentile parameter can be provided to remove outliers. It is
+recommended to first use `st_screen_twl()` to remove poor quality days.
 }
 \examples{
 
