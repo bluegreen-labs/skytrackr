@@ -41,6 +41,7 @@
 #' @param debug debugging info and plots
 #'
 #' @importFrom rlang .data
+#' @importFrom utils packageVersion
 #' @import patchwork
 #'
 #' @return A data frame with location estimate, their uncertainties, and
@@ -340,7 +341,7 @@ skytrackr <- function(
   locations$clip <- clip
 
   # add version
-  locations$version <- packageVersion('skytrackr')
+  locations$version <- as.character(packageVersion('skytrackr'))
 
   # return the data frame with
   # location
