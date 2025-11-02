@@ -140,7 +140,8 @@ stk_filter <- function(
           .data$hour,
           log(.data$value),
           colour = .data$selected
-        )
+        ),
+        na.rm = TRUE
       ) +
       ggplot2::labs(
         x = "hour",
