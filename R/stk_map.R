@@ -85,13 +85,22 @@ stk_map <- function(
 
       # if not logger ID column exists
       # assign one for further processing
-      if(! "logger" %in% names(df)){
+      if(! "logger" %in% colnames(df)){
         df$logger <- "Logger"
       }
 
       df <- df |>
          dplyr::mutate(
             uncertainty = .data$latitude_qt_95 - .data$latitude_qt_5
+         ) |>
+         dplyr::select(
+            .data$logger,
+            .data$longitude,
+            .data$latitude,
+            .data$sky_conditions,
+            .data$grd,
+            .data$date,
+            .data$equinox
          )
 
       points <- df |>
@@ -125,6 +134,12 @@ stk_map <- function(
       return(invisible())
    }
 
+   # calculate convergence labels
+   df <- df |>
+      dplyr::mutate(
+         convergence = as.factor(ifelse(.data$grd < 1.2, "good","poor"))
+      )
+
    # convert to sf
    path <-  df |>
             sf::st_as_sf(coords = c("longitude", "latitude")) |>
@@ -137,7 +152,6 @@ stk_map <- function(
       sf::st_set_crs("EPSG:4326") |>
       sf::st_cast("POINT") |>
       sf::st_transform(crs = "+proj=eqearth")
-
 
    # automatically calculate bounding box
    if(missing(bbox)){
@@ -179,7 +193,8 @@ stk_map <- function(
          ggplot2::geom_sf(
             data = m,
             fill = "grey",
-            inherit.aes = FALSE
+            inherit.aes = FALSE,
+            na.rm = TRUE
          ) +
          ggplot2::theme_bw() +
          ggplot2::theme(
@@ -199,17 +214,20 @@ stk_map <- function(
      p <- p +
         ggplot2::geom_sf(
            data = m,
-           fill = "grey"
+           fill = "grey",
+           na.rm = TRUE
         ) +
         ggplot2::geom_sf(
            data = roi,
            colour = NA,
            fill = "darkolivegreen1",
-           lty = 2
+           lty = 2,
+           na.rm = TRUE
         ) +
         ggplot2::geom_sf(
            data = m,
-           fill = NA
+           fill = NA,
+           na.rm = TRUE
         ) +
         ggplot2::theme_bw() +
         ggplot2::theme(
@@ -225,28 +243,31 @@ stk_map <- function(
             data = path,
             colour = "grey25",
             lty = 3,
+            na.rm = TRUE
          ) +
          ggplot2::geom_sf(
             data = points,
             ggplot2::aes(
                shape = .data$equinox,
-               colour = ifelse(.data$grd < 1.2, "good","poor")
+               fill = NA,
+               colour = .data$convergence
             ),
-            alpha = 0.8
+            alpha = 0.5,
+            na.rm = TRUE
          ) +
          ggplot2::scale_shape_manual(
             values = c(19, 1)
           ) +
          ggplot2::scale_colour_manual(
             values = c("#a50026","#313695"),
-            name = "fit",
-            na.value = NA
+            name = "fit"
          ) +
          ggplot2::geom_sf(
             data = points |> dplyr::filter(date == date[nrow(points)]),
             colour = "black",
             pch = 1,
-            size = 4
+            size = 4,
+            na.rm = TRUE
          )
    }
 
@@ -266,7 +287,8 @@ stk_map <- function(
          data = start,
          colour = "black",
          pch = 17,
-         size = 3
+         size = 3,
+         na.rm = TRUE
       )
    }
 
@@ -344,7 +366,8 @@ stk_map <- function(
             x = .data$grd,
             group = .data$logger
          ),
-         colour = "grey25"
+         colour = "grey25",
+         na.rm = TRUE
       ) +
       ggplot2::geom_vline(xintercept = 1.2) +
       ggplot2::labs(
@@ -360,7 +383,7 @@ stk_map <- function(
        ncol = 5,
        widths = c(4, 1, 1, 1, 1),
        axis_titles = "collect_y"
-     )
+      )
 
    return(p_final)
 }

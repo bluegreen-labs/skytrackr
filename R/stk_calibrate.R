@@ -1,17 +1,19 @@
 
-#' Estimate upper scale value
+#' Estimate scale the scale range
 #'
-#' Estimates the upper scale value based upon
-#' midday values of the data itself. The method
-#' requires midday values and will not work on
-#' loggers with a capped value (only recording twilight
-#' values)
+#' Provides a rough estimate on the light loss and corresponding
+#' range of scale values to consider during optimization. The full
+#' range is reported, but a percentile parameter can be provided
+#' to remove outliers. It is recommended to first use `st_screen_twl()`
+#' to remove "odd" days.
 #'
 #' @param df a skytrackr dataframe
 #' @param percentile percentile of the spread of data to use in scale value
 #'  evaluation
 #' @param floor threshold to remove low (nighttime) values
 #' @param verbose Give detailed feedback (TRUE or FALSE, default = TRUE)
+#'
+#' @importFrom utils packageVersion
 #'
 #' @returns an estimated scale value to be used in optimization
 #' @export
@@ -58,11 +60,11 @@ stk_calibrate <- function(
     )
 
   # calculate daily maxima
-  df_max <<- df |>
+  df_max <- df |>
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = quantile(.data$value, 0.9, na.rm = TRUE)
+      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE)
     )
 
   i <- 1
@@ -84,14 +86,20 @@ stk_calibrate <- function(
     i <- stats::quantile(obs_att, percentile/100)
   }
 
+  # set ranges
+  upper <- k
+  lower <- ifelse(k <= 20, 0.00001, 1)
+
   # feedback
   if(verbose) {
     cli::cli_bullets(c(
-      ">" = "The suggested upper scale parameter is {.strong {k}}!\n"
+      ">" = "The suggested upper scale parameter is {.strong {upper}}!",
+      ">" = "The suggested lower scale parameter is {.strong {lower}}!",
+      "i" = "Note, these estimates are approximations!"
       )
     )
   }
 
   # return estimated values invisible
-  invisible(c(0.00001, k))
+  invisible(c(lower, upper))
 }
