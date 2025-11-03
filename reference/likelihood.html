@@ -76,7 +76,7 @@ illuminance data with the step-selection function.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">likelihood</span><span class="op">(</span><span class="va">par</span>, <span class="va">data</span>, <span class="va">model</span>, <span class="va">loc</span>, <span class="va">roi</span>, <span class="va">step_selection</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">likelihood</span><span class="op">(</span><span class="va">par</span>, <span class="va">data</span>, <span class="va">model</span>, <span class="va">loc</span>, <span class="va">roi</span>, <span class="va">step_selection</span>, clip <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -106,6 +106,10 @@ on the target values.</p></dd>
 
 <dt id="arg-step-selection">step_selection<a class="anchor" aria-label="anchor" href="#arg-step-selection"></a></dt>
 <dd><p>A step selection function on the distance of a proposed move.</p></dd>
+
+
+<dt id="arg-clip">clip<a class="anchor" aria-label="anchor" href="#arg-clip"></a></dt>
+<dd><p>value over which lux values are clipped (default = NULL)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

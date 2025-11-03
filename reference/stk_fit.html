@@ -76,7 +76,7 @@ to estimate locations (parameters).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_fit</span><span class="op">(</span><span class="va">data</span>, <span class="va">roi</span>, <span class="va">loc</span>, <span class="va">scale</span>, <span class="va">control</span>, <span class="va">step_selection</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_fit</span><span class="op">(</span><span class="va">data</span>, <span class="va">roi</span>, <span class="va">loc</span>, <span class="va">scale</span>, <span class="va">control</span>, <span class="va">step_selection</span>, <span class="va">clip</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,6 +113,12 @@ information I refer to the BayesianTools package documentation.</p></dd>
 <dt id="arg-step-selection">step_selection<a class="anchor" aria-label="anchor" href="#arg-step-selection"></a></dt>
 <dd><p>A step selection function on the distance of a proposed
 move, step selection is specified on distance (in km) basis.</p></dd>
+
+
+<dt id="arg-clip">clip<a class="anchor" aria-label="anchor" href="#arg-clip"></a></dt>
+<dd><p>value over which lux values are clipped, to be set to the
+saturation value of your system when using the full diurnal profile (not only
+twilight) (default = NULL)</p></dd>
 
 </dl></div>
     <div id="value">

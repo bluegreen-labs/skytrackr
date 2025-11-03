@@ -125,26 +125,29 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># an overview profile</span></span>
 <span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;">
+<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-1-1.png" width="85%" style="display: block; margin: auto;">
 You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</a></code>, used to flag and filter the data to process using the <code>range</code> parameter, with the <code>plot</code> parameter set to TRUE. This returns a plot of the selected data as well as the annotated dataset.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># an overview profile</span></span>
-<span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_filter.html">stk_filter</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,640 × 7</span></span></span>
-<span><span class="co">#&gt;    logger date_time           date         hour measurement value twilight</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08 FALSE   </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,630 more rows</span></span></span></code></pre>
+<span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_filter.html">stk_filter</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; → Smoothing the data using a Hampel filter</span></span>
+<span><span class="co">#&gt;   [outliers will be replaced with interpolated values]</span></span></code></pre></div>
+<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" width="85%" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,640 × 8</span></span></span>
+<span><span class="co">#&gt;    logger date_time           date         hour measurement value outlier</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux         <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,630 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: selected &lt;lgl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level3" number="2.2">
 <h3 id="data-frequency">
@@ -158,19 +161,71 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <span class="header-section-number">2.3</span> The scale parameter<a class="anchor" aria-label="anchor" href="#the-scale-parameter"></a>
 </h3>
 <p>The scale parameter sets the light loss of the sky illuminance in the skylight model using the <code>sky condition</code> parameter in order to account for environmental conditions. This parameter is estimated during optimization, but at times competes with the estimated latitude parameter (depending on the optimization setup and used data). This parameter therefore needs to be chosen carefully, to allow for enough flexibility to account for environmental factors.</p>
-<p>These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still. Light loss can therefore be described as:</p>
-<p>light loss = <span class="math inline">\(Q_F(sky condition, LAI)\)</span> + <span class="math inline">\(f_sensor(sky condition, coverage)\)</span> + <span class="math inline">\(\epsilon\)</span></p>
-<p>Where both Q_F() and f_sensor(coverage) are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.</p>
+<p>These environmental factors take several forms. For an unobstructed sky view the scale parameters (sky condition) varies between values of one (1) for a clear sky, to 3 for an average sky (30% cloud cover) to ten (10) for a dense dark cloudy sky (uncommon). However, if an individual spends a lot of time in vegetation illuminance values can be lower as the environment further attenuates the ambient light conditions. Should a sensor be covered by additional feathers or fur the registered values might be lower still.</p>
+<div class="section level4" number="2.3.1">
+<h4 id="light-loss-theory">
+<span class="header-section-number">2.3.1</span> Light loss theory<a class="anchor" aria-label="anchor" href="#light-loss-theory"></a>
+</h4>
+<p>Light loss can be described as:</p>
+<p>light loss = <span class="math inline">\(Q_{F}(sky condition, LAI)\)</span> + <span class="math inline">\(f_{sensor}(sky condition, coverage)\)</span> + <span class="math inline">\(\epsilon\)</span></p>
+<p>Where both <span class="math inline">\(Q_{F}()\)</span> and <span class="math inline">\(f_{sensor}(coverage)\)</span> are dependent on the initial sky conditions in their own right. During optimization the upper bound of the scale should however not be a mere guess. Depending on the behaviour of the individual a physics informed constraint can be used.</p>
 <p>Where light loss through a canopy is described according to the Beer–Lambert Law.</p>
 <p><span class="math inline">\(Q_F\)</span> = <span class="math inline">\(Q_0 e^{–kF}\)</span></p>
-<p>Where Q_F is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (<span class="math inline">\(m^2\)</span>) per surface area (<span class="math inline">\(m^2\)</span>). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.</p>
-<p>Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the <code>sky condition</code> parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor.</p>
-<div class="section level4" number="2.3.1">
+<p>Where <span class="math inline">\(Q_{F}\)</span> is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (<span class="math inline">\(m^2\)</span>) per surface area (<span class="math inline">\(m^2\)</span>). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.</p>
+<p>Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the <code>sky condition</code> parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor, under ideal conditions. The below graph shows the relationship between the scale factor and LAI for an average sky (sky conditions of 3 in the {skylight} model). Working on the assumption that most dense vegetation have a LAI of four to six, one can expect the scale factor to rarely exceed 50 unless other factors are at play.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># calculate the attenuation Beer-Lambert for LAI</span></span>
+<span><span class="va">lai_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="va">lai_att</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="op">-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> <span class="va">lai_range</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># set the range of scale factors</span></span>
+<span><span class="va">scale_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2000</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># calculate "sky condition" based attenuation values</span></span>
+<span><span class="va">sky_att</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">scale_factor</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">ideal</span> <span class="op">&lt;-</span> <span class="fu">skylight</span><span class="fu">::</span><span class="fu"><a href="https://bluegreen-labs.github.io/skylight/reference/skylight.html" class="external-link">skylight</a></span><span class="op">(</span></span>
+<span>    date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2022-01-01 12:00:00"</span><span class="op">)</span>,</span>
+<span>    latitude <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    longitude <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    sky_condition <span class="op">=</span> <span class="fl">3</span></span>
+<span>  <span class="op">)</span><span class="op">$</span><span class="va">sun_illuminance</span></span>
+<span></span>
+<span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="fu">skylight</span><span class="fu">::</span><span class="fu"><a href="https://bluegreen-labs.github.io/skylight/reference/skylight.html" class="external-link">skylight</a></span><span class="op">(</span></span>
+<span>    date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2022-01-01 12:00:00"</span><span class="op">)</span>,</span>
+<span>    latitude <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    longitude <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    sky_condition <span class="op">=</span> <span class="va">i</span></span>
+<span>  <span class="op">)</span><span class="op">$</span><span class="va">sun_illuminance</span> <span class="op">/</span> <span class="va">ideal</span></span>
+<span></span>
+<span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="va">c</span> <span class="op">*</span> <span class="fl">100</span></span>
+<span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">c</span> <span class="op">&gt;</span> <span class="fl">100</span>, <span class="cn">NA</span>, <span class="va">c</span><span class="op">)</span></span>
+<span>  <span class="va">c</span> <span class="op">&lt;-</span> <span class="fl">100</span> <span class="op">-</span> <span class="va">c</span></span>
+<span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">lai_scale_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lai_att</span>, <span class="kw">function</span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">scale_factor</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">sky_att</span> <span class="op">-</span> <span class="va">a</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
+<span>    <span class="fu">aes</span><span class="op">(</span></span>
+<span>    <span class="va">lai_range</span>,</span>
+<span>    <span class="va">lai_scale_factor</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"LAI ~ scale factors"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"LAI"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"scale factor"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-3-1.png" width="85%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4" number="2.3.2">
 <h4 id="estimating-the-scale-from-data">
-<span class="header-section-number">2.3.1</span> Estimating the scale from data<a class="anchor" aria-label="anchor" href="#estimating-the-scale-from-data"></a>
+<span class="header-section-number">2.3.2</span> Estimating the scale from data<a class="anchor" aria-label="anchor" href="#estimating-the-scale-from-data"></a>
 </h4>
-<p>Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions).</p>
-<p>Generally, Migrate Technology Ltd. sensors track close to true physical values (low sensor error). The included function <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in <code><a href="../reference/skytrackr.html">skytrackr()</a></code>.</p>
+<p>Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). Generally, Migrate Technology Ltd. sensors track close to true physical values. The included function <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in <code><a href="../reference/skytrackr.html">skytrackr()</a></code>.</p>
 </div>
 </div>
 <div class="section level3" number="2.4">

@@ -80,7 +80,14 @@ selected (filtered out).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_filter</span><span class="op">(</span><span class="va">data</span>, <span class="va">range</span>, plot <span class="op">=</span> <span class="cn">FALSE</span>, filter <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_filter</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">range</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  filter <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -95,6 +102,13 @@ selected (filtered out).</p>
 <dd><p>a range c(min, max) of valid values in lux</p></dd>
 
 
+<dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
+<dd><p>smooth the data using a hampel filter with a window size
+of 3, and a multiplier of the MAD of 3. Original values are substituted,
+the values replaced are flagged in an `outlier` column in the returned
+data frame (default = TRUE)</p></dd>
+
+
 <dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
 <dd><p>plot daily profiles with the range filter applied</p></dd>
 
@@ -103,6 +117,10 @@ selected (filtered out).</p>
 <dd><p>if TRUE only twilight values are returned if
 FALSE the data frame is returned with an annotation column
 called 'twilight' for further processing.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Give detailed feedback (TRUE or FALSE, default = TRUE)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -117,6 +135,20 @@ called 'twilight' for further processing.</p></dd>
 useful for visualizations of profiles as well.</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># filter values using the preset range, only annotate</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">stk_filter</span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [outliers will be replaced with interpolated values]</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># filter values using the preset range, only retain filtered values</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">stk_filter</span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">400</span><span class="op">)</span>, filter <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   [outliers will be replaced with interpolated values]</span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
