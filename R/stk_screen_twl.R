@@ -80,7 +80,7 @@ stk_screen_twl <- function(
   # differ from the proceeding ones towards or from daylight. Twilight is
   # logarithmic in development so missed steps increase light levels significantly
   # exiting dark nests late shows up as an abrupt step in light levels
-  false_twl <- df_out |> na.omit() |>
+  false_twl <- df_out |> stats::na.omit() |>
     dplyr::group_by(.data$logger, .data$date) |>
     dplyr::summarise(
       dawn_start = which(.data$hour == .data$dawn)[1],

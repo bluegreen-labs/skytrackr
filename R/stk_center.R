@@ -24,7 +24,7 @@ stk_center <- function(df, floor = 1.5, replace = FALSE){
 
       hour_data <- .data |>
         dplyr::filter(
-          value > floor
+          .data$value > floor
         ) |>
         dplyr::mutate(
           angle = .data$hour/24 * 360

@@ -86,7 +86,7 @@ stk_filter <- function(
       dplyr::mutate(
         value = ifelse(.data$outlier, median, .data$value)
       ) |>
-      na.omit()
+      stats::na.omit()
   }
 
   # filter data
