@@ -46,6 +46,13 @@ stk_screen_twl <- function(
   options(dplyr.summarise.inform = FALSE)
   options(dplyr.show_progress = FALSE)
 
+  # make a copy of the original
+  df_original <- df
+
+  # center the data on midday
+  df <- df |>
+    stk_center(replace = TRUE)
+
   # for all dates calculate twilight values based upon
   # a threshold, commonly 1.5
   twl <- suppressWarnings(df |>
@@ -71,9 +78,9 @@ stk_screen_twl <- function(
 
   # detect false twilight by looking at how much the dawn and dusk values
   # differ from the proceeding ones towards or from daylight. Twilight is
-  # logarithmic in developent so missed steps increase light levels significantly
+  # logarithmic in development so missed steps increase light levels significantly
   # exiting dark nests late shows up as an abrupt step in light levels
-  false_twl <- df_out |>
+  false_twl <- df_out |> na.omit() |>
     dplyr::group_by(.data$logger, .data$date) |>
     dplyr::summarise(
       dawn_start = which(.data$hour == .data$dawn)[1],
@@ -90,15 +97,29 @@ stk_screen_twl <- function(
     df_out,
     false_twl,
     by = c("logger","date")
+  ) |>
+  dplyr::select(
+    "logger",
+    "date",
+    "date_time",
+    "roost",
+    "false_twl"
   )
 
+  df_original <- dplyr::left_join(
+    df_original,
+    df_out,
+    by = c("logger", "date","date_time")
+    ) |>
+    dplyr::ungroup()
+
   if(filter){
-    df_out <- df_out |>
+    df_original <- df_original |>
       dplyr::filter(
         !.data$roost,
         !.data$false_twl
       )
   }
 
-  return(df_out |> dplyr::ungroup())
+  return(df_original)
 }

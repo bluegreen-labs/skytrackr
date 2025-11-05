@@ -88,13 +88,20 @@ stk_calibrate <- function(
   }
 
   # set ranges
-  upper <- k
-  lower <- ifelse(k <= 20, 0.00001, 1)
+  lower <- 1
+  upper <- ifelse(k <= 10, 10, k)
 
   # feedback
   if(verbose) {
+
+    if(k < 10){
+      cli::cli_alert_info(
+        "The upper scale estimate is low ({.strong {k}}), using the default ({.strong 10})"
+      )
+    }
+
     cli::cli_bullets(c(
-      ">" = "The suggested scale range is {.strong {lower} - {upper}}!",
+      ">" = "The suggested scale range is {.strong c({lower},{upper})}!",
       "i" = "Note, these estimates are approximations! Always inspect your
       data (e.g. by using stk_filter()) and consider using the stk_screen_twl()
       to remove days with poor twilight and other characteristics.",
