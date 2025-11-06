@@ -243,15 +243,16 @@ stk_map <- function(
             data = path,
             colour = "grey25",
             lty = 3,
+            fill = NA,
             na.rm = TRUE
          ) +
          ggplot2::geom_sf(
             data = points,
             ggplot2::aes(
                shape = .data$equinox,
-               fill = NA,
                colour = .data$convergence
             ),
+            fill = NA,
             alpha = 0.5,
             na.rm = TRUE
          ) +

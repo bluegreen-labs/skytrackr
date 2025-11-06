@@ -127,7 +127,8 @@ skytrackr <- function(
     )
     cli::cli_end()
     cli::cli_alert_info(
-      "Processing logger: {.strong {data$logger[1]}}!")
+      "Processing logger: {.strong {data$logger[1]}}!"
+    )
   }
 
   if(missing(mask)){
@@ -154,9 +155,29 @@ skytrackr <- function(
     )
   }
 
+  if(length(range) != 2) {
+    cli::cli_abort(c(
+      "The range parameter has only one value.",
+      "x" = "Please provide an upper and lower bound"
+    )
+    )
+  }
+
+  if(length(scale) != 2) {
+    cli::cli_abort(c(
+      "The scale parameter has only one value.",
+      "x" = "Please provide an upper and lower bound"
+    )
+    )
+  }
+
   # unravel the light data
   data <- data |>
-    skytrackr::stk_filter(range = range, filter = TRUE, verbose = verbose) |>
+    skytrackr::stk_filter(
+      range = range,
+      filter = TRUE,
+      verbose = verbose
+    ) |>
     tidyr::pivot_wider(
       names_from = "measurement",
       values_from = "value"
@@ -256,9 +277,13 @@ skytrackr <- function(
     # plot debugging graph of fit curve for every day / period
     if (debug){
       subs <- subs |>
-        dplyr::select(.data$date_time, .data$lux) |>
+        dplyr::ungroup() |>
+        dplyr::select(
+          "date_time",
+          "lux"
+        ) |>
         dplyr::rename(
-          date = .data$date_time
+          date = "date_time"
         ) |>
         dplyr::mutate(
           latitude = out$latitude,
@@ -275,7 +300,10 @@ skytrackr <- function(
       if(!is.null(clip)){
         subs <- subs |>
           dplyr::mutate(
-            sun_illuminance = ifelse(.data$sun_illuminance > log(clip), log(clip), .data$sun_illuminance)
+            sun_illuminance = ifelse(
+              .data$sun_illuminance > log(clip),
+              log(clip),
+              .data$sun_illuminance)
           )
       }
 

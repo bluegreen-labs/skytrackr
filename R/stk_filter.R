@@ -48,6 +48,12 @@ stk_filter <- function(
       .data$measurement == "lux"
     )
 
+  # range check
+  if (range[1] < min(data$value, na.rm = TRUE)){
+    range[1] <- min(data$value, na.rm = TRUE)
+    cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+  }
+
   # Hampel value with a window of 3
   if (smooth){
     if(verbose){
@@ -60,6 +66,7 @@ stk_filter <- function(
       )
     }
 
+    # calculate metrics for the Hampel filter
     window <- 3
     median <- zoo::rollmedian(data$value, window, fill = NA)
     mad <- zoo::rollapply(
@@ -78,7 +85,8 @@ stk_filter <- function(
     data <- data |>
       dplyr::mutate(
         value = ifelse(.data$outlier, median, .data$value)
-      )
+      ) |>
+      stats::na.omit()
   }
 
   # filter data
@@ -86,50 +94,42 @@ stk_filter <- function(
     dplyr::group_by(.data$logger, .data$date) |>
     dplyr::do({
 
-      first_low <- which(.data$value > range[1])[1]
-      last_low <- utils::tail(which(.data$value > range[1]), 1)
-      first_high <- which(.data$value > range[2])[1] - 1
-      last_high <- utils::tail(which(.data$value > range[2]), 1) + 1
-      idx <- 1:nrow(.data)
+      # select values in date range
+      selected <- ifelse(
+        .data$value > range[1] & .data$value < range[2],
+        TRUE,
+        FALSE
+      )
 
-      first_low <- ifelse(
-        is.na(first_low) || rlang::is_empty(first_low) , 1, first_low)
+      # find run lengths
+      run_info <- rle(selected)
 
-      last_low <- ifelse(
-        is.na(last_low) || rlang::is_empty(last_low), last_high, last_low)
+      # sort the longest two sections
+      gr_len <- sort(
+        run_info$length[run_info$value],
+        decreasing = TRUE)[1:2]
 
-      first_high <- ifelse(
-        is.na(first_high) || rlang::is_empty(first_high), first_low, first_high)
+      # create segment list
+      seg_list <- list()
 
-      last_high <- ifelse(
-        is.na(last_high) || rlang::is_empty(last_high),
-        first_low, last_high)
+      # for every run length recreate the vector
+      # with labels TRUE or FALSE based on the length
+      # of the run
+      for (i in seq_along(run_info$values)) {
+        run_length <- run_info$lengths[i]
+        if (run_length %in% gr_len) {
+          segment_value <- TRUE
+        } else {
+          segment_value <- FALSE
+        }
+        seg_list[[i]] <- rep(segment_value, run_length)
+      }
 
+      seg_list <- unlist(seg_list)
       df <- .data
-      df$idx <- idx
-      df$first_low <- first_low
-      df$first_high <- first_high
-      df$last_low <- last_low
-      df$last_high <- last_high
+      df$selected <- seg_list
       df
     })
-
-  data <- data |>
-    dplyr::group_by(.data$logger, .data$date) |>
-    dplyr::mutate(
-      selected = ifelse(
-      (.data$idx >= .data$first_low & .data$idx <= .data$first_high) |
-        (.data$idx >= .data$last_high & .data$idx <= .data$last_low),
-      TRUE, FALSE
-    )
-  )
-
-  # cleanup
-  data <- data |>
-    dplyr::ungroup() |>
-    dplyr::select(
-      !dplyr::starts_with(c("first", "last","idx")),
-    )
 
   # plot
   if(plot){

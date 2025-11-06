@@ -6,7 +6,7 @@
 ![](https://www.r-pkg.org/badges/version/skytrackr)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8331492.svg)](https://doi.org/10.5281/zenodo.8331492)
 
-The routine uses model optimization and parameter estimation to determine locations robustly using a template matching approach and behaviourly informed constraints.
+The routine uses model optimization and parameter estimation to determine locations robustly using a template matching approach and behaviourally informed constraints. For now, {skytrackr} focuses on western European flyways and might not work beyond this area.
 
 ## How to cite this package
 
@@ -123,7 +123,7 @@ In addition, the range of the `scale` parameter determines the range of light lo
 This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the `stk_calibrate()` function to estimate the upper scale parameter. For more details on these optimization settings I refer to the [optimization vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html). Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).
 
 ```r
-upper_scale <- data |> stk_calibrate()
+scale_range <- data |> stk_calibrate()
 ```
 
 All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
@@ -133,8 +133,8 @@ locations <- data |>
     skytrackr(
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
-      scale = log(c(1, upper_scale)), # default range
-      range = c(0.09, 148), # default range
+      scale = log(scale_range),
+      range = c(0.09, 148),
       control = list(
         sampler = 'DEzs',
         settings = list(
@@ -147,20 +147,18 @@ locations <- data |>
       mask = mask,
       plot = TRUE
     )
-    
-
 ```
 
 If you enable plotting during the optimization routine a plot will be drawn with each new location which is determined. The plot shows a map covering the geographic extent as set by the mask you provide and a green region of interest defined by the intersection of the mask and a hard distance threshold tolerance (tolerance parameter). The start position is indicated with a black triangle, the latest position is defined by a closed and open circle combined. 
 
-During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also three panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun to watch though).
+During equinoxes the small closed circles will be small open circles as these periods have increased inherent uncertainty. To the right are also four panels showing the best value of the three estimated parameters as a black line, and their uncertainty intervals. In addition, the Gelman-Rubin Diagnostic is shown, with values below 1.2 showing convergence of the location (parameter) estimates. Note that using the plotting option considerably slows down overall calculation due to rendering times (it is fun and informative to watch though, consider using it on a single individual to establish the optimization settings).
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_preview.png)
 
 You can map the final location estimates using the same rendering layout using `stk_map()`.
 
 ```r
-locations |> stk_map(bbox = c(-20, -40, 60, 60))
+locations |> stk_map()
 ```
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/skytrackr_final_plot.png)
@@ -196,4 +194,8 @@ locations <- data |>
 
 ## Reasonable expectations and limitations
 
-The method proposed in {skytrackr} is "quasi" calibration free. It balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as [described in the vignette](), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set). It is worth mentioning that there is a serial dependency during location estimation. Although, "runaway" estimates should be limited, and the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of this single diurnal cycle.
+{skytrackr} currently focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. The methodology, due to taking into consideration more data during twilight, is very sensitive to the elongation or contraction of days due to fast east-west movements during the equinoxes.
+
+Although "quasi" calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as [described in the vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set). 
+
+It is worth mentioning that there is a serial dependency during location estimation. Although, "runaway" estimates should be limited, and the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of this single diurnal cycle.
