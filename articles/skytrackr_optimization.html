@@ -133,20 +133,21 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <span><span class="co">#&gt; → Smoothing the data using a Hampel filter</span></span>
 <span><span class="co">#&gt;   [outliers will be replaced with interpolated values]</span></span></code></pre></div>
 <p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" width="85%" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,640 × 8</span></span></span>
-<span><span class="co">#&gt;    logger date_time           date         hour measurement value outlier</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux         <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,630 more rows</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,638 × 8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   logger, date [30]</span></span></span>
+<span><span class="co">#&gt;    logger date_time           date        hour measurement value outlier</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:54:10</span> 2021-08-02 0.903 lux          0.08 FALSE  </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,628 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: selected &lt;lgl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level3" number="2.2">
