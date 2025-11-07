@@ -10,7 +10,8 @@
 #' useful for visualizations of profiles as well.
 #'
 #' @param data a skytrackr compatible data frame
-#' @param range a range c(min, max) of valid values in lux
+#' @param range a range c(min, max) of valid values in lux, or a single
+#'  threshold value
 #' @param smooth smooth the data using a hampel filter with a window size
 #'  of 3, and a multiplier of the MAD of 3. Original values are substituted,
 #'  the values replaced are flagged in an `outlier` column in the returned
@@ -51,7 +52,19 @@ stk_filter <- function(
   # range check
   if (range[1] < min(data$value, na.rm = TRUE)){
     range[1] <- min(data$value, na.rm = TRUE)
-    cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+    if(verbose){
+      cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+    }
+  }
+
+  # set twilight mode if necessary
+  twilight <- FALSE
+  if (length(range) == 1){
+    range <- c(range, 500000)
+    twilight <- TRUE
+    if(verbose){
+      cli::cli_alert("No maximum range provided, switching to twilight mode!")
+    }
   }
 
   # Hampel value with a window of 3
@@ -59,9 +72,7 @@ stk_filter <- function(
     if(verbose){
       cli::cli_alert(c(
         "Smoothing the data using a Hampel filter",
-        "i" = "
-           [outliers will be replaced with interpolated values]
-         "
+        "i" = "[outliers will be replaced with interpolated values]"
       )
       )
     }
@@ -79,7 +90,9 @@ stk_filter <- function(
     )
 
     # calculate outliers as 3 * MAD
-    data$outlier <- ifelse(abs(data$value - median) > 3 * mad, TRUE, FALSE)
+    data$outlier <- ifelse(
+      abs(data$value - median) > 3 * mad, TRUE, FALSE
+    )
 
     # substitute original values with median
     data <- data |>
@@ -128,6 +141,22 @@ stk_filter <- function(
       seg_list <- unlist(seg_list)
       df <- .data
       df$selected <- seg_list
+
+      # check for twilight mode
+      if(twilight){
+        twl <- df |>
+          dplyr::mutate(
+            diff_sel = c(diff(selected),0),
+            .groups = "drop"
+          )
+
+        first_twl <- which(twl$diff_sel == 1) + 1
+        last_twl <- which(twl$diff_sel == -1)
+
+        df$selected <- FALSE
+        df$selected[c(first_twl, last_twl)] <- TRUE
+      }
+
       df
     })
 
