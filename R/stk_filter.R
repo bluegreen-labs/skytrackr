@@ -10,7 +10,8 @@
 #' useful for visualizations of profiles as well.
 #'
 #' @param data a skytrackr compatible data frame
-#' @param range a range c(min, max) of valid values in lux
+#' @param range a range c(min, max) of valid values in lux, or a single
+#'  threshold value
 #' @param smooth smooth the data using a hampel filter with a window size
 #'  of 3, and a multiplier of the MAD of 3. Original values are substituted,
 #'  the values replaced are flagged in an `outlier` column in the returned
@@ -51,7 +52,9 @@ stk_filter <- function(
   # range check
   if (range[1] < min(data$value, na.rm = TRUE)){
     range[1] <- min(data$value, na.rm = TRUE)
-    cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+    if(verbose){
+      cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+    }
   }
 
   # set twilight mode if necessary
@@ -59,7 +62,9 @@ stk_filter <- function(
   if (length(range) == 1){
     range <- c(range, 500000)
     twilight <- TRUE
-    cli::cli_alert("No maximum range provided, switching to twilight mode!")
+    if(verbose){
+      cli::cli_alert("No maximum range provided, switching to twilight mode!")
+    }
   }
 
   # Hampel value with a window of 3
@@ -67,9 +72,7 @@ stk_filter <- function(
     if(verbose){
       cli::cli_alert(c(
         "Smoothing the data using a Hampel filter",
-        "i" = "
-           [outliers will be replaced with interpolated values]
-         "
+        "i" = "[outliers will be replaced with interpolated values]"
       )
       )
     }
