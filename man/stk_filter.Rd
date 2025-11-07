@@ -16,7 +16,8 @@ stk_filter(
 \arguments{
 \item{data}{a skytrackr compatible data frame}
 
-\item{range}{a range c(min, max) of valid values in lux}
+\item{range}{a range c(min, max) of valid values in lux, or a single
+threshold value}
 
 \item{smooth}{smooth the data using a hampel filter with a window size
 of 3, and a multiplier of the MAD of 3. Original values are substituted,
