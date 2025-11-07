@@ -10,6 +10,7 @@ preferred secluded habitats).
 - introduction of the `stk_calibrate()` function to estimate scale factors for optimization
 - correction to the subsetting of the data (see `stk_filter()`) to accommodate noisy data
 - trap rendering error on intermediate plots, which corrupts optimization
+- support for a threshold based (twilight) method when only providing a single `range` value
 
 # skytrackr 1.0
 
