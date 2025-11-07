@@ -151,7 +151,7 @@ skytrackr <- function(
   }
 
   if(window_size %% 2 == 0) {
-    cli::cli_warning(c(
+    cli::cli_abort(c(
       "The chosen window size is even.",
       "x" = "Please provide an uneven window size"
     )
