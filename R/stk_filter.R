@@ -54,6 +54,14 @@ stk_filter <- function(
     cli::cli_alert("Minimum range value out of range, set to {range[1]}")
   }
 
+  # set twilight mode if necessary
+  twilight <- FALSE
+  if (length(range) == 1){
+    range <- c(range, 500000)
+    twilight <- TRUE
+    cli::cli_alert("No maximum range provided, switching to twilight mode!")
+  }
+
   # Hampel value with a window of 3
   if (smooth){
     if(verbose){
@@ -79,7 +87,9 @@ stk_filter <- function(
     )
 
     # calculate outliers as 3 * MAD
-    data$outlier <- ifelse(abs(data$value - median) > 3 * mad, TRUE, FALSE)
+    data$outlier <- ifelse(
+      abs(data$value - median) > 3 * mad, TRUE, FALSE
+    )
 
     # substitute original values with median
     data <- data |>
@@ -128,6 +138,22 @@ stk_filter <- function(
       seg_list <- unlist(seg_list)
       df <- .data
       df$selected <- seg_list
+
+      # check for twilight mode
+      if(twilight){
+        twl <- df |>
+          dplyr::mutate(
+            diff_sel = c(diff(selected),0),
+            .groups = "drop"
+          )
+
+        first_twl <- which(twl$diff_sel == 1) + 1
+        last_twl <- which(twl$diff_sel == -1)
+
+        df$selected <- FALSE
+        df$selected[c(first_twl, last_twl)] <- TRUE
+      }
+
       df
     })
 

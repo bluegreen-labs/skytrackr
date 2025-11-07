@@ -15,7 +15,10 @@
 #'  given in km (left/right, top/bottom). Sets a hard limit on the search window
 #'  regardless of the step selection function used.
 #' @param range Range of values to consider during processing, should be
-#'  provided in lux c(min, max) or the equivalent if non-calibrated.
+#'  provided in lux c(min, max), or a single value. If providing
+#'  a single value a twilight threshold based method will be used rather
+#'  than a template matching approach. The underlying optimization will remain
+#'  the same.
 #' @param scale Scale / sky condition factor, by default covering the
 #'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 #'  but can be extended for more flexibility to account for coverage by plumage,
@@ -148,7 +151,7 @@ skytrackr <- function(
   }
 
   if(window_size %% 2 == 0) {
-    cli::cli_abort(c(
+    cli::cli_warning(c(
       "The chosen window size is even.",
       "x" = "Please provide an uneven window size"
     )
@@ -156,10 +159,10 @@ skytrackr <- function(
   }
 
   if(length(range) != 2) {
-    cli::cli_abort(c(
-      "The range parameter has only one value.",
-      "x" = "Please provide an upper and lower bound"
-    )
+    cli::cli_bullets(c(
+      ">" = "The range parameter has only one value!",
+      "i" = "Falling back to twilight mode."
+      )
     )
   }
 
@@ -309,14 +312,17 @@ skytrackr <- function(
 
       graphics::par(mfrow=c(1,1))
       plot(
-        subs$date, subs$lux, ylim = c(-5, 12),
+        subs$date_time, subs$lux, ylim = c(-5, 12),
         main = paste(
           round(out$latitude,3),
           round(out$longitude,3),
           round(out$sky_conditions,3)
           )
         )
-      graphics::lines(subs$date, subs$sun_illuminance, col = "red")
+      graphics::points(
+        subs$date_time,
+        subs$sun_illuminance,
+        col = "red")
     }
 
     # set date

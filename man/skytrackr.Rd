@@ -33,7 +33,10 @@ given in km (left/right, top/bottom). Sets a hard limit on the search window
 regardless of the step selection function used.}
 
 \item{range}{Range of values to consider during processing, should be
-provided in lux c(min, max) or the equivalent if non-calibrated.}
+provided in lux c(min, max), or a single value. If providing
+a single value a twilight threshold based method will be used rather
+than a template matching approach. The underlying optimization will remain
+the same.}
 
 \item{scale}{Scale / sky condition factor, by default covering the
 skylight() range of 1-10 (from clear sky to extensive cloud coverage)
