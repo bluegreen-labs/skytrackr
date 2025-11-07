@@ -99,7 +99,8 @@ selected (filtered out).</p>
 
 
 <dt id="arg-range">range<a class="anchor" aria-label="anchor" href="#arg-range"></a></dt>
-<dd><p>a range c(min, max) of valid values in lux</p></dd>
+<dd><p>a range c(min, max) of valid values in lux, or a single
+threshold value</p></dd>
 
 
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
@@ -140,13 +141,11 @@ useful for visualizations of profiles as well.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># filter values using the preset range, only annotate</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">stk_filter</span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   [outliers will be replaced with interpolated values]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter[outliers will be replaced with interpolated values]</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># filter values using the preset range, only retain filtered values</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">stk_filter</span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">400</span><span class="op">)</span>, filter <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   [outliers will be replaced with interpolated values]</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter[outliers will be replaced with interpolated values]</span>
 </code></pre></div>
     </div>
   </div>

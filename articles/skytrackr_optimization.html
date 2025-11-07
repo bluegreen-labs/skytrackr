@@ -130,8 +130,7 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># an overview profile</span></span>
 <span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_filter.html">stk_filter</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; → Smoothing the data using a Hampel filter</span></span>
-<span><span class="co">#&gt;   [outliers will be replaced with interpolated values]</span></span></code></pre></div>
+<span><span class="co">#&gt; → Smoothing the data using a Hampel filter[outliers will be replaced with interpolated values]</span></span></code></pre></div>
 <p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" width="85%" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,638 × 8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># Groups:   logger, date [30]</span></span></span>
