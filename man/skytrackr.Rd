@@ -12,7 +12,6 @@ skytrackr(
   scale = log(c(1e-05, 50)),
   control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 3000,
     message = FALSE)),
-  window_size = 1,
   mask,
   step_selection,
   smooth = TRUE,
@@ -48,9 +47,6 @@ to be provided on a log scale (default = log(c(0.00001, 50)))}
 \item{control}{Control settings for the Bayesian optimization, generally
 should not be altered (defaults to a Monte Carlo method). For detailed
 information I refer to the BayesianTools package documentation.}
-
-\item{window_size}{use a moving window across x days during data processing,
-this effectively smooths responses (default = 1, day-by-day processing)}
 
 \item{mask}{Mask to constrain positions to land}
 

@@ -29,8 +29,6 @@
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
 #' @param mask Mask to constrain positions to land
-#' @param window_size use a moving window across x days during data processing,
-#'  this effectively smooths responses (default = 1, day-by-day processing)
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
 #' @param smooth smooth the data before processing (default = TRUE)
@@ -98,7 +96,6 @@ skytrackr <- function(
         message = FALSE
       )
     ),
-    window_size = 1,
     mask,
     step_selection,
     smooth = TRUE,
@@ -148,14 +145,6 @@ skytrackr <- function(
           "x" = "Please provide a start location!"
         )
       )
-  }
-
-  if(window_size %% 2 == 0) {
-    cli::cli_abort(c(
-      "The chosen window size is even.",
-      "x" = "Please provide an uneven window size"
-    )
-    )
   }
 
   if(length(range) != 2) {
@@ -254,15 +243,9 @@ skytrackr <- function(
     roi <- terra::mask(mask, pol) |>
       terra::crop(sf::st_bbox(pol))
 
-    # calculate first and last window positions
-    # trap begin and end exceptions
-    w <- window_size%/%2
-    w_f <- ifelse(i-w <= 0, 1, i-w)
-    w_l <- ifelse(i+w >= length(dates), length(dates), i+w)
-
     # create a subset of the data to fit
     # the skylight model to
-    subs <- data[which(data$date %in% dates[w_f:w_l]),]
+    subs <- data[which(data$date %in% dates[i]),]
 
     # fit model parameters for a given
     # day to estimate the location
@@ -367,10 +350,9 @@ skytrackr <- function(
 
   # save setup
   locations$tolerance <- tolerance
+  locations$scale <- list(scale)
   locations$range <- list(range)
   locations$control <- list(control)
-  locations$scale <- list(scale)
-  locations$window_size <- window_size
   locations$clip <- clip
 
   # add version
