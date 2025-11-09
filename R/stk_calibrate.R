@@ -54,7 +54,7 @@ stk_calibrate <- function(
   # a subset of "daytime" data
   df <- df |>
     stk_filter(
-      range = c(floor, 150000),
+      range = c(floor, 500000),
       smooth = FALSE,
       filter = TRUE
     )
@@ -89,7 +89,7 @@ stk_calibrate <- function(
 
   # set ranges
   lower <- 1
-  upper <- ifelse(k <= 10, 10, k)
+  upper <- k # ifelse(k <= 10, 10, k)
 
   # feedback
   if(verbose) {

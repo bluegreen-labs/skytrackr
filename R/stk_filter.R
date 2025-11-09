@@ -70,9 +70,9 @@ stk_filter <- function(
   # Hampel value with a window of 3
   if (smooth){
     if(verbose){
-      cli::cli_alert(c(
-        "Smoothing the data using a Hampel filter",
-        "i" = "[outliers will be replaced with interpolated values]"
+      cli::cli_bullets(c(
+        ">" = "Smoothing the data using a Hampel filter",
+        "i" = "Outliers will be replaced with interpolated values."
       )
       )
     }

@@ -160,8 +160,7 @@ skytrackr <- function(
 
   if(length(range) != 2) {
     cli::cli_bullets(c(
-      ">" = "The range parameter has only one value!",
-      "i" = "Falling back to twilight mode."
+      ">" = "The range parameter has only one value!"
       )
     )
   }
