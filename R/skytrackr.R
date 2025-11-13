@@ -19,6 +19,9 @@
 #'  a single value a twilight threshold based method will be used rather
 #'  than a template matching approach. The underlying optimization will remain
 #'  the same.
+#' @param speed range of speeds to optimize, bound by the physical limits
+#'  of the species, but with a low valued lower bound because of
+#'  potential perceived low speeds when local ranging.
 #' @param scale Scale / sky condition factor, by default covering the
 #'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 #'  but can be extended for more flexibility to account for coverage by plumage,
@@ -87,6 +90,7 @@ skytrackr <- function(
     start_location,
     tolerance = 1500,
     range = c(0.09, 148),
+    speed = c(0.0001, 15),
     scale = log(c(0.00001, 50)),
     control = list(
       sampler = 'DEzs',
@@ -180,6 +184,13 @@ skytrackr <- function(
       lux = log(.data$lux)
     )
 
+  # calculate time_steps between data points
+  # used to calculate distances covered
+  data <- data |>
+    dplyr::mutate(
+    time_step = c(0, as.numeric(diff(.data$date_time, units = "secs")))
+  )
+
   # unique dates
   dates <- unique(data$date)
 
@@ -254,6 +265,7 @@ skytrackr <- function(
         roi = roi,
         loc = sf::st_coordinates(loc),
         scale = scale,
+        speed = speed,
         control = control,
         step_selection = step_selection,
         clip = clip
@@ -261,26 +273,21 @@ skytrackr <- function(
 
     # plot debugging graph of fit curve for every day / period
     if (debug){
-      subs <- subs |>
-        dplyr::ungroup() |>
-        dplyr::select(
-          "date_time",
-          "lux"
-        ) |>
-        dplyr::rename(
-          date = "date_time"
-        ) |>
-        dplyr::mutate(
-          latitude = out$latitude,
-          longitude = out$longitude
-        )
 
-      subs$sun_illuminance <- log(
-        skylight::skylight(
-          subs,
-          sky_condition = out$sky_conditions,
-        )$sun_illuminance
+      par <- c(
+        out$latitude,
+        out$longitude,
+        log(out$sky_conditions),
+        out$speed
       )
+
+      ll <- log_lux(
+        par,
+        data = subs,
+        loc = sf::st_coordinates(loc)
+      )
+
+      subs$sun_illuminance <- ll
 
       if(!is.null(clip)){
         subs <- subs |>
@@ -294,7 +301,9 @@ skytrackr <- function(
 
       graphics::par(mfrow=c(1,1))
       plot(
-        subs$date_time, subs$lux, ylim = c(-5, 12),
+        subs$date_time,
+        subs$lux,
+        ylim = c(-5, 12),
         main = paste(
           round(out$latitude,3),
           round(out$longitude,3),
@@ -304,7 +313,8 @@ skytrackr <- function(
       graphics::points(
         subs$date_time,
         subs$sun_illuminance,
-        col = "red")
+        col = "red"
+      )
     }
 
     # set date

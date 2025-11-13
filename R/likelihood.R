@@ -53,6 +53,7 @@ likelihood <- function(
     list(
       data = data,
       par = model_par,
+      loc = loc,
       ...
     )
   )

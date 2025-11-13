@@ -94,11 +94,11 @@ stk_calibrate <- function(
   # feedback
   if(verbose) {
 
-    if(k < 10){
-      cli::cli_alert_info(
-        "The upper scale estimate is low ({.strong {k}}), using the default ({.strong 10})"
-      )
-    }
+    # if(k < 10){
+    #   cli::cli_alert_info(
+    #     "The upper scale estimate is low ({.strong {k}}), using the default ({.strong 10})"
+    #   )
+    # }
 
     cli::cli_bullets(c(
       ">" = "The suggested scale range is {.strong c({lower},{upper})}!",

@@ -13,6 +13,7 @@
 log_lux <- function(
     par,
     data,
+    loc,
     ...
 ) {
 
@@ -20,16 +21,53 @@ log_lux <- function(
   lat <- par[1]
   lon <- par[2]
   sky <- exp(par[3])
+  speed <- par[4]
+
+  # calculate distances along reference rhumb line
+  # given a starting position (loc), a suggested
+  # end position and a speed
+  start <- loc
+
+  out <- data.frame(
+    lat = lat,
+    lon = lon,
+    date = data$date_time[1]
+  )
+
+  for(i in 2:nrow(data)){
+    bearing <- geosphere::bearing(start, c(lon, lat))
+    tmp <- as.data.frame(
+      geosphere::destPoint(
+        start,
+        b = bearing,
+        d = data$time_step[i] * speed
+        )
+    )
+
+    # update start position
+    start <- tmp
+
+    # add date field
+    tmp$date <- data$date_time[i]
+
+    # bind output
+    out <- dplyr::bind_rows(out, tmp)
+  }
+
+  out <- out |>
+    dplyr::rename(
+      'latitude' = 'lat',
+      'longitude' = 'lon'
+    )
+
+  # set sky
+  out$sky_condition <- sky
 
   # run model
   illuminance <- skylight::skylight(
-    longitude = lon,
-    latitude = lat,
-    date = data$date_time,
-    sky_condition = sky
+    out
   )$total_illuminance
 
   # return log lux
   return(log(illuminance))
-
 }

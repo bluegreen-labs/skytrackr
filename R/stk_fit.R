@@ -12,6 +12,9 @@
 #'  but can be extended for more flexibility to account for coverage by plumage,
 #'  note that in case of non-physical accurate lux measurements values can have
 #'  a range starting at 0.0001 (a multiplier instead of a divider).
+#' @param speed range of speeds to optimize, bound by the physical limits
+#'  of the species, but with a low valued lower bound because of
+#'  potential perceived low speeds when local ranging.
 #' @param control Control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
@@ -29,19 +32,20 @@ stk_fit <- function(
   roi,
   loc,
   scale,
+  speed,
   control,
   step_selection,
   clip
   ) {
 
-  # bbox
+  # set bounding box (from roi)
   bbox <- roi |> sf::st_bbox()
 
   # set lower and upper parameter ranges
   # from bounding box settings add scale
   # factor for sky conditions
-  lower <- c(bbox[2:1], scale[1])
-  upper <- c(bbox[4:3], scale[2])
+  lower <- c(bbox[2:1], scale[1], speed[1])
+  upper <- c(bbox[4:3], scale[2], speed[2])
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(
@@ -132,6 +136,7 @@ stk_fit <- function(
   data.frame(
     latitude = bf_par[1],
     longitude = bf_par[2],
+    speed = bf_par[4],
     sky_conditions = exp(bf_par[3]),
     latitude_qt_50 = latitude[2],
     longitude_qt_50 = longitude[2],
@@ -144,6 +149,7 @@ stk_fit <- function(
     sky_conditions_qt_95 = exp(sky_conditions[3]),
     grd = grd,
     n = nrow(data),
+    date_time = data$date_time[nrow(data)],
     row.names = NULL
   )
 }
