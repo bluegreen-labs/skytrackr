@@ -307,7 +307,8 @@ skytrackr <- function(
         main = paste(
           round(out$latitude,3),
           round(out$longitude,3),
-          round(out$sky_conditions,3)
+          round(out$sky_conditions,3),
+          round(out$speed,3)
           )
         )
       graphics::points(
