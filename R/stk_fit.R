@@ -12,9 +12,6 @@
 #'  but can be extended for more flexibility to account for coverage by plumage,
 #'  note that in case of non-physical accurate lux measurements values can have
 #'  a range starting at 0.0001 (a multiplier instead of a divider).
-#' @param speed range of speeds to optimize, bound by the physical limits
-#'  of the species, but with a low valued lower bound because of
-#'  potential perceived low speeds when local ranging.
 #' @param control Control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
@@ -23,6 +20,7 @@
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
 #'  twilight) (default = NULL)
+#' @param model model to use, either "diurnal" or "geodesic" (default = diurnal)
 #'
 #' @return An estimated illuminance based location (and its uncertainties).
 #' @export
@@ -32,20 +30,30 @@ stk_fit <- function(
   roi,
   loc,
   scale,
-  speed,
   control,
   step_selection,
-  clip
+  clip,
+  model
   ) {
 
   # set bounding box (from roi)
   bbox <- roi |> sf::st_bbox()
 
+  # if only a single scale value is provided
+  # pad with +- 2.5, this routine is used to apply
+  # daily informed priors rather than a global
+  # range across the whole track (works only for
+  # loggers with a full diurnal profile)
+  if(length(scale) == 1){
+    scale <- c(scale - 2.5, scale + 2.5)
+    scale <- ifelse(scale < 1, 1, scale)
+  }
+
   # set lower and upper parameter ranges
   # from bounding box settings add scale
   # factor for sky conditions
-  lower <- c(bbox[2:1], scale[1], speed[1])
-  upper <- c(bbox[4:3], scale[2], speed[2])
+  lower <- c(bbox[2:1], scale[1])
+  upper <- c(bbox[4:3], scale[2])
 
   # setup of the BT setup
   setup <- BayesianTools::createBayesianSetup(
@@ -53,7 +61,7 @@ stk_fit <- function(
       do.call("likelihood",
               list(par = random_par,
                    data = data,
-                   model = "log_lux",
+                   model = model,
                    loc = loc,
                    roi = roi,
                    step_selection = step_selection,
@@ -136,17 +144,16 @@ stk_fit <- function(
   data.frame(
     latitude = bf_par[1],
     longitude = bf_par[2],
-    speed = bf_par[4],
-    sky_conditions = exp(bf_par[3]),
+    sky_conditions = bf_par[3],
     latitude_qt_50 = latitude[2],
     longitude_qt_50 = longitude[2],
-    sky_conditions_qt_50 = exp(sky_conditions[2]),
+    sky_conditions_qt_50 = sky_conditions[2],
     latitude_qt_5 = latitude[1],
     latitude_qt_95 = latitude[3],
     longitude_qt_5 = longitude[1],
     longitude_qt_95 = longitude[3],
-    sky_conditions_qt_5 = exp(sky_conditions[1]),
-    sky_conditions_qt_95 = exp(sky_conditions[3]),
+    sky_conditions_qt_5 = sky_conditions[1],
+    sky_conditions_qt_95 = sky_conditions[3],
     grd = grd,
     n = nrow(data),
     date_time = data$date_time[nrow(data)],
