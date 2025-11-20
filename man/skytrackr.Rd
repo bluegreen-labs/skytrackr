@@ -9,11 +9,12 @@ skytrackr(
   start_location,
   tolerance = 1500,
   range = c(0.09, 148),
-  scale = log(c(1e-05, 50)),
+  scale = c(1, 50),
   control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 3000,
     message = FALSE)),
   mask,
   step_selection,
+  model = "diurnal",
   smooth = TRUE,
   clip = NULL,
   plot = TRUE,
@@ -41,8 +42,8 @@ the same.}
 skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 but can be extended for more flexibility to account for coverage by plumage,
 note that in case of non-physical accurate lux measurements values can have
-a range starting at 0.0001 (a multiplier instead of a divider). Values need
-to be provided on a log scale (default = log(c(0.00001, 50)))}
+a range starting at 0.0001 (a multiplier instead of a divider)
+(default = c(1,50)).}
 
 \item{control}{Control settings for the Bayesian optimization, generally
 should not be altered (defaults to a Monte Carlo method). For detailed
@@ -52,6 +53,8 @@ information I refer to the BayesianTools package documentation.}
 
 \item{step_selection}{A step selection function on the distance of a proposed
 move, step selection is specified on distance (in km) basis.}
+
+\item{model}{model to use, either "diurnal" or "geodesic" (default = diurnal)}
 
 \item{smooth}{smooth the data before processing (default = TRUE)}
 

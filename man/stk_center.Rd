@@ -14,12 +14,13 @@ stk_center(df, floor = 1.5, replace = FALSE)
 \item{replace}{replace original decimal hour values (default = FALSE)}
 }
 \value{
-a centered skytrackr compatible data frame
+a day-by-day centered skytrackr compatible data frame
 }
 \description{
-Values are centered on midday on a day by day basis. Note that this does
-not shift the time series properly as hours are wrapped around. This
-function should not be used stand-alone.
+Daily values are centered on midday on a day-by-day basis. Note that this does
+not shift the time series properly as hours are wrapped around on a given day.
+This function should not be used stand-alone, and is primarily used to screen
+data for noise / poor quality.
 }
 \examples{
 

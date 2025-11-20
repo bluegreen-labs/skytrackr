@@ -4,7 +4,7 @@
 \alias{stk_fit}
 \title{Fit illuminance (lux) profile}
 \usage{
-stk_fit(data, roi, loc, scale, control, step_selection, clip)
+stk_fit(data, roi, loc, scale, control, step_selection, clip, model)
 }
 \arguments{
 \item{data}{A skytrackr data frame}
@@ -30,6 +30,8 @@ move, step selection is specified on distance (in km) basis.}
 \item{clip}{value over which lux values are clipped, to be set to the
 saturation value of your system when using the full diurnal profile (not only
 twilight) (default = NULL)}
+
+\item{model}{model to use, either "diurnal" or "geodesic" (default = diurnal)}
 }
 \value{
 An estimated illuminance based location (and its uncertainties).

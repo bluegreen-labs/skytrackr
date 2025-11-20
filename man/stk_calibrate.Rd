@@ -4,7 +4,13 @@
 \alias{stk_calibrate}
 \title{Estimate scale the scale range}
 \usage{
-stk_calibrate(df, percentile = 100, floor = 1.5, verbose = TRUE)
+stk_calibrate(
+  df,
+  percentile = 100,
+  floor = 1.5,
+  distribution = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{df}{a skytrackr dataframe}
@@ -13,6 +19,9 @@ stk_calibrate(df, percentile = 100, floor = 1.5, verbose = TRUE)
 evaluation (default = 100, the full range of values is considered)}
 
 \item{floor}{threshold to remove low (nighttime) values}
+
+\item{distribution}{provide the full distribution across the track of scale
+factors (default = FALSE, providing only a range as a global constraint)}
 
 \item{verbose}{Give detailed feedback (TRUE or FALSE, default = TRUE)}
 }
