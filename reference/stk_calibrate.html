@@ -80,7 +80,13 @@ recommended to first use `st_screen_twl()` to remove poor quality days.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_calibrate</span><span class="op">(</span><span class="va">df</span>, percentile <span class="op">=</span> <span class="fl">100</span>, floor <span class="op">=</span> <span class="fl">1.5</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stk_calibrate</span><span class="op">(</span></span>
+<span>  <span class="va">df</span>,</span>
+<span>  percentile <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  floor <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  distribution <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -100,6 +106,11 @@ evaluation (default = 100, the full range of values is considered)</p></dd>
 <dd><p>threshold to remove low (nighttime) values</p></dd>
 
 
+<dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
+<dd><p>provide the full distribution across the track of scale
+factors (default = FALSE, providing only a range as a global constraint)</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Give detailed feedback (TRUE or FALSE, default = TRUE)</p></dd>
 
@@ -116,14 +127,12 @@ evaluation (default = 100, the full range of values is considered)</p></dd>
 <span class="r-in"><span><span class="co"># Estimate the upper scale value for fitting routine</span></span></span>
 <span class="r-in"><span><span class="va">upper_scale_value</span> <span class="op">&lt;-</span> <span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu">stk_calibrate</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating suggested scale range</span><span style="color: #9E9E9E;"> ══════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.1</span><span style="color: #9E9E9E;"> ══</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">── </span><span style="color: #000000; font-weight: bold;">Estimating suggested scale values</span><span style="color: #9E9E9E;"> ───────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → The suggested scale range is <span style="font-weight: bold;">c(1,24)</span>!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Note, these estimates are approximations! Always inspect your data (e.g. by</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   using stk_filter()) and consider using the stk_screen_twl() to remove days</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   with poor twilight and other characteristics.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Scale range values are not log transformed. You will need to take the log()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   of the scale range for use in skytrackr()</span>
 </code></pre></div>
     </div>
   </div>
