@@ -10,6 +10,8 @@
 #' @param percentile percentile of the spread of data to use in scale value
 #'  evaluation (default = 100, the full range of values is considered)
 #' @param floor threshold to remove low (nighttime) values
+#' @param distribution provide the full distribution across the track of scale
+#'  factors (default = FALSE, providing only a range as a global constraint)
 #' @param verbose Give detailed feedback (TRUE or FALSE, default = TRUE)
 #'
 #' @importFrom utils packageVersion
@@ -26,6 +28,7 @@ stk_calibrate <- function(
     df,
     percentile = 100,
     floor = 1.5,
+    distribution = FALSE,
     verbose = TRUE
 ){
 
@@ -36,15 +39,15 @@ stk_calibrate <- function(
       theme = list(
         rule = list(
           color = "darkgrey",
-          "line-type" = "double",
+          "line-type" = "single",
           "margin-bottom" = 1,
           "margin-top" = 1
         ),
         span.strong = list(color = "black"))
     )
     cli::cli_rule(
-      left = "{.strong Estimating suggested scale range}",
-      right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
+      left = "{.strong Estimating suggested scale values}",
+      #right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
 
     )
     cli::cli_end()
@@ -56,7 +59,8 @@ stk_calibrate <- function(
     stk_filter(
       range = c(floor, 500000),
       smooth = FALSE,
-      filter = TRUE
+      filter = TRUE,
+      verbose = FALSE
     )
 
   # calculate daily maxima
@@ -64,53 +68,75 @@ stk_calibrate <- function(
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE),
-      .groups = "drop"
+      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE)
     )
 
-  i <- 1
-  k <- 0
+  df_scales <- df_max |>
+    dplyr::group_by(.data$logger,.data$date) |>
+    dplyr::do({
 
-  while(i > 0){
-    k <- k + 1
+      i <- 1
+      k <- 0
 
-    # generate a reference
-    reference <- skylight::skylight(
-      date = as.POSIXct("2022-09-23 12:00:00"),
-      latitude = 0,
-      longitude = 0,
-      sky_condition = k
-    )$sun_illuminance
+      # sets reference to a sky condition k to look at the distribution
+      # of scaling factors
+      while(any(i > 0)){
+        k <- k + 1
 
-    # calculate the observed attenuation
-    obs_att <- 100 - (df_max$max_illuminance/reference) * 100
-    i <- stats::quantile(obs_att, percentile/100)
-  }
+        # generate a reference
+        reference <- skylight::skylight(
+          date = as.POSIXct("2022-09-23 12:00:00"),
+          latitude = 0,
+          longitude = 0,
+          sky_condition = k
+        )$sun_illuminance
 
-  # set ranges
-  lower <- 1
-  upper <- k # ifelse(k <= 10, 10, k)
+        # calculate the observed attenuation
+        i <- 100 - (.data$max_illuminance/reference) * 100
+      }
 
-  # feedback
-  if(verbose) {
-
-    # if(k < 10){
-    #   cli::cli_alert_info(
-    #     "The upper scale estimate is low ({.strong {k}}), using the default ({.strong 10})"
-    #   )
-    # }
-
-    cli::cli_bullets(c(
-      ">" = "The suggested scale range is {.strong c({lower},{upper})}!",
-      "i" = "Note, these estimates are approximations! Always inspect your
-      data (e.g. by using stk_filter()) and consider using the stk_screen_twl()
-      to remove days with poor twilight and other characteristics.",
-      "i" = "Scale range values are not log transformed. You will need to take
-      the log() of the scale range for use in skytrackr()"
-      )
-    )
-  }
+      data.frame(scale = k)
+    }) |>
+    dplyr::ungroup()
 
   # return estimated values invisible
-  return(c(lower, upper))
+  if(distribution){
+
+    # feedback
+    if(verbose) {
+      cli::cli_bullets(c(
+        ">" = "Calculating the full distribution of scale parameters!"
+        )
+      )
+    }
+
+    return(df_scales)
+  } else {
+
+    # set ranges
+    lower <- 1
+    upper <- as.numeric(
+      stats::quantile(
+        df_scales$scale,
+        percentile/100)
+    )
+
+    # set upper to 10 (default max of skylight)
+    # if < 10
+    upper <- ifelse(upper < 10, 10, upper)
+
+
+    # feedback
+    if(verbose) {
+      cli::cli_bullets(c(
+        ">" = "The suggested scale range is {.strong c({lower},{upper})}!",
+        "i" = "Note, these estimates are approximations! Always inspect your
+      data (e.g. by using stk_filter()) and consider using the stk_screen_twl()
+      to remove days with poor twilight and other characteristics."
+      )
+      )
+    }
+
+    return(c(lower, upper))
+  }
 }
