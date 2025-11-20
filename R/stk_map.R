@@ -187,7 +187,7 @@ stk_map <- function(
 
    # load raster
    r <- terra::rast(
-      system.file("extdata/hillshade.tif", package = "skytrackr")
+      system.file("extdata/shadedrelief.tif", package = "skytrackr")
    ) |>
       terra::project("+proj=eqearth") |>
       terra::crop(terra::vect(m)) |>
@@ -195,10 +195,8 @@ stk_map <- function(
 
    # base plot call
    p <- ggplot2::ggplot(df) +
-      tidyterra::geom_spatraster(
-         data = r,
-         na.rm = TRUE,
-         show.legend = FALSE
+      tidyterra::geom_spatraster_rgb(
+         data = r
       ) +
       ggplot2::scale_fill_gradient(
         low = "grey50",
@@ -244,8 +242,8 @@ stk_map <- function(
         ) +
         ggplot2::geom_sf(
            data = roi,
-           colour = NA,
-           fill = "darkolivegreen1",
+           colour = "red",
+           fill = NA,
            lty = 2,
            alpha = 0.5,
            na.rm = TRUE
@@ -386,44 +384,26 @@ stk_map <- function(
      ) +
      ggplot2::theme_bw()
 
-#    p_grd <- ggplot2::ggplot(df) +
-#       ggplot2::geom_point(
-#          ggplot2::aes(
-#             y = .data$date,
-#             x = .data$grd,
-#             group = .data$logger
-#          ),
-#          colour = "grey25",
-#          na.rm = TRUE
-#       ) +
-#       ggplot2::geom_vline(xintercept = 1.2) +
-#       ggplot2::labs(
-#          x = "Gelman-Rubin\n diagnostic"
-#       ) +
-#       ggplot2::theme_bw() +
-#       ggplot2::theme(
-#          legend.position = "bottom"
-#       )
-
-   p_speed <- ggplot2::ggplot(df) +
+   p_grd <- ggplot2::ggplot(df) +
       ggplot2::geom_point(
          ggplot2::aes(
             y = .data$date,
-            x = .data$speed,
+            x = .data$grd,
             group = .data$logger
          ),
          colour = "grey25",
          na.rm = TRUE
       ) +
+      ggplot2::geom_vline(xintercept = 1.2) +
       ggplot2::labs(
-         x = "speed (m/s)"
+         x = "Gelman-Rubin\n diagnostic"
       ) +
       ggplot2::theme_bw() +
       ggplot2::theme(
          legend.position = "bottom"
       )
 
-   p_final <- p + p_lat + p_lon + p_sky + p_speed +
+   p_final <- p + p_lat + p_lon + p_sky + p_grd +
      patchwork::plot_layout(
        ncol = 5,
        widths = c(4, 1, 1, 1, 1),
