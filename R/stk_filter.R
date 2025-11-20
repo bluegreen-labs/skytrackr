@@ -43,6 +43,26 @@ stk_filter <- function(
     verbose = TRUE
 ){
 
+  if (verbose){
+
+    cli::cli_div(
+      theme = list(
+        rule = list(
+          color = "darkgrey",
+          "line-type" = "single",
+          "margin-bottom" = 1,
+          "margin-top" = 1
+        ),
+        span.strong = list(color = "black"))
+    )
+    cli::cli_rule(
+      left = "{.strong Filtering data}",
+      #right = "{.pkg skytrackr v{packageVersion('skytrackr')}}",
+
+    )
+    cli::cli_end()
+  }
+
   # unravel the light data
   data <- data |>
     dplyr::filter(
@@ -53,7 +73,7 @@ stk_filter <- function(
   if (range[1] < min(data$value, na.rm = TRUE)){
     range[1] <- min(data$value, na.rm = TRUE)
     if(verbose){
-      cli::cli_alert("Minimum range value out of range, set to {range[1]}")
+      cli::cli_bullets(c("!" = "Minimum range value out of range, set to {range[1]}"))
     }
   }
 
@@ -63,7 +83,7 @@ stk_filter <- function(
     range <- c(range, 500000)
     twilight <- TRUE
     if(verbose){
-      cli::cli_alert("No maximum range provided, switching to twilight mode!")
+      cli::cli_bullets(c("!" = "No maximum range provided, switching to twilight mode!"))
     }
   }
 
@@ -190,6 +210,10 @@ stk_filter <- function(
     data <- data |>
       dplyr::filter(.data$selected)
   }
+
+  # ungroup data
+  data <- data |>
+    dplyr::ungroup()
 
   return(data)
 }
