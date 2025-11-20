@@ -5,6 +5,7 @@
 #'
 #' @param par Three parameters specifying the illuminance model.
 #' @param data A data frame with the required drivers for the illuminance model.
+#' @param loc previous location
 #' @param ... optional other parameters to forward
 #'
 #' @return Sky illuminance as log(lux).
@@ -42,6 +43,7 @@ diurnal <- function(
 #'
 #' @param par Three parameters specifying the illuminance model.
 #' @param data A data frame with the required drivers for the illuminance model.
+#' @param loc previous location
 #' @param ... optional other parameters to forward
 #'
 #' @return Sky illuminance as log(lux).
