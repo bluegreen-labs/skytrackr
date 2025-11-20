@@ -19,21 +19,19 @@
 #'  a single value a twilight threshold based method will be used rather
 #'  than a template matching approach. The underlying optimization will remain
 #'  the same.
-#' @param speed range of speeds to optimize, bound by the physical limits
-#'  of the species, but with a low valued lower bound because of
-#'  potential perceived low speeds when local ranging.
 #' @param scale Scale / sky condition factor, by default covering the
 #'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 #'  but can be extended for more flexibility to account for coverage by plumage,
 #'  note that in case of non-physical accurate lux measurements values can have
-#'  a range starting at 0.0001 (a multiplier instead of a divider). Values need
-#'  to be provided on a log scale (default = log(c(0.00001, 50)))
+#'  a range starting at 0.0001 (a multiplier instead of a divider)
+#'  (default = c(1,50)).
 #' @param control Control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
 #' @param mask Mask to constrain positions to land
 #' @param step_selection A step selection function on the distance of a proposed
 #'  move, step selection is specified on distance (in km) basis.
+#' @param model model to use, either "diurnal" or "geodesic" (default = diurnal)
 #' @param smooth smooth the data before processing (default = TRUE)
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
@@ -90,8 +88,7 @@ skytrackr <- function(
     start_location,
     tolerance = 1500,
     range = c(0.09, 148),
-    speed = c(0.0001, 15),
-    scale = log(c(0.00001, 50)),
+    scale = c(1, 50),
     control = list(
       sampler = 'DEzs',
       settings = list(
@@ -102,6 +99,7 @@ skytrackr <- function(
     ),
     mask,
     step_selection,
+    model = "diurnal",
     smooth = TRUE,
     clip = NULL,
     plot = TRUE,
@@ -153,17 +151,39 @@ skytrackr <- function(
 
   if(length(range) != 2) {
     cli::cli_bullets(c(
-      ">" = "The range parameter has only one value!"
+      "x" = "The range parameter has only one value!"
       )
     )
   }
 
-  if(length(scale) != 2) {
-    cli::cli_abort(c(
-      "The scale parameter has only one value.",
-      "x" = "Please provide an upper and lower bound"
+  if(is.null(scale)){
+    if(verbose){
+      cli::cli_bullets(c(
+        "i" = "No scale range is provided, will be estimated from data!"
+        )
+      )
+    }
+
+    # calculating informed priors for the scale
+    # parameter
+    scales <- data |>
+      stk_calibrate(
+        distribution = TRUE,
+        verbose = verbose
+      )
+
+    # merge with data file, sets daily priors
+    data <- dplyr::left_join(data, scales, by = c("logger", "date"))
+  }
+
+  if(length(scale) == 1) {
+    cli::cli_bullets(c(
+      "i" = "Single scale value is provided, using it as a global prior!"
+      )
     )
-    )
+
+    # set global scale prior
+    data$scale <- scale
   }
 
   # unravel the light data
@@ -188,7 +208,7 @@ skytrackr <- function(
   # used to calculate distances covered
   data <- data |>
     dplyr::mutate(
-    time_step = c(0, as.numeric(diff(.data$date_time, units = "secs")))
+    time_step = c(0,as.numeric(diff(.data$date_time, units = "secs")))
   )
 
   # unique dates
@@ -202,7 +222,7 @@ skytrackr <- function(
 
     if(plot){
       cli::cli_alert_info(
-        "(preview plot will update every 7 days)"
+        "(preview plot will update every 2 days)"
       )
     }
 
@@ -212,9 +232,9 @@ skytrackr <- function(
     )
   }
 
-  # plot updates every 5 days (if possible)
-  if(length(dates) >= 7){
-    plot_update <- seq(2, length(dates), by = 7)
+  # plot updates every 2 days (if possible)
+  if(length(dates) >= 2){
+    plot_update <- seq(2, length(dates), by = 2)
   } else {
     plot_update  <- length(dates)
   }
@@ -258,17 +278,24 @@ skytrackr <- function(
     # the skylight model to
     subs <- data[which(data$date %in% dates[i]),]
 
+    # set proper scaling factor
+    if(is.null(scale) | length(scale) == 1){
+      scale_subs <- subs$scale[1]
+    } else {
+      scale_subs <- scale
+    }
+
     # fit model parameters for a given
     # day to estimate the location
     out <- stk_fit(
         data = subs,
         roi = roi,
         loc = sf::st_coordinates(loc),
-        scale = scale,
-        speed = speed,
+        scale = scale_subs,
         control = control,
         step_selection = step_selection,
-        clip = clip
+        clip = clip,
+        model = model
       )
 
     # plot debugging graph of fit curve for every day / period
@@ -277,8 +304,7 @@ skytrackr <- function(
       par <- c(
         out$latitude,
         out$longitude,
-        log(out$sky_conditions),
-        out$speed
+        log(out$sky_conditions)
       )
 
       ll <- log_lux(
@@ -305,10 +331,9 @@ skytrackr <- function(
         subs$lux,
         ylim = c(-5, 12),
         main = paste(
-          round(out$latitude,3),
-          round(out$longitude,3),
-          round(out$sky_conditions,3),
-          round(out$speed,3)
+          "lat:", round(out$latitude,3),
+          "lon:", round(out$longitude,3),
+          "sky:", round(out$sky_conditions,3)
           )
         )
       graphics::points(
