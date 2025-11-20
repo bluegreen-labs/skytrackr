@@ -307,11 +307,19 @@ skytrackr <- function(
         log(out$sky_conditions)
       )
 
-      ll <- log_lux(
-        par,
-        data = subs,
-        loc = sf::st_coordinates(loc)
-      )
+      if(model == "diurnal"){
+        ll <- diurnal(
+          par,
+          data = subs,
+          loc = sf::st_coordinates(loc)
+        )
+      } else {
+        ll <- geodesic(
+          par,
+          data = subs,
+          loc = sf::st_coordinates(loc)
+        )
+      }
 
       subs$sun_illuminance <- ll
 
