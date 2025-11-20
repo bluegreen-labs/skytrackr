@@ -11,6 +11,8 @@ diurnal(par, data, loc, ...)
 
 \item{data}{A data frame with the required drivers for the illuminance model.}
 
+\item{loc}{previous location}
+
 \item{...}{optional other parameters to forward}
 }
 \value{
