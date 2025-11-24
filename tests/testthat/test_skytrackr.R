@@ -80,24 +80,21 @@ test_that("test no start", {
 })
 
 test_that("read from file and optimize", {
-  location <- skytrackr::stk_read_lux(
-      system.file("extdata/cc876.lux", package="skytrackr")
-    ) |>
+  location <- skytrackr::cc876 |>
     skytrackr::skytrackr(
       mask = mask,
       plot = TRUE,
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
       scale = log(c(1,10)),
-      range = c(0.32, 10),
+      range = c(0.2, 10),
       control = list(
         sampler = 'DEzs',
         settings = list(
           iterations = 10,
           message = FALSE
         )
-      ),
-      step_selection = ssf
+      )
     )
   expect_s3_class(location, "data.frame")
 })
