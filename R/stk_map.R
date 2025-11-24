@@ -185,6 +185,18 @@ stk_map <- function(
    m <- m |>
       sf::st_transform(crs = "+proj=eqearth")
 
+   # crop and convert rivers
+   rivers <- suppressWarnings({suppressMessages({ rivers |>
+      sf::st_crop(bbox) |>
+      sf::st_transform(crs = "+proj=eqearth")
+   })})
+
+   # crop and convert lakes
+   lakes <- suppressWarnings({suppressMessages({ lakes |>
+      sf::st_crop(bbox) |>
+      sf::st_transform(crs = "+proj=eqearth")
+   })})
+
    # load raster
    r <- terra::rast(
       system.file("extdata/shadedrelief.tif", package = "skytrackr")
@@ -197,15 +209,26 @@ stk_map <- function(
    p <- ggplot2::ggplot(df) +
       tidyterra::geom_spatraster_rgb(
          data = r
-      ) +
-      ggplot2::scale_fill_gradient(
-        low = "grey50",
-        high = "grey95",
-        na.value = NA
       )
 
    if(missing(roi)){
       p <- p +
+         ggplot2::geom_sf(
+            data = rivers,
+            fill = NA,
+            colour = "lightblue",
+            alpha = 0.6,
+            inherit.aes = FALSE,
+            na.rm = TRUE
+         ) +
+         ggplot2::geom_sf(
+            data = lakes,
+            fill = "lightblue",
+            colour = NA,
+            alpha = 0.6,
+            inherit.aes = FALSE,
+            na.rm = TRUE
+         ) +
          ggplot2::geom_sf(
             data = m,
             fill = NA,
@@ -235,9 +258,19 @@ stk_map <- function(
 
      p <- p +
         ggplot2::geom_sf(
-           data = m,
-           colour = "black",
+           data = rivers,
            fill = NA,
+           colour = "lightblue",
+           alpha = 0.6,
+           inherit.aes = FALSE,
+           na.rm = TRUE
+        ) +
+        ggplot2::geom_sf(
+           data = lakes,
+           fill = "lightblue",
+           colour = NA,
+           alpha = 0.6,
+           inherit.aes = FALSE,
            na.rm = TRUE
         ) +
         ggplot2::geom_sf(
@@ -250,13 +283,20 @@ stk_map <- function(
         ) +
         ggplot2::geom_sf(
            data = m,
+           colour = "black",
            fill = NA,
            na.rm = TRUE
         ) +
         ggplot2::theme_bw() +
         ggplot2::theme(
            legend.position = "bottom",
-           panel.border = ggplot2::element_blank()
+           panel.border = ggplot2::element_blank(),
+           plot.margin = ggplot2::margin(
+              t = 10,
+              r = 0,
+              b = 0,
+              l = 0,
+              unit = "pt")
         )
    }
 
