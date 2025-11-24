@@ -54,7 +54,7 @@ test_that("test optimizations", {
       step_selection = ssf
     )
 
-  expect_type(location, "list")
+  expect_s3_class(location, "data.frame")
 })
 
 
@@ -79,11 +79,11 @@ test_that("test no start", {
   )
 })
 
-test_that("read from file and optimize", {
+test_that("optimize individual + map", {
   location <- skytrackr::cc876 |>
     skytrackr::skytrackr(
       mask = mask,
-      plot = TRUE,
+      plot = FALSE,
       start_location = c(51.08, 3.73),
       tolerance = 1500, # in km
       scale = log(c(1,10)),
@@ -94,9 +94,15 @@ test_that("read from file and optimize", {
           iterations = 10,
           message = FALSE
         )
-      )
+      ),
+      model = "individual"
     )
   expect_s3_class(location, "data.frame")
+
+  # test output plotting function
+  p <- location |> stk_map()
+  expect_s3_class(p, "ggplot")
+
 })
 
 test_that("test reading data", {
