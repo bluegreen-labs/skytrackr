@@ -16,8 +16,8 @@ the tolerance value and relative to the previous step)}
 
 \item{scale}{Scale / sky condition factor covering the
 skylight() range of 1-10 (from clear sky to extensive cloud coverage)
-but can be extended for more flexibility to account for coverage by plumage,
-note that in case of non-physical accurate lux measurements values can have
+but can be extended for more flexibility to account for coverage by plumage.
+Note that in case of non-physical accurate lux measurements values can have
 a range starting at 0.0001 (a multiplier instead of a divider).}
 
 \item{control}{Control settings for the Bayesian optimization, generally
@@ -31,7 +31,10 @@ move, step selection is specified on distance (in km) basis.}
 saturation value of your system when using the full diurnal profile (not only
 twilight) (default = NULL)}
 
-\item{model}{model to use, either "diurnal" or "geodesic" (default = diurnal)}
+\item{model}{model to use, either "diurnal" calculating the diurnal profile
+fit using a single set of locations, or "individual" where the positions
+are updated along the flight track but only the last position is reported
+back (default = diurnal).}
 }
 \value{
 An estimated illuminance based location (and its uncertainties).

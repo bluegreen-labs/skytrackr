@@ -13,9 +13,10 @@ skytrackr(
   control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 3000,
     message = FALSE)),
   mask,
-  step_selection,
+  step_selection = NULL,
   model = "diurnal",
   smooth = TRUE,
+  MAP = TRUE,
   clip = NULL,
   plot = TRUE,
   verbose = TRUE,
@@ -51,12 +52,23 @@ information I refer to the BayesianTools package documentation.}
 
 \item{mask}{Mask to constrain positions to land}
 
-\item{step_selection}{A step selection function on the distance of a proposed
-move, step selection is specified on distance (in km) basis.}
+\item{step_selection}{A step-selection function on the distance of a proposed
+move, step selection is specified on distance (in km) basis. If missing,
+(default = NULL) no distance based constraints are used, aside from the
+tolerance value (a hard limit on the distance of travel).}
 
-\item{model}{model to use, either "diurnal" or "geodesic" (default = diurnal)}
+\item{model}{model to use, either "diurnal" calculating the diurnal profile
+fit using a single set of locations, or "individual" where the positions
+are updated along the flight track but only the last position is reported
+back (default = diurnal). For individual flight tracks the assumption is
+that the flight bearing isn't constantly updated, but only adjusted after
+key (twilight) events. Between updates individuals move along a track of
+constant bearing (loxodrome).}
 
 \item{smooth}{smooth the data before processing (default = TRUE)}
+
+\item{MAP}{use the maximum aposteriori method to determine the best estimate
+parameter set (default = TRUE). If FALSE, the median of a MCMC sample is used.}
 
 \item{clip}{value over which lux values are clipped, to be set to the
 saturation value of your system when using the full diurnal profile (not only

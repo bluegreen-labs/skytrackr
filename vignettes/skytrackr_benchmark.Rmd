@@ -1,0 +1,107 @@
+---
+title: "Benchmark"
+subtitle: "a comparison to known estimates"
+author: "Koen Hufkens"
+output: 
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
+    fig_caption: yes
+    toc: true
+    toc_depth: 2
+pkgdown:
+  as_is: true
+vignette: >
+  %\VignetteIndexEntry{Benchmark}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center"
+)
+set.seed(0)
+library(dplyr)
+library(skytrackr)
+library(ggplot2)
+```
+
+This benchmark visually compares the results of `skytrackr` to results from the geolocation manual. In particular it compares the results of the SGAT and FlightR outputs to `skytrackr` approximations. The vignette isn't run online, with rendered results included as images, however all the code can be used in a reproducible way (to track changes between updates).
+
+# SGAT
+
+The SGAT demo includes data from the European bee-eater, recorded from a Swiss Ornithological Institute logger.
+
+```{r eval = FALSE}
+# read the data from the geolocation manual repo
+df <- stk_read_glf(
+  "https://raw.githubusercontent.com/slisovski/TheGeolocationManual/refs/heads/master/data/RawData/MerApi/14SA.glf",
+   verbose = FALSE)
+
+# automatically screen most spurious days
+df <- df |>  
+  stk_screen_twl(filter = TRUE)
+
+# estimate upper scale value
+scale <- stk_calibrate(df)
+
+# set the twilight range
+# note that these values are generally larger
+# for the SOI loggers
+range <- c(1.5, 3000)
+
+# define land mask with a bounding box
+# and an off-shore buffer (in km), in addition
+# you can specifiy the resolution of the resulting raster
+mask <- stk_mask(
+  bbox  =  c(-20, -40, 70, 70), #xmin, ymin, xmax, ymax
+  buffer = 10,
+  resolution = 0.5 # map grid in degrees corresponding to the buffer in km
+)
+
+# define a step selection distribution
+ssf <- function(x, shape = 0.7, scale = 100, tolerance = 1500){
+  # normalize over expected range with km increments
+  norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+  prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+  return(prob)
+}
+
+locations <- df |>
+    skytrackr(
+      mask = mask,
+      plot = FALSE,
+      start_location = c(51.32, 11.96),
+      tolerance = 1500, # in km
+      scale = log(scale),
+      range = range,
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          burnin = 1000,
+          iterations = 3000,
+          message = FALSE
+        )
+      ),
+      window_size = 1,
+      step_selection = ssf
+    )
+
+# save results
+saveRDS(locations, "sgat_locations.rds", compress = "xz")
+
+# render map
+locations |> stk_map()
+```
+
+```{r eval = TRUE, echo=FALSE}
+
+```
+
+
+![](https://geolocationmanual.vogelwarte.ch/07-SGAT_files/figure-html/unnamed-chunk-31-1.png)
+
+# FlightR
+
