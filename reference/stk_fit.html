@@ -22,7 +22,7 @@ to estimate locations (parameters)."><meta name="twitter:card" content="summary"
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.1</small></i>
+           <i>skytrackr <small>v2.0</small></i>
         </a>
       </div>
     </div>
@@ -38,6 +38,9 @@ to estimate locations (parameters)."><meta name="twitter:card" content="summary"
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/skytrackr_benchmark.html">Benchmark</a>
+    </li>
+    <li>
       <a href="../articles/skytrackr_optimization.html">Optimization tips</a>
     </li>
     <li>
@@ -99,8 +102,8 @@ the tolerance value and relative to the previous step)</p></dd>
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
 <dd><p>Scale / sky condition factor covering the
 skylight() range of 1-10 (from clear sky to extensive cloud coverage)
-but can be extended for more flexibility to account for coverage by plumage,
-note that in case of non-physical accurate lux measurements values can have
+but can be extended for more flexibility to account for coverage by plumage.
+Note that in case of non-physical accurate lux measurements values can have
 a range starting at 0.0001 (a multiplier instead of a divider).</p></dd>
 
 
@@ -122,7 +125,10 @@ twilight) (default = NULL)</p></dd>
 
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>model to use, either "diurnal" or "geodesic" (default = diurnal)</p></dd>
+<dd><p>model to use, either "diurnal" calculating the diurnal profile
+fit using a single set of locations, or "individual" where the positions
+are updated along the flight track but only the last position is reported
+back (default = diurnal).</p></dd>
 
 </dl></div>
     <div id="value">

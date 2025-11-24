@@ -43,7 +43,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.1</small></i>
+           <i>skytrackr <small>v2.0</small></i>
         </a>
       </div>
     </div>
@@ -61,6 +61,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/skytrackr_benchmark.html">Benchmark</a>
+    </li>
+    <li>
       <a href="../articles/skytrackr_optimization.html">Optimization tips</a>
     </li>
     <li>
@@ -175,7 +178,7 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <p>Where light loss through a canopy is described according to the Beer–Lambert Law.</p>
 <p><span class="math inline">\(Q_F\)</span> = <span class="math inline">\(Q_0 e^{–kF}\)</span></p>
 <p>Where <span class="math inline">\(Q_{F}\)</span> is the light level for a given level F, with k dependent on the canopy complexity (where literature often cites a value of 0.5 as a good middle ground). Maximum F is determined by the density of the vegetation or Leaf Area Index (LAI, dimensionless), expressed as leaves (<span class="math inline">\(m^2\)</span>) per surface area (<span class="math inline">\(m^2\)</span>). LAI reach a maximum of 10 for certain dense needleleaf forests, but are generally far lower.</p>
-<p>Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the <code>sky condition</code> parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor, under ideal conditions. The below graph shows the relationship between the scale factor and LAI for an average sky (sky conditions of 3 in the {skylight} model). Working on the assumption that most dense vegetation have a LAI of four to six, one can expect the scale factor to rarely exceed 50 unless other factors are at play.</p>
+<p>Assuming a k of 0.5 and a maximum LAI of 6 (a reasonable maximum for broadleaf forests) we get a light loss relative to the original solar illuminance of about 5%. We can map the <code>sky condition</code> parameter to LAI (using an average sky as a reference). This inverse mapping allows us to estimate the vegetation density in which an individual (bird) is located (assuming an average sky and limited sensor losses). Turning this around, if you know the ecology of an individual you can then use this relationship to set the upper scale factor, under ideal conditions. The below graph shows the relationship between the scale factor and LAI for an average sky (sky conditions of 3 in the {skylight} model). Working on the assumption that most dense vegetation have a LAI of four to six, rarely reaching 10, one can expect the scale factor to rarely exceed 50 (unless other factors are at play such as a dirty or partially covered sensor).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate the attenuation Beer-Lambert for LAI</span></span>
 <span><span class="va">lai_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
@@ -228,7 +231,8 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <h4 id="estimating-the-scale-from-data">
 <span class="header-section-number">2.3.2</span> Estimating the scale from data<a class="anchor" aria-label="anchor" href="#estimating-the-scale-from-data"></a>
 </h4>
-<p>Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum solar illuminance at noon can be compared with the measured maximum daily values. These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). Generally, Migrate Technology Ltd. sensors track close to true physical values. The included function <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> returns the 90th quantile of the estimated daily scale factors across the data, which can then be used as upper value to the scale parameter in <code><a href="../reference/skytrackr.html">skytrackr()</a></code>.</p>
+<p>Working on the assumption that the sensor is correctly installed and the sensor error is minimal we can estimate the light loss from the data itself if a full diurnal profile is measured. Here, the difference between the maximum (global) solar illuminance at noon can be compared with the measured maximum daily values.</p>
+<p>These values should give a crude estimate of the total light loss (without a need for attribution to vegetation, sky or other environmental conditions). Generally, Migrate Technology Ltd. sensors track close to true physical values. The included function <code><a href="../reference/stk_calibrate.html">stk_calibrate()</a></code> estimates daily scale factors across the data (and their range), which can then be used as upper value to the scale parameter in <code><a href="../reference/skytrackr.html">skytrackr()</a></code>.</p>
 </div>
 </div>
 <div class="section level3" number="2.4">
@@ -242,6 +246,13 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <span class="header-section-number">2.5</span> Step-selection dynamics<a class="anchor" aria-label="anchor" href="#step-selection-dynamics"></a>
 </h3>
 <p>The step-selection function constrains the validity of a proposed location estimate. However, the function used is approximate only. It must also be noted that while an individual might move a long distance across a day (in absolute sense), its position from day-to-day might not move much (e.g. in the most extreme case, there is no day-to-day movement if the individual returns to a nesting location). <strong>The step-selection function should reflect short-distance ranging movements</strong> (i.e. rapid decay) rather than long-distance migration movements.</p>
+</div>
+<div class="section level3" number="2.6">
+<h3 id="the-light-model-used">
+<span class="header-section-number">2.6</span> The light model used<a class="anchor" aria-label="anchor" href="#the-light-model-used"></a>
+</h3>
+<p>The package provides two modes of calculating a diurnal light profile, fit to the data. The normal, default, “diurnal” mode calculates light levels for a single (static) location (latitude, longitude), while the “individual” model calculates light levels along a rhumb line track between the last estimated position and a target (end) position. The speed depends on the track length, and is constant throughout. The “individual” model therefore <strong>corrects for the slight changes in light levels when moving with or against a changing twilight</strong>.</p>
+<p>For example, with twilight at dusk approaching from the east, flying towards the east will shorten the actual twilight. The inverse is true when flying westward during dawn, prolonging twilight conditions. These effects are particularly important for fast east-west movements. The “individual” model influences both latitude and scale parameter components. Note that the increased complexity of the model influences parameter estimation and generally requires increasing the number of required iterations, and potentially the upper scale value.</p>
 </div>
 </div>
 <div class="section level2" number="3">

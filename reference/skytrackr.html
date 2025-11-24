@@ -22,7 +22,7 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987)."><me
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>skytrackr <small>v1.1</small></i>
+           <i>skytrackr <small>v2.0</small></i>
         </a>
       </div>
     </div>
@@ -38,6 +38,9 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987)."><me
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/skytrackr_benchmark.html">Benchmark</a>
+    </li>
+    <li>
       <a href="../articles/skytrackr_optimization.html">Optimization tips</a>
     </li>
     <li>
@@ -85,9 +88,10 @@ those modelled by the sky illuminance model of Janiczek and DeYoung (1987).</p>
 <span>  control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sampler <span class="op">=</span> <span class="st">"DEzs"</span>, settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burnin <span class="op">=</span> <span class="fl">1000</span>, iterations <span class="op">=</span> <span class="fl">3000</span>,</span>
 <span>    message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">mask</span>,</span>
-<span>  <span class="va">step_selection</span>,</span>
+<span>  step_selection <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  model <span class="op">=</span> <span class="st">"diurnal"</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  MAP <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  clip <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -142,16 +146,29 @@ information I refer to the BayesianTools package documentation.</p></dd>
 
 
 <dt id="arg-step-selection">step_selection<a class="anchor" aria-label="anchor" href="#arg-step-selection"></a></dt>
-<dd><p>A step selection function on the distance of a proposed
-move, step selection is specified on distance (in km) basis.</p></dd>
+<dd><p>A step-selection function on the distance of a proposed
+move, step selection is specified on distance (in km) basis. If missing,
+(default = NULL) no distance based constraints are used, aside from the
+tolerance value (a hard limit on the distance of travel).</p></dd>
 
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>model to use, either "diurnal" or "geodesic" (default = diurnal)</p></dd>
+<dd><p>model to use, either "diurnal" calculating the diurnal profile
+fit using a single set of locations, or "individual" where the positions
+are updated along the flight track but only the last position is reported
+back (default = diurnal). For individual flight tracks the assumption is
+that the flight bearing isn't constantly updated, but only adjusted after
+key (twilight) events. Between updates individuals move along a track of
+constant bearing (loxodrome).</p></dd>
 
 
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
 <dd><p>smooth the data before processing (default = TRUE)</p></dd>
+
+
+<dt id="arg-map">MAP<a class="anchor" aria-label="anchor" href="#arg-map"></a></dt>
+<dd><p>use the maximum aposteriori method to determine the best estimate
+parameter set (default = TRUE). If FALSE, the median of a MCMC sample is used.</p></dd>
 
 
 <dt id="arg-clip">clip<a class="anchor" aria-label="anchor" href="#arg-clip"></a></dt>
@@ -221,7 +238,7 @@ longitudinal displacement).</p>
 <span class="r-in"><span>      <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating locations</span><span style="color: #9E9E9E;"> ══════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v1.1</span><span style="color: #9E9E9E;"> ══</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #9E9E9E;">══ </span><span style="color: #000000; font-weight: bold;">Estimating locations</span><span style="color: #9E9E9E;"> ══════════════════════════════════════ </span><span style="color: #0000BB;">skytrackr v2.0</span><span style="color: #9E9E9E;"> ══</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing logger: <span style="font-weight: bold;">CC876</span>!</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -230,33 +247,33 @@ longitudinal displacement).</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> → Smoothing the data using a Hampel filter</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Outliers will be replaced with interpolated values.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> (preview plot will update every 2 days)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■                              </span>   3% | ETA: 47s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■                              </span>   3% | ETA: 45s</span>
 <span class="r-plt img"><img src="skytrackr-1.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■                            </span>  10% | ETA: 46s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■                            </span>  10% | ETA: 48s</span>
 <span class="r-plt img"><img src="skytrackr-2.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■                          </span>  17% | ETA: 41s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■                          </span>  17% | ETA: 39s</span>
 <span class="r-plt img"><img src="skytrackr-3.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■                        </span>  23% | ETA: 35s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■                        </span>  23% | ETA: 34s</span>
 <span class="r-plt img"><img src="skytrackr-4.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■                      </span>  30% | ETA: 31s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■                      </span>  30% | ETA: 30s</span>
 <span class="r-plt img"><img src="skytrackr-5.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■                    </span>  37% | ETA: 27s</span>
 <span class="r-plt img"><img src="skytrackr-6.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■                  </span>  43% | ETA: 24s</span>
 <span class="r-plt img"><img src="skytrackr-7.png" alt="" width="700" height="433"></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% | ETA: 20s</span>
 <span class="r-plt img"><img src="skytrackr-8.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■              </span>  57% | ETA: 18s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■              </span>  57% | ETA: 17s</span>
 <span class="r-plt img"><img src="skytrackr-9.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■            </span>  63% | ETA: 15s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■            </span>  63% | ETA: 14s</span>
 <span class="r-plt img"><img src="skytrackr-10.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■          </span>  70% | ETA: 12s</span>
 <span class="r-plt img"><img src="skytrackr-11.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■        </span>  77% | ETA:  9s</span>
 <span class="r-plt img"><img src="skytrackr-12.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■      </span>  83% | ETA:  7s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■      </span>  83% | ETA:  6s</span>
 <span class="r-plt img"><img src="skytrackr-13.png" alt="" width="700" height="433"></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   </span>  93% | ETA:  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■    </span>  90% | ETA:  4s</span>
 <span class="r-plt img"><img src="skytrackr-14.png" alt="" width="700" height="433"></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  </span>  97% | ETA:  1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  - Estimating positions <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 100% | ETA:  0s</span>
 <span class="r-plt img"><img src="skytrackr-15.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data processing done ...</span>

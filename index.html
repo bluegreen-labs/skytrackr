@@ -45,7 +45,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://bluegreenlabs.org">
           <img src="https://bluegreenlabs.org/img/logo.png" id="hexlogo" alt="bluegreen labs"></a>
         <a class="navbar-brand" href="index.html">
-           <i>skytrackr <small>v1.1</small></i>
+           <i>skytrackr <small>v2.0</small></i>
         </a>
       </div>
     </div>
@@ -63,6 +63,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/skytrackr_benchmark.html">Benchmark</a>
+    </li>
+    <li>
       <a href="articles/skytrackr_optimization.html">Optimization tips</a>
     </li>
     <li>
@@ -171,7 +174,7 @@
 <span><span class="co"># are pipeable</span></span>
 <span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/stk_profile.html">stk_profile</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png"></p>
-<p>Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but use expert judgement.</p>
+<p>Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but <strong>use expert judgement</strong>.</p>
 </div>
 <div class="section level2">
 <h2 id="basic-optimization">Basic optimization<a class="anchor" aria-label="anchor" href="#basic-optimization"></a>
@@ -193,17 +196,17 @@
 <span>  <span class="va">norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">tolerance</span>, shape <span class="op">=</span> <span class="va">shape</span>, scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">prob</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/GammaDist.html" class="external-link">dgamma</a></span><span class="op">(</span><span class="va">x</span>, shape <span class="op">=</span> <span class="va">shape</span>, scale <span class="op">=</span> <span class="va">scale</span><span class="op">)</span> <span class="op">/</span> <span class="va">norm</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>In addition, the range of the <code>scale</code> parameter determines the range of light loss due to environmental conditions. If you are used to</p>
-<p>This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the <code><a href="reference/stk_calibrate.html">stk_calibrate()</a></code> function to estimate the upper scale parameter. For more details on these optimization settings I refer to the <a href="https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html" class="external-link">optimization vignette</a>. Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).</p>
+<p>In addition, the range of the <code>scale</code> parameter determines the range of light loss due to environmental conditions. This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the <code><a href="reference/stk_calibrate.html">stk_calibrate()</a></code> function to estimate the upper scale parameter. For more details on these optimization settings I refer to the <a href="https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html" class="external-link">optimization vignette</a>. Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scale_range</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/stk_calibrate.html">stk_calibrate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.</p>
+<p>The package also provides two underlying light models, the default “diurnal” model assumes quasi-stationary. In short, for all calculated light values over a day only one latitude and longitude is used. The alternative “geodesic” mode calculated the locations along a greater circle path until the location of the final observed (selected) value in this diurnal cycle. The geodesic model therefore compensates for contractions or elongation of twilight events due to rapid movements (mostly east-west). The geodesic mode increases the calculation burden and influences both the speed of the processing as well as the accuracy (i.e. an increased number of iterations is required).</p>
+<p>All these factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), the underlying light model, and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>      start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
-<span>      tolerance <span class="op">=</span> <span class="fl">1500</span>, <span class="co"># in km</span></span>
-<span>      scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">scale_range</span><span class="op">)</span>,</span>
+<span>      tolerance <span class="op">=</span> <span class="fl">2000</span>, <span class="co"># in km</span></span>
+<span>      scale <span class="op">=</span> <span class="va">scale_range</span>,</span>
 <span>      range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">148</span><span class="op">)</span>,</span>
 <span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
@@ -235,9 +238,9 @@
 <span>      <span class="fu"><a href="reference/skytrackr.html">skytrackr</a></span><span class="op">(</span></span>
 <span>        <span class="va">.</span>,</span>
 <span>        start_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">51.08</span>, <span class="fl">3.73</span><span class="op">)</span>,</span>
-<span>        tolerance <span class="op">=</span> <span class="fl">1500</span>, <span class="co"># in km</span></span>
-<span>        scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.00001</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span>, <span class="co"># default range</span></span>
-<span>        range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">148</span><span class="op">)</span>, <span class="co"># default range</span></span>
+<span>        tolerance <span class="op">=</span> <span class="fl">2000</span>, <span class="co"># in km</span></span>
+<span>        scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>        range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">148</span><span class="op">)</span>,</span>
 <span>        control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>          sampler <span class="op">=</span> <span class="st">'DEzs'</span>,</span>
 <span>          settings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -255,9 +258,9 @@
 <div class="section level2">
 <h2 id="reasonable-expectations-and-limitations">Reasonable expectations and limitations<a class="anchor" aria-label="anchor" href="#reasonable-expectations-and-limitations"></a>
 </h2>
-<p>{skytrackr} currently focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. The methodology, due to taking into consideration more data during twilight, is very sensitive to the elongation or contraction of days due to fast east-west movements during the equinoxes.</p>
-<p>Although “quasi” calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as <a href="https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html" class="external-link">described in the vignette</a>, optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set).</p>
-<p>It is worth mentioning that there is a serial dependency during location estimation. Although, “runaway” estimates should be limited, and the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of this single diurnal cycle.</p>
+<p>{skytrackr} currently mostly focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. Although “quasi” calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), the path covered, and the step selection function (and is further constraint by land mass if so desired).</p>
+<p>In this context, and as <a href="https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html" class="external-link">described in the vignette</a>, optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set), and is in part art as well as science.</p>
+<p>It is worth mentioning that there is a serial dependency during location estimation. Although, “runaway” estimates the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of a single diurnal cycle.</p>
 </div>
 </div>
   </div>
