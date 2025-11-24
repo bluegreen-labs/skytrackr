@@ -30,8 +30,8 @@
 #'   resolution = 0.5 # map grid in degrees
 #'   )
 #'
-#'   # define a step selection distribution/function
-#'   ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
+#' # define a step selection distribution/function
+#' ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
 #'   norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
 #'   prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
 #' }
@@ -53,10 +53,7 @@
 #'
 #' #----- actual plotting routines ----
 #' # static plot, with required bounding box
-#' locations |> stk_map(bbox = c(-20, -40, 60, 60))
-#'
-#' # dynamic plot
-#' locations |> stk_map(dynamic = TRUE)
+#' locations |> stk_map()
 #' }
 
 stk_map <- function(
