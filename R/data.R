@@ -27,3 +27,23 @@
 #'   \item{MULTIPOLYGON}{sf multipolygon}
 #' }
 "land"
+
+#' River lines
+#'
+#' Vector line strings of world rivers
+#'
+#' @format sf
+#' \describe{
+#'   \item{MULTILINESTRING}{sf multilinestring}
+#' }
+"rivers"
+
+#' Lakes
+#'
+#' Vector polygons of world lakes
+#'
+#' @format sf
+#' \describe{
+#'   \item{MULTIPOLYGON}{sf multipolygon}
+#' }
+"lakes"
