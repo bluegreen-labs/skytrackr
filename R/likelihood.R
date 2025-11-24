@@ -79,6 +79,7 @@ likelihood <- function(
   if(missing(step_selection) || is.null(step_selection)){
     return(sll)
   } else {
+
     # calculate distance for step (in km)
     dist <- geosphere::distGeo(loc, par[2:1])/1000
 

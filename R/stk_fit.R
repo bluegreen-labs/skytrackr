@@ -9,8 +9,8 @@
 #' @param loc The location of the previous step
 #' @param scale Scale / sky condition factor covering the
 #'  skylight() range of 1-10 (from clear sky to extensive cloud coverage)
-#'  but can be extended for more flexibility to account for coverage by plumage,
-#'  note that in case of non-physical accurate lux measurements values can have
+#'  but can be extended for more flexibility to account for coverage by plumage.
+#'  Note that in case of non-physical accurate lux measurements values can have
 #'  a range starting at 0.0001 (a multiplier instead of a divider).
 #' @param control Control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
@@ -20,7 +20,10 @@
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
 #'  twilight) (default = NULL)
-#' @param model model to use, either "diurnal" or "geodesic" (default = diurnal)
+#' @param model model to use, either "diurnal" calculating the diurnal profile
+#'  fit using a single set of locations, or "individual" where the positions
+#'  are updated along the flight track but only the last position is reported
+#'  back (default = diurnal).
 #'
 #' @return An estimated illuminance based location (and its uncertainties).
 #' @export
@@ -136,8 +139,15 @@ stk_fit <- function(
     c(0.05,0.5,0.95),
     na.rm = TRUE
   )
+
   # return "best" fit parameters
   bf_par <- BayesianTools::MAP(out)$parametersMAP
+
+  if (model != "diurnal"){
+    date_time = data$date_time[nrow(data)]
+  } else {
+    date_time = NA
+  }
 
   # return data as a structured
   # data frame
@@ -156,7 +166,7 @@ stk_fit <- function(
     sky_conditions_qt_95 = sky_conditions[3],
     grd = grd,
     n = nrow(data),
-    date_time = data$date_time[nrow(data)],
+    date_time = date_time,
     row.names = NULL
   )
 }

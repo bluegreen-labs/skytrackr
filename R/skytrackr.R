@@ -29,9 +29,19 @@
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
 #' @param mask Mask to constrain positions to land
-#' @param step_selection A step selection function on the distance of a proposed
-#'  move, step selection is specified on distance (in km) basis.
-#' @param model model to use, either "diurnal" or "geodesic" (default = diurnal)
+#' @param step_selection A step-selection function on the distance of a proposed
+#'  move, step selection is specified on distance (in km) basis. If missing,
+#'  (default = NULL) no distance based constraints are used, aside from the
+#'  tolerance value (a hard limit on the distance of travel).
+#' @param model model to use, either "diurnal" calculating the diurnal profile
+#'  fit using a single set of locations, or "individual" where the positions
+#'  are updated along the flight track but only the last position is reported
+#'  back (default = diurnal). For individual flight tracks the assumption is
+#'  that the flight bearing isn't constantly updated, but only adjusted after
+#'  key (twilight) events. Between updates individuals move along a track of
+#'  constant bearing (loxodrome).
+#' @param MAP use the maximum aposteriori method to determine the best estimate
+#'  parameter set (default = TRUE). If FALSE, the median of a MCMC sample is used.
 #' @param smooth smooth the data before processing (default = TRUE)
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
@@ -98,9 +108,10 @@ skytrackr <- function(
       )
     ),
     mask,
-    step_selection,
+    step_selection = NULL,
     model = "diurnal",
     smooth = TRUE,
+    MAP = TRUE,
     clip = NULL,
     plot = TRUE,
     verbose = TRUE,
@@ -186,13 +197,18 @@ skytrackr <- function(
     data$scale <- scale
   }
 
-  # unravel the light data
+  # filter the light data, for the diurnal model
+  # all filtered data is removed, for the alternative
+  # geodesic model all values are retained, but labelled
+  # for later use
   data <- data |>
-    skytrackr::stk_filter(
-      range = range,
-      filter = TRUE,
-      verbose = verbose
-    ) |>
+      skytrackr::stk_filter(
+        range = range,
+        filter = TRUE,
+        verbose = verbose
+      )
+
+   data <- data |>
     tidyr::pivot_wider(
       names_from = "measurement",
       values_from = "value"
@@ -208,7 +224,8 @@ skytrackr <- function(
   # used to calculate distances covered
   data <- data |>
     dplyr::mutate(
-    time_step = c(0,as.numeric(diff(.data$date_time, units = "secs")))
+    time_step =
+      c(0,as.numeric(diff(.data$date_time, units = "secs")))
   )
 
   # unique dates
@@ -242,14 +259,30 @@ skytrackr <- function(
   # loop over all available dates
   for (i in seq_along(dates)) {
     if (i != 1) {
-          # create data point
-          loc <-  sf::st_as_sf(
+
+          # by default use maximum aposteriori values
+          # to estimate the best parameter value (default)
+          # otherwise use the median of a sample
+          if (MAP) {
+            # create data point
+            loc <-  sf::st_as_sf(
               data.frame(
                 lon = locations$longitude[i-1],
                 lat = locations$latitude[i-1]
               ),
               coords = c("lon","lat")
             ) |> sf::st_set_crs(4326)
+          } else {
+            # create data point
+            loc <-  sf::st_as_sf(
+              data.frame(
+                lon = locations$longitude_qt_50[i-1],
+                lat = locations$latitude_qt_50[i-1]
+              ),
+              coords = c("lon","lat")
+            ) |> sf::st_set_crs(4326)
+          }
+
     } else {
         # create data point
         loc <- sf::st_as_sf(
@@ -304,7 +337,7 @@ skytrackr <- function(
       par <- c(
         out$latitude,
         out$longitude,
-        log(out$sky_conditions)
+        out$sky_conditions
       )
 
       if(model == "diurnal"){
@@ -313,15 +346,17 @@ skytrackr <- function(
           data = subs,
           loc = sf::st_coordinates(loc)
         )
+
+        subs$sun_illuminance <- ll
       } else {
-        ll <- geodesic(
+        ll <- individual(
           par,
           data = subs,
           loc = sf::st_coordinates(loc)
         )
-      }
 
-      subs$sun_illuminance <- ll
+        subs$sun_illuminance <- ll
+      }
 
       if(!is.null(clip)){
         subs <- subs |>
@@ -342,7 +377,9 @@ skytrackr <- function(
           "lat:", round(out$latitude,3),
           "lon:", round(out$longitude,3),
           "sky:", round(out$sky_conditions,3)
-          )
+          ),
+        ylab = "log(lux)",
+        xlab = "time"
         )
       graphics::points(
         subs$date_time,
@@ -398,8 +435,8 @@ skytrackr <- function(
   locations$range <- list(range)
   locations$control <- list(control)
   locations$clip <- clip
-
-  # add version
+  locations$model <- model
+  locations$step_selection <- list(step_selection)
   locations$version <- as.character(packageVersion('skytrackr'))
 
   # return the data frame with
