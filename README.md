@@ -93,7 +93,7 @@ df |> stk_profile()
 
 ![](https://raw.githubusercontent.com/bluegreen-labs/skytrackr/main/profile_plot_trimmed.png)
 
-Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but use expert judgement.
+Further sub-setting can be done from this point, but if a bird is known to remain in a single location for breeding one can assume the individual is stationary. The filtering is there to provide as much of a hands-off approach as possible, but **use expert judgement**.
 
 ## Basic optimization
 
@@ -118,22 +118,22 @@ ssf <- function(x, shape = 0.9, scale = 100, tolerance = 1500){
 }
 ```
 
-In addition, the range of the `scale` parameter determines the range of light loss due to environmental conditions. If you are used to 
-
-This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the `stk_calibrate()` function to estimate the upper scale parameter. For more details on these optimization settings I refer to the [optimization vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html). Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).
+In addition, the range of the `scale` parameter determines the range of light loss due to environmental conditions. This parameter needs to be set to for each sensor in order to reflect real world conditions. For Migrate Technology Ltd. sensors, or all those which track true light levels (in lux) reasonably well, you can use the `stk_calibrate()` function to estimate the upper scale parameter. For more details on these optimization settings I refer to the [optimization vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html). Note that this function does not work for truncated profiles where light levels saturate above a certain level (this includes Migrate Technology Ltd. sensors which are configured as such).
 
 ```r
 scale_range <- data |> stk_calibrate()
 ```
 
-All three factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
+The package also provides two underlying light models, the default "diurnal" model assumes quasi-stationary. In short, for all calculated light values over a day only one latitude and longitude is used. The alternative "geodesic" mode calculated the locations along a greater circle path until the location of the final observed (selected) value in this diurnal cycle. The geodesic model therefore compensates for contractions or elongation of twilight events due to rapid movements (mostly east-west). The geodesic mode increases the calculation burden and influences both the speed of the processing as well as the accuracy (i.e. an increased number of iterations is required).
+
+All these factors, the tolerance (maximum distance covered), the land mask (limiting locations to those over land), the underlying light model, and step-selection function (providing a probabilistic constrained on distance covered), constrain the parameter fit. This ensures stability of results on a pseudo-mechanistic basis.
 
 ```r
 locations <- data |>
     skytrackr(
       start_location = c(51.08, 3.73),
-      tolerance = 1500, # in km
-      scale = log(scale_range),
+      tolerance = 2000, # in km
+      scale = scale_range,
       range = c(0.09, 148),
       control = list(
         sampler = 'DEzs',
@@ -174,9 +174,9 @@ locations <- data |>
       skytrackr(
         .,
         start_location = c(51.08, 3.73),
-        tolerance = 1500, # in km
-        scale = log(c(0.00001,50)), # default range
-        range = c(0.09, 148), # default range
+        tolerance = 2000, # in km
+        scale = c(1, 50),
+        range = c(0.09, 148),
         control = list(
           sampler = 'DEzs',
           settings = list(
@@ -194,8 +194,8 @@ locations <- data |>
 
 ## Reasonable expectations and limitations
 
-{skytrackr} currently focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. The methodology, due to taking into consideration more data during twilight, is very sensitive to the elongation or contraction of days due to fast east-west movements during the equinoxes.
+{skytrackr} currently mostly focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. Although "quasi" calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), the path covered, and the step selection function (and is further constraint by land mass if so desired). 
 
-Although "quasi" calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), and the step selection function (and is further constraint by land mass if so desired). In this context, and as [described in the vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set). 
+In this context, and as [described in the vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set), and is in part art as well as science.
 
-It is worth mentioning that there is a serial dependency during location estimation. Although, "runaway" estimates should be limited, and the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of this single diurnal cycle.
+It is worth mentioning that there is a serial dependency during location estimation. Although, "runaway" estimates the temporal dependency is theoretically limited to the previous step, there might still be a chance of errors propagating. The latter also puts into context that poor quality data might not only affect the estimation of the location of a single diurnal cycle.
