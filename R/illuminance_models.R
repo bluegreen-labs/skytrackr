@@ -80,9 +80,6 @@ individual <- function(
     sky = sky
   )
 
-  # subset the resulting locations
-  out <- out[data$selected,]
-
   # run model
   illuminance <- skylight::skylight(
     out
@@ -94,7 +91,7 @@ individual <- function(
 
 
 # Blind function to calculate flight steps for the individual model
-.flight_steps <- function(.data, start, end, sky = 1){
+.flight_steps <- function(.data, start, end, sky){
 
   # calculate the distance to the end-point
   dist <- geosphere::distGeo(
