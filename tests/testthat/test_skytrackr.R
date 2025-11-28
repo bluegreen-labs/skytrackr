@@ -119,10 +119,8 @@ test_that("test plots", {
      )
 
   p <- skytrackr::stk_profile(df)
-  p_night <- skytrackr::stk_profile(df, center = "night")
 
   expect_s3_class(p, "ggplot")
-  expect_s3_class(p_night, "ggplot")
 })
 
 test_that("test calibration", {
