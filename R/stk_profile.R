@@ -3,10 +3,7 @@
 #' Provides static or dynamic (plotly) seasonal profile plot
 #'
 #' @param data A skytrackr compatible data frame.
-#' @param logger The logger to plot.
-#' @param range The light range to plot.
-#' @param center Set the data to center data on "day" or "night"
-#'  (default = "day").
+#' @param logger The logger to plot
 #' @param plotly Logical, convert to dynamic plotly plot or not (default = FALSE)
 #' @importFrom rlang .data
 #'
@@ -16,8 +13,6 @@
 stk_profile <- function(
     data,
     logger,
-    range = c(0, 100000),
-    center = "day",
     plotly = FALSE
   ) {
 
@@ -33,18 +28,6 @@ stk_profile <- function(
       .data$logger == logger
     )
 
-  # center on midnight
-  if (center != "day"){
-    data <- data |>
-      dplyr::mutate(
-        date_time = .data$date_time - 12*60*60,
-        hour = as.numeric(format(.data$date_time,"%H")) +
-          as.numeric(format(.data$date_time,"%M"))/60 +
-          as.numeric(format(.data$date_time,"%S"))/3600,
-        hour = .data$hour - 12
-        )
-  }
-
   # round hour values
   data <- data |>
     dplyr::mutate(
@@ -56,8 +39,6 @@ stk_profile <- function(
     dplyr::do(p = {
 
       if(.data$measurement[1] == "lux") {
-        .data$value[
-          which(.data$value < range[1] | .data$value > range[2])] <- NA
         .data$value <- log(.data$value)
       }
 
