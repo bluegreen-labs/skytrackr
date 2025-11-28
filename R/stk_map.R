@@ -9,6 +9,9 @@
 #'  the starting position of the track (optional)
 #' @param roi A region of interest under consideration, only used in
 #'  plots during optimization
+#' @param simplify simplify the plot and only show the map (default = FALSE)
+#' @param intervals show the uncertainty intervals as shaded
+#'  ellipses (default = FALSE)
 #' @param dynamic Option to create a dynamic interactive graph rather than
 #'  a static plot. Both the path as the locations are shown. The size
 #'  of the points is proportional to the latitudinal uncertainty, while
@@ -61,7 +64,9 @@ stk_map <- function(
     bbox,
     start_location,
     roi,
-    dynamic = FALSE
+    dynamic = FALSE,
+    intervals = FALSE,
+    simplify = FALSE
     ) {
 
    # check if not a {multidplyr} data frame
@@ -91,16 +96,18 @@ stk_map <- function(
             uncertainty = .data$latitude_qt_95 - .data$latitude_qt_5
          ) |>
          dplyr::select(
-            .data$logger,
-            .data$longitude,
-            .data$latitude,
-            .data$sky_conditions,
-            .data$grd,
-            .data$date,
-            .data$equinox
+            "logger",
+            "longitude",
+            "latitude",
+            "sky_conditions",
+            "grd",
+            "date",
+            "equinox",
+            "grd"
          )
 
       points <- df |>
+         dplyr::group_by(.data$logger) |>
          sf::st_as_sf(
             coords = c("longitude","latitude"),
             crs = 4326
@@ -113,17 +120,16 @@ stk_map <- function(
 
       m <- mapview::mapview(
          path,
-         map.types = "Esri.WorldImagery"
+         map.types = c("Esri.WorldImagery","OpenTopoMap")
       )
 
       m <- m + mapview::mapview(
          points,
          popup = TRUE,
          zcol = "equinox",
-         col.regions = c("grey", "white"),
-         col = c("grey", "white"),
-         alpha.regions = 0.8,
-         cex = "uncertainty",
+         col.regions = c("red", "white"),
+         col = c("red", "white"),
+         cex = "grd",
          label = NA
       )
 
@@ -134,8 +140,37 @@ stk_map <- function(
    # calculate convergence labels
    df <- df |>
       dplyr::mutate(
-         convergence = as.factor(ifelse(.data$grd < 1.2, "good","poor"))
+         convergence = ifelse(.data$grd < 1.2, "good","poor"),
+         convergence = ifelse(.data$grd < 1.05, "best", .data$convergence)
       )
+
+   df$convergence <- factor(
+      df$convergence, levels=c("best", "good", "poor")
+   )
+
+   if (intervals){
+      # create uncertainty intervals
+      uncertainty <- suppressWarnings({suppressMessages({
+         df |>
+            sf::st_as_sf(
+               coords = c("longitude_qt_50", "latitude_qt_50")
+            ) |>
+            sf::st_set_crs("EPSG:4326") |>
+            dplyr::rowwise() |>
+            dplyr::mutate(
+               geometry = sfdep::st_ellipse(
+                  .data$geometry,
+                  sx = (.data$longitude_qt_95 - .data$longitude_qt_5)/2,
+                  sy = (.data$latitude_qt_95 - .data$latitude_qt_5)/2
+               )
+            ) |>
+            sf::st_geometry() |>
+            sf::st_cast("POLYGON") |>
+            sf::st_union() |>
+            sf::st_transform(crs = "+proj=eqearth")
+      })})
+   }
+
 
    # convert to sf
    path <-  df |>
@@ -297,7 +332,18 @@ stk_map <- function(
         )
    }
 
-   if(nrow(df) > 1) {
+   if(nrow(df) >= 1) {
+
+      if(intervals){
+         p <- p +
+            ggplot2::geom_sf(
+            data = uncertainty,
+            colour = NA,
+            fill = "grey25",
+            alpha = 0.3,
+            na.rm = TRUE
+         )
+      }
 
       p <- p +
          ggplot2::geom_sf(
@@ -311,18 +357,21 @@ stk_map <- function(
             data = points,
             ggplot2::aes(
                shape = .data$equinox,
-               colour = .data$convergence
+               colour = .data$convergence,
+               fill = .data$convergence,
             ),
-            fill = NA,
-            alpha = 0.5,
             na.rm = TRUE
          ) +
          ggplot2::scale_shape_manual(
-            values = c(19, 1)
+            values = c(20, 3)
           ) +
          ggplot2::scale_colour_manual(
-            values = c("#a50026","#313695"),
+            values = c("poor" = "#d7191c","good" = "#ffffbf", "best" = "#2c7bb6"),
             name = "fit"
+         ) +
+         ggplot2::scale_fill_manual(
+            values = c("poor" = "#d7191c","good" = "#ffffbf", "best" = "#2c7bb6"),
+            guide = "none"
          ) +
          ggplot2::geom_sf(
             data = points |> dplyr::filter(date == date[nrow(points)]),
@@ -354,6 +403,11 @@ stk_map <- function(
       )
    }
 
+   # return the simple map plot
+   if(simplify){
+      return(p)
+   }
+
    p_lat <- ggplot2::ggplot(df) +
      ggplot2::geom_ribbon(
        ggplot2::aes(
@@ -369,8 +423,17 @@ stk_map <- function(
          y = .data$date,
          x = .data$latitude_qt_50,
          group = .data$logger
-       )
+       ),
+       colour = "grey50"
      )  +
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$latitude,
+            group = .data$logger
+         ),
+         colour = "black"
+      )  +
       ggplot2::labs(
          x = "latitude"
       ) +
@@ -391,9 +454,17 @@ stk_map <- function(
          y = .data$date,
          x = .data$longitude_qt_50,
          group = .data$logger
-       )
+       ),
+       colour = "grey50"
      )  +
-
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$longitude,
+            group = .data$logger
+         ),
+         colour = "black"
+      )  +
       ggplot2::labs(
          x = "longitude"
       ) +
@@ -414,8 +485,17 @@ stk_map <- function(
          y = .data$date,
          x = .data$sky_conditions_qt_50,
          group = .data$logger
-       )
+       ),
+       colour = "grey50"
      ) +
+      ggplot2::geom_path(
+         ggplot2::aes(
+            y = .data$date,
+            x = .data$sky_conditions,
+            group = .data$logger
+         ),
+         colour = "black"
+      )  +
      ggplot2::labs(
         x = "sky conditions"
      ) +
@@ -428,10 +508,11 @@ stk_map <- function(
             x = .data$grd,
             group = .data$logger
          ),
-         colour = "grey25",
+         colour = "grey50",
          na.rm = TRUE
       ) +
       ggplot2::geom_vline(xintercept = 1.2) +
+      ggplot2::geom_vline(xintercept = 1.05, linetype = 2) +
       ggplot2::labs(
          x = "Gelman-Rubin\n diagnostic"
       ) +
