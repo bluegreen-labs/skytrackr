@@ -3,10 +3,9 @@
 Where release 1.0 was tuned for use on the common swift (an ideal light logger species)
 this release sees improvements in which cover expanding the methodology to
 species which have less than optimal (noisy) light logger data. It provides new
-methods to estimate suggested parameter ranges (attenuation factors due to
-preferred secluded habitats).
+methods to estimate suggested parameter ranges.
 
-The package now provides two modes of calculating a diurnal light profile to fit to the data. The normal, default, "diurnal" mode calculates light levels for a single (static) location (latitude, longitude), while the new "individual" model calculates light levels along a rhumb line track between the last estimated position and a target (end) position. The speed depends on the track length, and is constant throughout. The "individual" model therefore corrects for the slight changes in light levels when moving with or against a changing twilight.
+The package now provides two modes of calculating a diurnal light profile to fit to the data. The normal, default, "diurnal" mode calculates light levels for a single (static) location (latitude, longitude), while the new "individual" model calculates light levels along a rhumb line track between the last estimated position and a target (end) position. The speed depends on the track length, and is constant throughout. The "individual" model therefore corrects for the slight changes in light levels when moving with or against a changing twilight. Consider the "individual" mode experimental still.
 
 - introduction of a filter function `stk_filter()`, but helpful in visualizing data
 - introduction of the `stk_calibrate()` function to estimate scale factors for optimization
