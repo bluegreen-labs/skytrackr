@@ -7,8 +7,8 @@
 #' recommended to first use `st_screen_twl()` to remove poor quality days.
 #'
 #' @param df a skytrackr dataframe
-#' @param percentile percentile of the spread of data to use in scale value
-#'  evaluation (default = 100, the full range of values is considered)
+#' @param percentile percentile of the diurnal data (abvoe the floor value)
+#'  used in calculating daily maxima (default = 95, ~max daily value is considered)
 #' @param floor threshold to remove low (nighttime) values
 #' @param distribution provide the full distribution across the track of scale
 #'  factors (default = FALSE, providing only a range as a global constraint)
@@ -26,7 +26,7 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 100,
+    percentile = 95,
     floor = 1.5,
     distribution = FALSE,
     verbose = TRUE
@@ -57,7 +57,7 @@ stk_calibrate <- function(
   # a subset of "daytime" data
   df <- df |>
     stk_filter(
-      range = c(floor, 500000),
+      range = c(floor, Inf),
       smooth = FALSE,
       filter = TRUE,
       verbose = FALSE
@@ -68,7 +68,7 @@ stk_calibrate <- function(
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = stats::quantile(.data$value, 0.9, na.rm = TRUE)
+      max_illuminance = stats::quantile(.data$value, percentile/100, na.rm = TRUE)
     )
 
   df_scales <- df_max |>
@@ -83,7 +83,7 @@ stk_calibrate <- function(
       while(any(i > 0)){
         k <- k + 1
 
-        # generate a reference
+        # generate a reference (should pre-calculate this!)
         reference <- skylight::skylight(
           date = as.POSIXct("2022-09-23 12:00:00"),
           latitude = 0,
@@ -92,7 +92,7 @@ stk_calibrate <- function(
         )$sun_illuminance
 
         # calculate the observed attenuation
-        i <- 100 - (.data$max_illuminance/reference) * 100
+        i <- 1 - (.data$max_illuminance/reference)
       }
 
       data.frame(scale = k)
@@ -114,17 +114,27 @@ stk_calibrate <- function(
   } else {
 
     # set ranges
-    lower <- 1
+    lower <- 0.9
     upper <- as.numeric(
       stats::quantile(
-        df_scales$scale,
-        percentile/100)
+        df_scales$scale, 1
+      )
     )
 
-    # set upper to 10 (default max of skylight)
-    # if < 10
-    upper <- ifelse(upper < 10, 10, upper)
+    if(upper < 10){
+      if(verbose) {
+        cli::cli_bullets(c(
+          "!" = "Upper bound is lower than the light model's normal maximum range (10).",
+          "i" = "Suggesting 10 instead of the calculated {upper}."
+        )
+        )
+      }
 
+      # set upper to 10 (default max of skylight)
+      # if < 10
+      upper <- 10
+
+    }
 
     # feedback
     if(verbose) {
@@ -132,7 +142,8 @@ stk_calibrate <- function(
         ">" = "The suggested scale range is {.strong c({lower},{upper})}!",
         "i" = "Note, these estimates are approximations! Always inspect your
       data (e.g. by using stk_filter()) and consider using the stk_screen_twl()
-      to remove days with poor twilight and other characteristics."
+      to remove days with poor twilight and other characteristics. When using the
+      'individual' light model you might have to relax the upper scaling value."
       )
       )
     }
