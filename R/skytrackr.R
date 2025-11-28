@@ -24,7 +24,7 @@
 #'  but can be extended for more flexibility to account for coverage by plumage,
 #'  note that in case of non-physical accurate lux measurements values can have
 #'  a range starting at 0.0001 (a multiplier instead of a divider)
-#'  (default = c(1,50)).
+#'  (default = c(0.9, 50)).
 #' @param control Control settings for the Bayesian optimization, generally
 #'  should not be altered (defaults to a Monte Carlo method). For detailed
 #'  information I refer to the BayesianTools package documentation.
@@ -46,7 +46,8 @@
 #' @param clip value over which lux values are clipped, to be set to the
 #'  saturation value of your system when using the full diurnal profile (not only
 #'  twilight) (default = NULL)
-#' @param plot Plot a map during location estimation (updated every seven days)
+#' @param plot Plot a map during location estimation
+#' @param plot_update plot update fequency (default = 4)
 #' @param verbose Give feedback including a progress bar (TRUE or FALSE,
 #'  default = TRUE)
 
@@ -96,9 +97,9 @@
 skytrackr <- function(
     data,
     start_location,
-    tolerance = 1500,
+    tolerance = 2500,
     range = c(0.09, 148),
-    scale = c(1, 50),
+    scale = c(0.9, 50),
     control = list(
       sampler = 'DEzs',
       settings = list(
@@ -110,10 +111,11 @@ skytrackr <- function(
     mask,
     step_selection = NULL,
     model = "diurnal",
-    smooth = TRUE,
+    smooth = FALSE,
     MAP = TRUE,
     clip = NULL,
     plot = TRUE,
+    plot_update = 4,
     verbose = TRUE,
     debug = FALSE
 ) {
@@ -205,6 +207,7 @@ skytrackr <- function(
       skytrackr::stk_filter(
         range = range,
         filter = TRUE,
+        smooth = smooth,
         verbose = verbose
       )
 
@@ -228,6 +231,8 @@ skytrackr <- function(
       c(0,as.numeric(diff(.data$date_time, units = "secs")))
   )
 
+  #---- start of the for loop over all days ----
+
   # unique dates
   dates <- unique(data$date)
 
@@ -239,19 +244,19 @@ skytrackr <- function(
 
     if(plot){
       cli::cli_alert_info(
-        "(preview plot will update every 2 days)"
+        "(preview plot will update every {plot_update} days)"
       )
     }
 
     cli::cli_progress_bar(
-      " - Estimating positions",
-      total = length(dates)
+      total = length(dates),
+      format = " {cli::pb_spin} Estimating positions {cli::pb_bar} {cli::pb_percent} | ETA: {cli::pb_eta}"
     )
   }
 
   # plot updates every 2 days (if possible)
   if(length(dates) >= 2){
-    plot_update <- seq(2, length(dates), by = 2)
+    plot_update <- seq(2, length(dates), by = plot_update)
   } else {
     plot_update  <- length(dates)
   }
@@ -374,6 +379,7 @@ skytrackr <- function(
         subs$lux,
         ylim = c(-5, 12),
         main = paste(
+          "date:", subs$date[1],
           "lat:", round(out$latitude,3),
           "lon:", round(out$longitude,3),
           "sky:", round(out$sky_conditions,3)
@@ -395,8 +401,8 @@ skytrackr <- function(
     # equinox flag
     doy <- as.numeric(format(out$date, "%j"))
     out$equinox <- ifelse(
-      (doy > 266 - 10 & doy < 266 + 10) |
-        (doy > 80 - 10 & doy < 80 + 10),
+      (doy > 266 - 14 & doy < 266 + 14) |
+        (doy > 80 - 14 & doy < 80 + 14),
       TRUE, FALSE)
 
     # append output to data frame
@@ -421,6 +427,8 @@ skytrackr <- function(
     }
   }
 
+  #---- end of for loop ----
+
   # cleanup of progress bar
   if(verbose) {
     cli::cli_progress_done()
@@ -430,11 +438,13 @@ skytrackr <- function(
   }
 
   # save setup
+  locations$start_location <- list(start_location)
   locations$tolerance <- tolerance
   locations$scale <- list(scale)
   locations$range <- list(range)
   locations$control <- list(control)
   locations$clip <- clip
+  locations$smooth <- smooth
   locations$model <- model
   locations$step_selection <- list(step_selection)
   locations$version <- as.character(packageVersion('skytrackr'))
