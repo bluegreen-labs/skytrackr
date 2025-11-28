@@ -6,7 +6,7 @@
 \usage{
 stk_calibrate(
   df,
-  percentile = 100,
+  percentile = 95,
   floor = 1.5,
   distribution = FALSE,
   verbose = TRUE

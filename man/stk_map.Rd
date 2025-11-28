@@ -4,7 +4,15 @@
 \alias{stk_map}
 \title{Plot skytrackr results}
 \usage{
-stk_map(df, bbox, start_location, roi, dynamic = FALSE)
+stk_map(
+  df,
+  bbox,
+  start_location,
+  roi,
+  dynamic = FALSE,
+  intervals = FALSE,
+  simplify = FALSE
+)
 }
 \arguments{
 \item{df}{A data frame with locations produced with the skytrackr() function}
@@ -22,6 +30,11 @@ plots during optimization}
 a static plot. Both the path as the locations are shown. The size
 of the points is proportional to the latitudinal uncertainty, while
 equinox windows are marked with red points. (default = FALSE)}
+
+\item{intervals}{show the uncertainty intervals as shaded
+ellipses (default = FALSE)}
+
+\item{simplify}{simplify the plot and only show the map (default = FALSE)}
 }
 \value{
 A ggplot map of tracked locations or mapview dynamic overview.

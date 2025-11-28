@@ -4,17 +4,12 @@
 \alias{stk_profile}
 \title{Plot seasonal profiles}
 \usage{
-stk_profile(data, logger, range = c(0, 1e+05), center = "day", plotly = FALSE)
+stk_profile(data, logger, plotly = FALSE)
 }
 \arguments{
 \item{data}{A skytrackr compatible data frame.}
 
-\item{logger}{The logger to plot.}
-
-\item{range}{The light range to plot.}
-
-\item{center}{Set the data to center data on "day" or "night"
-(default = "day").}
+\item{logger}{The logger to plot}
 
 \item{plotly}{Logical, convert to dynamic plotly plot or not (default = FALSE)}
 }
