@@ -7,7 +7,7 @@
 stk_filter(
   data,
   range,
-  smooth = TRUE,
+  smooth = FALSE,
   plot = FALSE,
   filter = FALSE,
   verbose = TRUE

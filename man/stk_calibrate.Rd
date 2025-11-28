@@ -15,8 +15,8 @@ stk_calibrate(
 \arguments{
 \item{df}{a skytrackr dataframe}
 
-\item{percentile}{percentile of the spread of data to use in scale value
-evaluation (default = 100, the full range of values is considered)}
+\item{percentile}{percentile of the diurnal data (abvoe the floor value)
+used in calculating daily maxima (default = 95, ~max daily value is considered)}
 
 \item{floor}{threshold to remove low (nighttime) values}
 

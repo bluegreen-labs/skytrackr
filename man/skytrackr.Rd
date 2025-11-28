@@ -7,18 +7,19 @@
 skytrackr(
   data,
   start_location,
-  tolerance = 1500,
+  tolerance = 2500,
   range = c(0.09, 148),
-  scale = c(1, 50),
+  scale = c(0.9, 50),
   control = list(sampler = "DEzs", settings = list(burnin = 1000, iterations = 3000,
     message = FALSE)),
   mask,
   step_selection = NULL,
   model = "diurnal",
-  smooth = TRUE,
+  smooth = FALSE,
   MAP = TRUE,
   clip = NULL,
   plot = TRUE,
+  plot_update = 4,
   verbose = TRUE,
   debug = FALSE
 )
@@ -44,7 +45,7 @@ skylight() range of 1-10 (from clear sky to extensive cloud coverage)
 but can be extended for more flexibility to account for coverage by plumage,
 note that in case of non-physical accurate lux measurements values can have
 a range starting at 0.0001 (a multiplier instead of a divider)
-(default = c(1,50)).}
+(default = c(0.9, 50)).}
 
 \item{control}{Control settings for the Bayesian optimization, generally
 should not be altered (defaults to a Monte Carlo method). For detailed
@@ -74,7 +75,9 @@ parameter set (default = TRUE). If FALSE, the median of a MCMC sample is used.}
 saturation value of your system when using the full diurnal profile (not only
 twilight) (default = NULL)}
 
-\item{plot}{Plot a map during location estimation (updated every seven days)}
+\item{plot}{Plot a map during location estimation}
+
+\item{plot_update}{plot update fequency (default = 4)}
 
 \item{verbose}{Give feedback including a progress bar (TRUE or FALSE,
 default = TRUE)}
