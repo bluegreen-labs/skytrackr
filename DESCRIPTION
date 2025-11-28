@@ -38,6 +38,7 @@ Imports:
     rlang,
     sf,
     terra,
+    sfdep,
     tidyterra,
     geosphere,
     tidyr,
