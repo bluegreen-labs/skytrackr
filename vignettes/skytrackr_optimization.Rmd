@@ -138,7 +138,9 @@ These values should give a crude estimate of the total light loss (without a nee
 
 ## Optimization iterations
 
-There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is advised to increase the number of optimization iterations. For **high quality** data **3000 iterations** generally yields good results, but increasing this number to **6000 might provide a more robust estimate** in some cases. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.
+There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and/or frequency, is low it is advised to increase the number of optimization iterations. You can consult the Gelman-Rubin Diagnostic values for the quality of the fit (use the `stk_map()` function after a fit, or plot the optimization process).
+
+For **high quality** data **3000 iterations** generally yields good results, but increasing this number to **6000 might provide a more robust estimate**. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.
 
 ## Step-selection dynamics
 
@@ -152,4 +154,11 @@ For example, with twilight at dusk approaching from the east, flying towards the
 
 # Post-processing
 
-After estimating locations you can inspect the location estimation data using the `stk_map()` function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values < 1.05 are generally considered showing convergence of the parameter (location) estimates.
+After estimating locations you can inspect the location estimation data using the `stk_map()` function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values < 1.05 are generally considered showing convergence of the parameter (location) estimates. Spurious patterns, such as coordinates bouncing between two locations are also a telltale sign that your model was poorly constrained and converged on a faulty solution (see highlighted red sections in the panel plot below). In those cases you mostly either have to increase the scale upper bound, and/or increase the search space for your solution by increasing the number of iterations during optimization.
+
+```{r label = "final-plot", echo = FALSE, fig.cap="Overview plot after location estimation"}
+knitr::include_graphics("poor_fit.png")
+```
+
+> It is helpful to realize that models, fit to data, can be "right" for all the wrong reasons. Even when parameter values converge this does not guarantee an absolute "true" location. It is therefore important to realize that broad patterns should hold, but individual short sections of tracks can vary due to parameter settings.
+
