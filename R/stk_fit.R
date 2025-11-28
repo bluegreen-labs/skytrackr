@@ -43,13 +43,13 @@ stk_fit <- function(
   bbox <- roi |> sf::st_bbox()
 
   # if only a single scale value is provided
-  # pad with +- 2.5, this routine is used to apply
+  # pad with +- 0.5, this routine is used to apply
   # daily informed priors rather than a global
   # range across the whole track (works only for
   # loggers with a full diurnal profile)
   if(length(scale) == 1){
-    scale <- c(scale - 2.5, scale + 2.5)
-    scale <- ifelse(scale < 1, 1, scale)
+    scale <- c(scale - 0.5, scale + 0.5)
+    scale <- ifelse(scale < 0, 0.0001, scale)
   }
 
   # set lower and upper parameter ranges
@@ -78,15 +78,18 @@ stk_fit <- function(
 
   # calculate the optimization
   # run and return results
-  # [suppress all output]
-  out <- #suppressWarnings(
-    #suppressMessages(
-      BayesianTools::runMCMC(
-        bayesianSetup = setup,
-        sampler = control$sampler,
-        settings = control$settings
+  # [suppress all output including non standard cat statements]
+  # the latter only happens when values are severely out of bound
+  #capture.output(
+    out <-suppressWarnings(
+        suppressMessages(
+        BayesianTools::runMCMC(
+          bayesianSetup = setup,
+          sampler = control$sampler,
+          settings = control$settings
+        )
       )
-    #)
+    )
   #)
 
   # Gelman-Brooks-Rubin (GBR) potential
