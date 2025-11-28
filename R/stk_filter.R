@@ -37,7 +37,7 @@
 stk_filter <- function(
     data,
     range,
-    smooth = TRUE,
+    smooth = FALSE,
     plot = FALSE,
     filter = FALSE,
     verbose = TRUE
@@ -63,7 +63,7 @@ stk_filter <- function(
     cli::cli_end()
   }
 
-  # unravel the light data
+  # only select the light data
   data <- data |>
     dplyr::filter(
       .data$measurement == "lux"
@@ -109,64 +109,73 @@ stk_filter <- function(
       na.rm = TRUE
     )
 
-    # calculate outliers as 3 * MAD
+    # calculate outliers with MAD
     data$outlier <- ifelse(
-      abs(data$value - median) > 3 * mad, TRUE, FALSE
+      abs(data$value - median) > 2.5 * mad, TRUE, FALSE
     )
 
     # substitute original values with median
     data <- data |>
       dplyr::mutate(
         value = ifelse(.data$outlier, median, .data$value)
-      ) |>
-      stats::na.omit()
+      )
   }
 
-  # filter data
+  # center the data but only add
+  # offset columns and arrange on
+  # the hour offset column (wrapping
+  # the diurnal profile where required)
+  data <- data |>
+    stk_center() |>
+    dplyr::group_by(.data$logger, .data$date) |>
+    dplyr::arrange(.data$hour_centered)
+
+  # filter data day by day on the centered profiles
   data <- data |>
     dplyr::group_by(.data$logger, .data$date) |>
     dplyr::do({
 
+      # copy data
+      df <- .data
+
       # select values in date range
-      selected <- ifelse(
-        .data$value > range[1] & .data$value < range[2],
+      tmp_selected <- ifelse(
+        df$value > range[1],
         TRUE,
         FALSE
       )
 
-      # find run lengths
-      run_info <- rle(selected)
+      # set first and last twilight
+      first_twl <- suppressWarnings(min(which(tmp_selected)))
+      last_twl <- suppressWarnings(max(which(tmp_selected)))
 
-      # sort the longest two sections
-      gr_len <- sort(
-        run_info$length[run_info$value],
-        decreasing = TRUE)[1:2]
+      selected <- rep(FALSE, nrow(df))
 
-      # create segment list
-      seg_list <- list()
-
-      # for every run length recreate the vector
-      # with labels TRUE or FALSE based on the length
-      # of the run
-      for (i in seq_along(run_info$values)) {
-        run_length <- run_info$lengths[i]
-        if (run_length %in% gr_len) {
-          segment_value <- TRUE
+      # forward pass
+      for(i in which(tmp_selected)){
+        if(df$value[i] <= range[2]){
+          selected[i] <- TRUE
         } else {
-          segment_value <- FALSE
+          break
         }
-        seg_list[[i]] <- rep(segment_value, run_length)
       }
 
-      seg_list <- unlist(seg_list)
-      df <- .data
-      df$selected <- seg_list
+      # backward pass
+      for(i in rev(which(tmp_selected))){
+        if(df$value[i] <= range[2]){
+          selected[i] <- TRUE
+        } else {
+          break
+        }
+      }
+
+      df$selected <- selected
 
       # check for twilight mode
       if(twilight){
         twl <- df |>
           dplyr::mutate(
-            diff_sel = c(diff(selected),0),
+            diff_sel = c(diff(.data$selected),0),
             .groups = "drop"
           )
 
@@ -182,7 +191,7 @@ stk_filter <- function(
 
   # plot
   if(plot){
-    p <- data |>
+    p1 <- data |>
       ggplot2::ggplot() +
       ggplot2::geom_point(
         ggplot2::aes(
@@ -194,15 +203,45 @@ stk_filter <- function(
       ) +
       ggplot2::labs(
         x = "hour",
-        y = "log(lux)",
-        title = "Diurnal light profile"
+        y = "log(lux)"
       ) +
       ggplot2::scale_color_manual(
         values = c("black","red")
       ) +
       ggplot2::theme_bw() +
       ggplot2::facet_wrap(~.data$logger)
-    plot(p)
+
+    p2 <- data |>
+      ggplot2::ggplot() +
+      ggplot2::geom_tile(
+        ggplot2::aes(
+          .data$date,
+          .data$hour,
+          fill = log(.data$value)
+        ),
+        na.rm = TRUE
+      ) +
+      ggplot2::geom_contour(
+        ggplot2::aes(
+          .data$date,
+          .data$hour,
+          z = as.numeric(.data$selected)
+        ),
+        lwd = 0.3,
+        colour = "white",
+        na.rm = TRUE
+      ) +
+      ggplot2::scale_fill_viridis_c(
+        na.value = NA
+      ) +
+      ggplot2::labs(
+        x = "Date",
+        y = "hour"
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::facet_wrap(~.data$logger)
+
+    plot(p1 / p2)
   }
 
   # only retain twilight values
