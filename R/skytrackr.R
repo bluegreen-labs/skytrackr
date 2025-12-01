@@ -169,6 +169,23 @@ skytrackr <- function(
     )
   }
 
+  # check model names
+  if(!(model %in% c("diurnal", "individual"))){
+    cli::cli_abort(c(
+      "Unknown model name provided.",
+      "x" = "Please check your model name!"
+    )
+    )
+  }
+
+  if(model == "individual"){
+    cli::cli_bullets(c(
+      "!" = "Using an {.strong experimental} light model: {model}!"
+    )
+    )
+  }
+
+  # check scales
   if(is.null(scale)){
     if(verbose){
       cli::cli_bullets(c(

@@ -57,7 +57,6 @@ test_that("test optimizations", {
   expect_s3_class(location, "data.frame")
 })
 
-
 test_that("test no start", {
   # no start
   expect_error(skytrackr::cc876 |>
@@ -76,6 +75,28 @@ test_that("test no start", {
         ),
       step_selection = ssf
     )
+  )
+})
+
+test_that("test wrong model", {
+  # no start
+  expect_error(skytrackr::cc876 |>
+                 skytrackr::skytrackr(
+                   mask = mask,
+                   plot = FALSE,
+                   tolerance = 1500, # in km
+                   scale = log(c(1,10)),
+                   range = c(0.32, 10),
+                   control = list(
+                     sampler = 'DEzs',
+                     settings = list(
+                       iterations = 10,
+                       message = FALSE
+                     )
+                   ),
+                   model = "bla",
+                   step_selection = ssf
+                 )
   )
 })
 
@@ -102,7 +123,6 @@ test_that("optimize individual + map", {
   # test output plotting function
   p <- location |> stk_map()
   expect_s3_class(p, "ggplot")
-
 })
 
 test_that("test reading data", {
