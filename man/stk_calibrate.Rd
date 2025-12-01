@@ -6,7 +6,7 @@
 \usage{
 stk_calibrate(
   df,
-  percentile = 50,
+  percentile = 100,
   floor = 1.5,
   distribution = FALSE,
   verbose = TRUE
@@ -16,7 +16,7 @@ stk_calibrate(
 \item{df}{a skytrackr dataframe}
 
 \item{percentile}{percentile of the diurnal data (abvoe the floor value)
-used in calculating daily maxima (default = 50, ~max daily value is considered)}
+used in calculating daily statistics (default = 100)}
 
 \item{floor}{threshold to remove low (nighttime) values}
 
