@@ -8,7 +8,7 @@
 #'
 #' @param df a skytrackr dataframe
 #' @param percentile percentile of the diurnal data (abvoe the floor value)
-#'  used in calculating daily maxima (default = 50, ~max daily value is considered)
+#'  used in calculating daily statistics (default = 100)
 #' @param floor threshold to remove low (nighttime) values
 #' @param distribution provide the full distribution across the track of scale
 #'  factors (default = FALSE, providing only a range as a global constraint)
@@ -26,7 +26,7 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 50,
+    percentile = 100,
     floor = 1.5,
     distribution = FALSE,
     verbose = TRUE
@@ -68,7 +68,7 @@ stk_calibrate <- function(
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = stats::quantile(.data$value, percentile/100, na.rm = TRUE),
+      max_illuminance = stats::quantile(log(.data$value), percentile/100, na.rm = TRUE),
       .groups = "drop"
     )
 
@@ -93,8 +93,8 @@ stk_calibrate <- function(
         )$sun_illuminance
 
         # reference
-        reference <- reference[reference > floor]
-        reference <- stats::quantile(reference, percentile/100, na.rm = TRUE)
+        reference <- reference[reference > floor] # log convert!
+        reference <- stats::quantile(log(reference), percentile/100, na.rm = TRUE)
 
         # calculate the observed attenuation
         i <- 1 - (.data$max_illuminance/reference)
