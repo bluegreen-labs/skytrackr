@@ -48,7 +48,7 @@ stk_fit <- function(
   # range across the whole track (works only for
   # loggers with a full diurnal profile)
   if(length(scale) == 1){
-    scale <- c(scale - 0.5, scale + 0.5)
+    scale <- c(scale - 1, scale + 1)
     scale <- ifelse(scale < 0, 0.0001, scale)
   }
 
