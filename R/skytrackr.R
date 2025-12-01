@@ -218,7 +218,7 @@ skytrackr <- function(
     data$scale <- scale
   }
 
-  if(length(scale) == nrow(data)) {
+  if("scale" %in% colnames(scale)) {
     if(verbose){
       cli::cli_bullets(c(
         "i" = "Daily scale values are provided, using day-by-day scale values!"
@@ -227,7 +227,7 @@ skytrackr <- function(
     }
 
     # set daily scale prior
-    data$scale <- scale
+    data <- dplyr::left_join(data, scale, by = c("logger", "date"))
   }
 
   # filter the light data, for the diurnal model
