@@ -189,30 +189,44 @@ skytrackr <- function(
   if(is.null(scale)){
     if(verbose){
       cli::cli_bullets(c(
-        "i" = "No scale range is provided, will be estimated from data!"
+        "!" = "No scale range is provided.",
+        "i" = "Daily scale values will be estimated from data using default settings!"
         )
       )
     }
 
     # calculating informed priors for the scale
     # parameter
-    scales <- data |>
+    scale <- data |>
       stk_calibrate(
         distribution = TRUE,
         verbose = verbose
       )
 
-    # merge with data file, sets daily priors
-    data <- dplyr::left_join(data, scales, by = c("logger", "date"))
+    data$scale <- scale
   }
 
   if(length(scale) == 1) {
-    cli::cli_bullets(c(
-      "i" = "Single scale value is provided, using it as a global prior!"
+    if(verbose){
+      cli::cli_bullets(c(
+        "i" = "A single scale value is provided, using it as a global prior!"
       )
-    )
+      )
+    }
 
     # set global scale prior
+    data$scale <- scale
+  }
+
+  if(length(scale) == nrow(data)) {
+    if(verbose){
+      cli::cli_bullets(c(
+        "i" = "Daily scale values are provided, using day-by-day scale values!"
+      )
+      )
+    }
+
+    # set daily scale prior
     data$scale <- scale
   }
 
@@ -333,8 +347,10 @@ skytrackr <- function(
     # the skylight model to
     subs <- data[which(data$date %in% dates[i]),]
 
-    # set proper scaling factor
-    if(is.null(scale) | length(scale) == 1){
+    # set proper scaling factor, anything
+    # which isn't a pair should be provided
+    # as a single daily value
+    if(is.null(scale) | length(scale) != 2){
       scale_subs <- subs$scale[1]
     } else {
       scale_subs <- scale
