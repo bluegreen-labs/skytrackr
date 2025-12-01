@@ -194,7 +194,7 @@ locations <- data |>
 
 ## Reasonable expectations and limitations
 
-{skytrackr} currently mostly focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. Although "quasi" calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), the path covered, and the step selection function (and is further constraint by land mass if so desired). 
+{skytrackr} currently mostly focuses on western European flyways, or those without a strong longitudinal component, and might not work beyond this area. Although "quasi" calibration free, it balances parameter optimization between the location to be estimated, the light loss (sky condition), the path covered, and the step selection function (and is further constraint by land mass if so desired).
 
 In this context, and as [described in the vignette](https://bluegreen-labs.github.io/skytrackr/articles/skytrackr_optimization.html), optimization success depends on the physical accuracy of these constraints and a reasonable understanding of the ecology of your species of interest. As with any optimization method used in location estimation there will be variation between optimization runs (unless a random seed is set), and is in part art as well as science.
 
