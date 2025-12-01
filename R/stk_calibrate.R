@@ -2,13 +2,13 @@
 #' Estimate scale the scale range
 #'
 #' Provides a rough estimate on the light loss and corresponding
-#' range of scale values to consider during optimization. The full
+#' range of scale values to consider during optimization.
 #' A percentile parameter can be provided to remove outliers. It is
 #' recommended to first use `st_screen_twl()` to remove poor quality days.
 #'
 #' @param df a skytrackr dataframe
 #' @param percentile percentile of the diurnal data (abvoe the floor value)
-#'  used in calculating daily maxima (default = 95, ~max daily value is considered)
+#'  used in calculating daily maxima (default = 50, ~max daily value is considered)
 #' @param floor threshold to remove low (nighttime) values
 #' @param distribution provide the full distribution across the track of scale
 #'  factors (default = FALSE, providing only a range as a global constraint)
@@ -26,7 +26,7 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 95,
+    percentile = 50,
     floor = 1.5,
     distribution = FALSE,
     verbose = TRUE
@@ -68,7 +68,8 @@ stk_calibrate <- function(
     dplyr::filter(.data$measurement == "lux") |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::summarize(
-      max_illuminance = stats::quantile(.data$value, percentile/100, na.rm = TRUE)
+      max_illuminance = stats::quantile(.data$value, percentile/100, na.rm = TRUE),
+      .groups = "drop"
     )
 
   df_scales <- df_max |>
@@ -85,11 +86,15 @@ stk_calibrate <- function(
 
         # generate a reference (should pre-calculate this!)
         reference <- skylight::skylight(
-          date = as.POSIXct("2022-09-23 12:00:00"),
+          date = as.POSIXct("2022-09-23 12:00:00", tz = "GMT")  + seq(0, 24*3600, 300),
           latitude = 0,
           longitude = 0,
           sky_condition = k
         )$sun_illuminance
+
+        # reference
+        reference <- reference[reference > floor]
+        reference <- stats::quantile(reference, percentile/100, na.rm = TRUE)
 
         # calculate the observed attenuation
         i <- 1 - (.data$max_illuminance/reference)

@@ -6,7 +6,7 @@
 \usage{
 stk_calibrate(
   df,
-  percentile = 95,
+  percentile = 50,
   floor = 1.5,
   distribution = FALSE,
   verbose = TRUE
@@ -16,7 +16,7 @@ stk_calibrate(
 \item{df}{a skytrackr dataframe}
 
 \item{percentile}{percentile of the diurnal data (abvoe the floor value)
-used in calculating daily maxima (default = 95, ~max daily value is considered)}
+used in calculating daily maxima (default = 50, ~max daily value is considered)}
 
 \item{floor}{threshold to remove low (nighttime) values}
 
@@ -31,7 +31,7 @@ An estimated range of scale values to be used in optimization.
 }
 \description{
 Provides a rough estimate on the light loss and corresponding
-range of scale values to consider during optimization. The full
+range of scale values to consider during optimization.
 A percentile parameter can be provided to remove outliers. It is
 recommended to first use `st_screen_twl()` to remove poor quality days.
 }
