@@ -224,7 +224,7 @@ df <- df |>
 
 The optimization routine relies on a land mask to constrain land based animals to land. This mask needs to be generated beforehand. The mask will generate a raster file showing land locations, buffered by a given distance (in km) and with a given spatial resolution (in degrees). Only locations within the mask are considered during location estimates. Should an animal not be constrained to land a mask (map) should be generated with unity (1) values throughout.
 
-```{r label = land-mask, fig.cap = "Land mask to constrain location estimates"}
+```{r eval = FALSE}
 # generate a mask
 mask <- stk_mask(
   bbox  =  c(-20, -40, 60, 60), #xmin, ymin, xmax, ymax
@@ -236,7 +236,7 @@ mask <- stk_mask(
 plot(mask)
 ```
 
-```{r label = "mask", echo = FALSE, fig.cap="Preview of the spatial mask"}
+```{r label = land-mask, fig.cap = "Land mask to constrain location estimates"}
 knitr::include_graphics("mask.png")
 ```
 
