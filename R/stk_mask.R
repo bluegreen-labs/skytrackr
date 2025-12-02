@@ -12,8 +12,6 @@
 #' @param sf Return the land mask as an 'sf' polygon, not a rasterized map for.
 #'  use in map plotting, not used for processing (default = FALSE)
 #'
-#' @importFrom memoise memoise
-#'
 #' @return A buffered land mask as an 'sf' or 'terra' map object.
 #' @export
 #' @examples
@@ -28,8 +26,7 @@
 #'   )
 #'  }
 
-stk_mask <- memoise::memoise(
-  function(
+stk_mask <- function(
     buffer = 0,
     resolution = 1,
     bbox,
@@ -90,4 +87,4 @@ stk_mask <- memoise::memoise(
   } else {
     return(land)
   }
-})
+}
