@@ -135,25 +135,23 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <span><span class="va">cc876</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_filter.html">stk_filter</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.09</span>, <span class="fl">400</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #9E9E9E;">── </span><span style="color: #000000; font-weight: bold;">Filtering data</span><span style="color: #9E9E9E;"> ──────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; → Smoothing the data using a Hampel filter</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Outliers will be replaced with interpolated values.</span></span></code></pre></div>
+<span><span class="co">#&gt; </span></span></code></pre></div>
 <p><img src="skytrackr_optimization_files/figure-html/unnamed-chunk-2-1.png" width="85%" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,638 × 8</span></span></span>
-<span><span class="co">#&gt;    logger date_time           date        hour measurement value outlier</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:54:10</span> 2021-08-02 0.903 lux          0.08 FALSE  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,628 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: selected &lt;lgl&gt;</span></span></span></code></pre>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8,640 × 9</span></span></span>
+<span><span class="co">#&gt;    logger date_time           date         hour measurement value offset</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CC876  2021-08-02 <span style="color: #949494;">00:04:10</span> 2021-08-02 0.069<span style="text-decoration: underline;">4</span> lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CC876  2021-08-02 <span style="color: #949494;">00:09:10</span> 2021-08-02 0.153  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CC876  2021-08-02 <span style="color: #949494;">00:14:10</span> 2021-08-02 0.236  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CC876  2021-08-02 <span style="color: #949494;">00:19:10</span> 2021-08-02 0.319  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CC876  2021-08-02 <span style="color: #949494;">00:24:10</span> 2021-08-02 0.403  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CC876  2021-08-02 <span style="color: #949494;">00:29:10</span> 2021-08-02 0.486  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CC876  2021-08-02 <span style="color: #949494;">00:34:10</span> 2021-08-02 0.569  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CC876  2021-08-02 <span style="color: #949494;">00:39:10</span> 2021-08-02 0.653  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CC876  2021-08-02 <span style="color: #949494;">00:44:10</span> 2021-08-02 0.736  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CC876  2021-08-02 <span style="color: #949494;">00:49:10</span> 2021-08-02 0.819  lux          0.08   24.0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,630 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: hour_centered &lt;dbl&gt;, selected &lt;lgl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level3" number="2.2">
 <h3 id="data-frequency">
@@ -239,7 +237,8 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <h3 id="optimization-iterations">
 <span class="header-section-number">2.4</span> Optimization iterations<a class="anchor" aria-label="anchor" href="#optimization-iterations"></a>
 </h3>
-<p>There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and or frequency, is low it is advised to increase the number of optimization iterations. For <strong>high quality</strong> data <strong>3000 iterations</strong> generally yields good results, but increasing this number to <strong>6000 might provide a more robust estimate</strong> in some cases. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.</p>
+<p>There is also a trade-off between the amount of data used in a location estimate and the number of iterations used during optimization. If your data quality, and/or frequency, is low it is advised to increase the number of optimization iterations. You can consult the Gelman-Rubin Diagnostic values for the quality of the fit (use the <code><a href="../reference/stk_map.html">stk_map()</a></code> function after a fit, or plot the optimization process).</p>
+<p>For <strong>high quality</strong> data <strong>3000 iterations</strong> generally yields good results, but increasing this number to <strong>6000 might provide a more robust estimate</strong>. It is advised to inspect the performance of the routine on a single logger, before proceeding to (batch) process all data. Iteration values in excess of 10K should generally not be required.</p>
 </div>
 <div class="section level3" number="2.5">
 <h3 id="step-selection-dynamics">
@@ -259,7 +258,16 @@ You can also use the <code><a href="../reference/stk_filter.html">stk_filter()</
 <h2 id="post-processing">
 <span class="header-section-number">3</span> Post-processing<a class="anchor" aria-label="anchor" href="#post-processing"></a>
 </h2>
-<p>After estimating locations you can inspect the location estimation data using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing convergence of the parameter (location) estimates.</p>
+<p>After estimating locations you can inspect the location estimation data using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function. This will give you an initial idea on the accuracy of the estimates. The spread of the uncertainty on both longitude and latitude parameters can help determine the quality of the estimated locations. If available, a Gelman-Rubin Diagnostic (or grd value) is returned in the data output. Gelman-Rubin Diagnostic values &lt; 1.05 are generally considered showing convergence of the parameter (location) estimates. Spurious patterns, such as coordinates bouncing between two locations are also a telltale sign that your model was poorly constrained and converged on a faulty solution (see highlighted red sections in the panel plot below). In those cases you mostly either have to increase the scale upper bound, and/or increase the search space for your solution by increasing the number of iterations during optimization.</p>
+<div class="figure" style="text-align: center">
+<span style="display:block;" id="fig:final-plot"></span>
+<img src="poor_fit.png" alt="Overview plot after location estimation" width="1887"><p class="caption">
+Figure 3.1: Overview plot after location estimation
+</p>
+</div>
+<blockquote>
+<p>It is helpful to realize that models, fit to data, can be “right” for all the wrong reasons. Even when parameter values converge this does not guarantee an absolute “true” location. It is therefore important to realize that broad patterns should hold, but individual short sections of tracks can vary due to parameter settings.</p>
+</blockquote>
 </div>
   </div>
 
