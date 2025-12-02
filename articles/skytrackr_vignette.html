@@ -269,20 +269,15 @@ Figure 3.5: Screened light values, with offending days removed
 <span>  buffer <span class="op">=</span> <span class="fl">150</span>, <span class="co"># in km</span></span>
 <span>  resolution <span class="op">=</span> <span class="fl">0.5</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Spherical geometry (s2) switched off</span></span>
 <span></span>
 <span><span class="co"># plot the mask</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mask</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"mask.png"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:land-mask"></span>
-<img src="skytrackr_vignette_files/figure-html/land-mask-1.png" alt="Land mask to constrain location estimates"><p class="caption">
+<img src="mask.png" alt="Land mask to constrain location estimates" width="875"><p class="caption">
 Figure 3.6: Land mask to constrain location estimates
-</p>
-</div>
-<div class="figure" style="text-align: center">
-<span style="display:block;" id="fig:mask"></span>
-<img src="mask.png" alt="Preview of the spatial mask" width="875"><p class="caption">
-Figure 3.7: Preview of the spatial mask
 </p>
 </div>
 </div>
@@ -299,7 +294,7 @@ Figure 3.7: Preview of the spatial mask
 <span class="header-section-number">3.4</span> Estimating positions<a class="anchor" aria-label="anchor" href="#estimating-positions"></a>
 </h3>
 <p>After reading in the data, cleaning the data, and setting up the mask and step-selection function you can now call the main <code><a href="../reference/skytrackr.html">skytrackr()</a></code> function. This function deals with the final parameter optimization (location estimates). Before proceeding you will have to set a few more parameters. In particular, a start location (which should be the location where you tagged your individual), the tolerance distance (in km) which sets a hard limit on the locations considered (redundant dependent on the shape of the step-selection function), the <code>scale</code> parameter which adjusts the daylight levels to occlusions by clouds (or fur/feathers/other environmental factors), the <code>range</code> of light values (in lux) to consider (to select either only twilight periods or the full diurnal cycle). Finally, you have to specify the <code>control</code> parameters for the BayesianTools functions as a nested list.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set a random seed</span></span>
 <span><span class="co"># for reproducibility reasons</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
@@ -323,16 +318,16 @@ Figure 3.7: Preview of the spatial mask
 <span>      mask <span class="op">=</span> <span class="va">mask</span>,</span>
 <span>      plot <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>══ Estimating locations ══════════════════════════════════════ skytrackr v1<span class="fl">.0</span> ══</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>ℹ Processing logger<span class="sc">:</span> CC876<span class="sc">!</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>ℹ (preview plot will update every <span class="dv">7</span> days)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>estimating positions ■■                                 <span class="dv">2</span>% <span class="sc">|</span> ETA<span class="sc">:</span>  <span class="dv">2</span>h</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>══ Estimating locations ══════════════════════════════════════ skytrackr v1<span class="fl">.0</span> ══</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>ℹ Processing logger<span class="sc">:</span> CC876<span class="sc">!</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>ℹ (preview plot will update every <span class="dv">7</span> days)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>estimating positions ■■                                 <span class="dv">2</span>% <span class="sc">|</span> ETA<span class="sc">:</span>  <span class="dv">2</span>h</span></code></pre></div>
 <p>If the <code>plot</code> parameter is set to <code>TRUE</code> a plot of the estimated locations will be generated every so many days (see parameter settings). For reference, processing a full year of data with the above settings takes approximately one hour, slightly faster without the preview plots. The red dashed outline highlights the search area for the best location estimate. The last estimated location is highlighted with an open circle.</p>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:preview"></span>
 <img src="skytrackr_preview.png" alt="Dynamic preview during location estimation" width="1125"><p class="caption">
-Figure 3.8: Dynamic preview during location estimation
+Figure 3.7: Dynamic preview during location estimation
 </p>
 </div>
 <div class="section level4" number="3.4.1">
@@ -351,13 +346,13 @@ Figure 3.8: Dynamic preview during location estimation
 <span class="header-section-number">3.5</span> Visualizing location estimates<a class="anchor" aria-label="anchor" href="#visualizing-location-estimates"></a>
 </h3>
 <p>Running the full dataset for logger CC876, from which a subset is included, would yield a full track. You can visualize a full track using the <code><a href="../reference/stk_map.html">stk_map()</a></code> function.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># map the output</span></span>
 <span><span class="va">locations</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/stk_map.html">stk_map</a></span><span class="op">(</span>bbox <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">20</span>, <span class="op">-</span><span class="fl">40</span>, <span class="fl">60</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:final-plot"></span>
 <img src="skytrackr_final_plot.png" alt="Overview plot after location estimation" width="1125"><p class="caption">
-Figure 3.9: Overview plot after location estimation
+Figure 3.8: Overview plot after location estimation
 </p>
 </div>
 </div>
@@ -366,9 +361,9 @@ Figure 3.9: Overview plot after location estimation
 <h2 id="discussion">
 <span class="header-section-number">4</span> Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching <span class="citation">(Ekstrom 2004)</span>. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure <a href="#fig:final-plot">3.9</a>). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the “Twilight-Free” method as described by <span class="citation">(Bindoff et al. 2018)</span>. Furthermore, no external packages should be loaded from github increasing reproducibility.</p>
+<p>The method as proposed should perform equally well, or better than, the Ekstrom methodology using template matching <span class="citation">(Ekstrom 2004)</span>. However, some limitations do apply. Not all sensors return physical units, with some returning an arbitrary numbers due to data limitations (compression) or hardware choices. In these cases, the physical nature of the underlying model fit to the data does not hold and parameters must be relaxed outside their normal range. Although performance should improve around the equinoxes, performance will remain poorer than average. Uncertainty around the equinoxes is reflected in the estimated quantiles on the location parameters (latitude, longitude, see Figure <a href="#fig:final-plot">3.8</a>). However, the addition of geolocation estimation uncertainties as well as GRB metrics make screening outliers easy and consistent but generally not necessary. The methodology should compare favourably to the “Twilight-Free” method as described by <span class="citation">(Bindoff et al. 2018)</span>. Furthermore, no external packages should be loaded from github increasing reproducibility.</p>
 <p>The package and function descriptions can be found on github at: <a href="https://github.com/bluegreen-labs/skytrackr" class="external-link uri">https://github.com/bluegreen-labs/skytrackr</a>. To install the development releases of the package run the following commands:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"bluegreen-labs/skytrackr"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3" number="4.1">
