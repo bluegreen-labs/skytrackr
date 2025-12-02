@@ -236,6 +236,10 @@ mask <- stk_mask(
 plot(mask)
 ```
 
+```{r label = "mask", echo = FALSE, fig.cap="Preview of the spatial mask"}
+knitr::include_graphics("mask.png")
+```
+
 ### Defining a step-selection
 
 The location estimates are not only constrained by geography but more importantly by behaviour. A function (returning probabilities) can be used to weight the probability of a step of a particular distance (relative to the previous location). Although any function can be used common step-selection probability distributions such as a gamma or Weibull are adviced.
