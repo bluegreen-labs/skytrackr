@@ -68,11 +68,11 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/v2.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/bluegreen-labs/skytrackr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.0" id="skytrackr-20">skytrackr 2.0<a class="anchor" aria-label="anchor" href="#skytrackr-20"></a></h2>
+<h2 class="page-header" data-toc-text="2.0" id="skytrackr-20">skytrackr 2.0<small>2025-12-02</small><a class="anchor" aria-label="anchor" href="#skytrackr-20"></a></h2>
 <p>Where release 1.0 was tuned for use on the common swift (an ideal light logger species) this release sees improvements in which cover expanding the methodology to species which have less than optimal (noisy) light logger data. It provides new methods to estimate suggested parameter ranges.</p>
 <p>The package now provides two modes of calculating a diurnal light profile to fit to the data. The normal, default, “diurnal” mode calculates light levels for a single (static) location (latitude, longitude), while the new “individual” model calculates light levels along a rhumb line track between the last estimated position and a target (end) position. The speed depends on the track length, and is constant throughout. The “individual” model therefore corrects for the slight changes in light levels when moving with or against a changing twilight. Consider the “individual” mode experimental still.</p>
 <ul><li>introduction of a filter function <code><a href="../reference/stk_filter.html">stk_filter()</a></code>, but helpful in visualizing data</li>
