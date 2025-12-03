@@ -75,7 +75,7 @@ locations <- df |>
       plot = FALSE,
       start_location = c(51.32, 11.96),
       tolerance = 1500, # in km
-      scale = log(scale),
+      scale = scale,
       range = range,
       control = list(
         sampler = 'DEzs',
@@ -85,23 +85,97 @@ locations <- df |>
           message = FALSE
         )
       ),
-      window_size = 1,
       step_selection = ssf
     )
-
-# save results
-saveRDS(locations, "sgat_locations.rds", compress = "xz")
 
 # render map
 locations |> stk_map()
 ```
 
-```{r eval = TRUE, echo=FALSE}
+```{r eval = FALSE, echo = FALSE}
+# save results
+saveRDS(locations, "sgat_locations.rds", compress = "xz")
+```
 
+```{r eval = TRUE, echo = FALSE, warning=FALSE, message=FALSE, fig.width= 12, fig.height= 7}
+locations <- readRDS("sgat_locations.rds")
+locations |> stk_map()
+```
+
+```{r label = "sgat", echo = FALSE, fig.cap="SGAT location estimates"}
+knitr::include_graphics("https://geolocationmanual.vogelwarte.ch/07-SGAT_files/figure-html/unnamed-chunk-31-1.png")
 ```
 
 
-![](https://geolocationmanual.vogelwarte.ch/07-SGAT_files/figure-html/unnamed-chunk-31-1.png)
-
 # FlightR
+
+```{r eval = FALSE}
+# Red-backed Shrike
+
+df <- stk_read_lux(
+  "https://raw.githubusercontent.com/slisovski/TheGeolocationManual/refs/heads/master/data/RawData/LanCol/M034.lux",
+   verbose = TRUE) |>
+  stk_screen_twl(filter = TRUE)
+
+# estimate upper scale value
+scale <- stk_calibrate(df)
+
+range <- c(1.136, 400)
+tol <- 1500
+
+# define land mask with a bounding box
+# and an off-shore buffer (in km), in addition
+# you can specifiy the resolution of the resulting raster
+mask <- stk_mask(
+  bbox  =  c(5, -33, 50, 60), #xmin, ymin, xmax, ymax values from the example
+  buffer = 10,
+  resolution = 0.5 # map grid in degrees corresponding to the buffer in km
+)
+
+# define a step selection distribution
+ssf <- function(x, shape = 0.9, scale = 100, tolerance = tol){
+  # normalize over expected range with km increments
+  norm <- sum(stats::dgamma(1:tolerance, shape = shape, scale = scale))
+  prob <- stats::dgamma(x, shape = shape, scale = scale) / norm
+  return(prob)
+}
+
+locations <- df |>
+  group_by(logger) |>
+  do({
+    skytrackr(
+      .,
+      mask = mask,
+      plot = TRUE,
+      start_location = c(55.98, 12.33 ),
+      tolerance = tol, # in km
+      scale = log(scale),
+      range = range,
+      control = list(
+        sampler = 'DEzs',
+        settings = list(
+          burnin = 1000,
+          iterations = 4000,
+          message = FALSE
+        )
+      ),
+      step_selection = ssf
+    )
+  })
+
+locations |> stk_map()
+```
+
+```{r eval = FALSE, echo = FALSE}
+saveRDS(locations, "flightr_locations.rds", compress = "xz")
+```
+
+```{r eval = TRUE, echo = FALSE, warning=FALSE, message=FALSE, fig.width= 12, fig.height= 7}
+locations <- readRDS("flightr_locations.rds")
+locations |> stk_map()
+```
+
+```{r label = "flightr", echo = FALSE, fig.cap="FlightR location estimates"}
+knitr::include_graphics("https://geolocationmanual.vogelwarte.ch/08-FlightR_files/figure-html/unnamed-chunk-25-1.png")
+```
 
