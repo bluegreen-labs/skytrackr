@@ -53,7 +53,11 @@ stk_center <- function(df, floor = 1.5, replace = FALSE){
         dplyr::mutate(
           offset = 24 * (180 - a) / 360,
           hour_centered = .data$hour + .data$offset,
-          hour_centered = ifelse(.data$hour_centered > 24, .data$hour_centered - 24, .data$hour_centered)
+          hour_centered = ifelse(
+            .data$hour_centered > 24,
+            .data$hour_centered - 24,
+            .data$hour_centered
+          )
         )
 
       if (replace){
