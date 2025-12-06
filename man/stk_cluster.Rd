@@ -2,21 +2,21 @@
 % Please edit documentation in R/stk_cluster.R
 \name{stk_cluster}
 \alias{stk_cluster}
-\title{Cluster geolocator co-variates}
+\title{Cluster geolocator light levels}
 \usage{
-stk_cluster(df, k = 2, method = "kmeans")
+stk_cluster(df, eps = 0.1, plot = TRUE)
 }
 \arguments{
-\item{df}{A skytrackr data frame.}
+\item{df}{A skytrackr data frame}
 
-\item{k}{The number of k-means/hierarchical clusters to consider.}
+\item{eps}{dbscan eps value, see `dbscan::dbscan()` (default = 0.1, condensed clusters)}
 
-\item{method}{The method to use, "kmeans" (default), "hclust" can be set.}
+\item{plot}{plot the cluster results with respect to the diurnal pattern offset and (day)length values}
 }
 \value{
 The original data frame with attached cluster labels.
 }
 \description{
-Uses k-means and hierarchical clustering to group geolocator
-covariates into consistent groups for visual analysis
+Uses k-means to group geolocator light values
+into consistent groups for further analysis
 }

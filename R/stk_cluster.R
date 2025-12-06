@@ -1,38 +1,39 @@
-#' Cluster geolocator co-variates
+#' Cluster geolocator light levels
 #'
-#' Uses k-means and hierarchical clustering to group geolocator
-#' covariates into consistent groups for visual analysis
+#' Uses k-means to group geolocator light values
+#' into consistent groups for further analysis
 #'
-#' @param df A skytrackr data frame.
-#' @param k The number of k-means/hierarchical clusters to consider.
-#' @param method The method to use, "kmeans" (default), "hclust" can be set.
+#' @param df A skytrackr data frame
+#' @param eps dbscan eps value, see `dbscan::dbscan()` (default = 0.1, condensed clusters)
+#' @param plot plot the cluster results with respect to the diurnal pattern offset and (day)length values
 #'
 #' @return The original data frame with attached cluster labels.
 #' @export
 
 stk_cluster <- function(
     df,
-    k = 2,
-    method = "kmeans"
-    ) {
+    eps = 0.1,
+    plot = TRUE
+  ) {
 
-  # convert from long to wide format
   df_wide <- df |>
-    dplyr::filter(
-      .data$measurement != "lux"
+    stk_center() |>
+    stk_filter(
+      range = 1.5,
+      filter = TRUE,
+      verbose = FALSE
     ) |>
-    dplyr::select(
-      "logger",
-      "date",
-      "hour",
-      "measurement",
-      "value"
-    ) |>
-    tidyr::pivot_wider(
-      names_from = c("logger", "hour", "measurement"),
-      values_from = "value"
-    ) |>
-    stats::na.omit()
+    dplyr::group_by(date) |>
+    dplyr::summarize(
+      date_num = as.numeric(date[1]),
+      offset = offset[1],
+      length =
+        as.numeric(difftime(
+          date_time[2],
+          date_time[1],
+          units = "hours")
+        )
+    )
 
   # split out date
   dates <- df_wide |>
@@ -40,44 +41,28 @@ stk_cluster <- function(
       "date"
     )
 
-  # drop date
+  # split out date
   df_wide <- df_wide |>
     dplyr::select(
-      -"date"
+      -"date",
     )
 
   # center values as based on distance
   # with widely different absolute values
-  #df_wide <- apply(df_wide, 2, scale)
+  df_wide_scaled <- apply(df_wide, 2, scale)
 
-  if (method == "kmeans") {
-    # calculate kmeans clustering
-    # output
-    output <- data.frame(
-      date = dates,
-      cluster = as.double(
-        stats::kmeans(
-          df_wide,
-          centers = k,
-          nstart = 10
-        )$cluster
-      )
+  # dbscan clustering
+  t <- dbscan::dbscan(
+    df_wide_scaled,
+    eps = eps,
+    minPts = 3
+  )$cluster
+
+  # combine labels with dates
+  output <- data.frame(
+    date = dates,
+    cluster = t
     )
-  } else {
-
-   # calculate cluster tree
-   cl <- stats::hclust(stats::dist(df_wide))
-
-   # format output
-   output <- data.frame(
-       date = dates,
-       cluster =
-         stats::cutree(
-           cl,
-           k = k
-         )
-     )
-  }
 
   # combine with original timing (add hour field)
   # and convert to long format
@@ -93,7 +78,11 @@ stk_cluster <- function(
     ) |>
     unique()
 
-  tmp <- dplyr::left_join(df_time, output, by = "date") |>
+  tmp <- dplyr::left_join(
+      df_time,
+      output,
+      by = "date"
+    ) |>
     dplyr::select(
       "logger",
       "date",
@@ -114,6 +103,24 @@ stk_cluster <- function(
         levels = sort(unique(.data$measurement))
       )
     )
+
+  if(plot){
+    p <- ggplot2::ggplot() +
+      ggplot2::geom_point(
+        data = df_wide,
+        ggplot2::aes(
+          offset,
+          length,
+          colour = as.factor(t)
+        )
+      ) +
+      ggplot2::scale_colour_viridis_d(
+        name = "cluster"
+      ) +
+      ggplot2::theme_minimal()
+    print(p)
+  }
+
 
   # return cluster object
   return(df)
