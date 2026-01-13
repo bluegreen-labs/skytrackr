@@ -4,7 +4,7 @@
 \alias{stk_cluster}
 \title{Cluster geolocator light levels}
 \usage{
-stk_cluster(df, eps = 0.1, plot = TRUE)
+stk_cluster(df, eps = 0.1, plot = FALSE)
 }
 \arguments{
 \item{df}{A skytrackr data frame}
