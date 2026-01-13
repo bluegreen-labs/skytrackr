@@ -6,9 +6,11 @@
 \usage{
 stk_calibrate(
   df,
-  percentile = 100,
-  floor = 1.5,
+  percentile = 50,
+  floor = 400,
+  eps = 0.1,
   distribution = FALSE,
+  cluster = TRUE,
   verbose = TRUE
 )
 }
@@ -19,6 +21,8 @@ stk_calibrate(
 used in calculating daily statistics (default = 100)}
 
 \item{floor}{threshold to remove low (nighttime) values}
+
+\item{eps}{clustering eps factor (default = 0.1)}
 
 \item{distribution}{provide the full distribution across the track of scale
 factors (default = FALSE, providing only a range as a global constraint)}
