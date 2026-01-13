@@ -202,8 +202,6 @@ skytrackr <- function(
         distribution = TRUE,
         verbose = verbose
       )
-
-    data$scale <- scale
   }
 
   if(length(scale) == 1) {
@@ -227,7 +225,11 @@ skytrackr <- function(
     }
 
     # set daily scale prior
-    data <- dplyr::left_join(data, scale, by = c("logger", "date"))
+    data <- dplyr::left_join(
+      data,
+      scale,
+      by = c("logger", "date")
+    )
   }
 
   # filter the light data, for the diurnal model
@@ -439,7 +441,7 @@ skytrackr <- function(
       TRUE, FALSE)
 
     # append output to data frame
-    locations <- rbind(locations, out)
+    locations <- dplyr::bind_rows(locations, out)
 
     # increment on progress bar
     if(verbose) {
@@ -473,7 +475,8 @@ skytrackr <- function(
   # save setup
   locations$start_location <- list(start_location)
   locations$tolerance <- tolerance
-  locations$scale <- list(scale)
+  # scale can be dynamically set, forwarded from stk_fit
+  #locations$scale <- list(scale)
   locations$range <- list(range)
   locations$control <- list(control)
   locations$clip <- clip
