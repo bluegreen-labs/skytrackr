@@ -13,10 +13,12 @@
 stk_cluster <- function(
     df,
     eps = 0.1,
-    plot = TRUE
+    index = TRUE,
+    plot = FALSE
   ) {
 
   df_wide <- df |>
+    na.omit() |>
     stk_center() |>
     stk_filter(
       range = 1.5,
@@ -54,9 +56,28 @@ stk_cluster <- function(
   # dbscan clustering
   t <- dbscan::dbscan(
     df_wide_scaled,
-    eps = eps,
-    minPts = 3
+    eps = eps
   )$cluster
+
+  # reindex cluster labels sequentially
+  if(index){
+    index <- 1
+    t_new <- t
+
+    # reindex clusters
+    for(i in seq_along(t)){
+      if(i == 1){
+        t_new[i] <- index
+      } else {
+        if(t[i-1] != t[i]){
+          index <- index + 1
+        }
+      }
+
+      t_new[i] <- index
+    }
+    t <- t_new
+  }
 
   # combine labels with dates
   output <- data.frame(
@@ -120,7 +141,6 @@ stk_cluster <- function(
       ggplot2::theme_minimal()
     print(p)
   }
-
 
   # return cluster object
   return(df)

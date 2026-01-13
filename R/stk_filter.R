@@ -80,7 +80,7 @@ stk_filter <- function(
   # set twilight mode if necessary
   twilight <- FALSE
   if (length(range) == 1){
-    range <- c(range, 500000)
+    range <- c(range, Inf)
     twilight <- TRUE
     if(verbose){
       cli::cli_bullets(c("!" = "No maximum range provided, switching to twilight mode!"))

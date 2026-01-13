@@ -12,6 +12,7 @@
 #' @param floor threshold to remove low (nighttime) values
 #' @param distribution provide the full distribution across the track of scale
 #'  factors (default = FALSE, providing only a range as a global constraint)
+#' @param eps clustering eps factor (default = 0.2)
 #' @param verbose Give detailed feedback (TRUE or FALSE, default = TRUE)
 #'
 #' @importFrom utils packageVersion
@@ -26,9 +27,11 @@
 
 stk_calibrate <- function(
     df,
-    percentile = 100,
-    floor = 1.5,
+    percentile = 50,
+    floor = 400,
+    eps = 0.2,
     distribution = FALSE,
+    cluster = FALSE,
     verbose = TRUE
 ){
 
@@ -55,7 +58,7 @@ stk_calibrate <- function(
 
   # pre-process the data, only retaining
   # a subset of "daytime" data
-  df <- df |>
+  df_tmp <- df |>
     stk_filter(
       range = c(floor, Inf),
       smooth = FALSE,
@@ -63,16 +66,7 @@ stk_calibrate <- function(
       verbose = FALSE
     )
 
-  # calculate daily maxima
-  df_max <- df |>
-    dplyr::filter(.data$measurement == "lux") |>
-    dplyr::group_by(.data$logger,.data$date) |>
-    dplyr::summarize(
-      max_illuminance = stats::quantile(log(.data$value), percentile/100, na.rm = TRUE),
-      .groups = "drop"
-    )
-
-  df_scales <- df_max |>
+  df_scales <- df_tmp |>
     dplyr::group_by(.data$logger,.data$date) |>
     dplyr::do({
 
@@ -86,22 +80,23 @@ stk_calibrate <- function(
 
         # generate a reference (should pre-calculate this!)
         reference <- skylight::skylight(
-          date = as.POSIXct("2022-09-23 12:00:00", tz = "GMT")  + seq(0, 24*3600, 300),
+          date = as.POSIXct("2000-09-23 12:00:00",tz = "GMT"),
           latitude = 0,
           longitude = 0,
           sky_condition = k
-        )$sun_illuminance
-
-        # reference
-        reference <- reference[reference > floor] # log convert!
-        reference <- stats::quantile(log(reference), percentile/100, na.rm = TRUE)
+        )
 
         # calculate the observed attenuation
-        i <- 1 - (.data$max_illuminance/reference)
+        i <- log(reference$total_illuminance) - quantile(log(.data$value), 0.5)
       }
 
-      data.frame(scale = k)
+      data.frame(
+        scale = k
+      )
     }) |>
+    dplyr::mutate(
+      scale = ifelse(.data$scale < 10, 10,.data$scale)
+    ) |>
     dplyr::ungroup()
 
   # return estimated values invisible
@@ -115,7 +110,37 @@ stk_calibrate <- function(
       )
     }
 
+    if(cluster){
+      clusters <- df |>
+        stk_cluster(eps = eps) |>
+        dplyr::filter(
+          measurement == "cluster"
+        ) |>
+        tidyr::pivot_wider(
+          names_from = "measurement",
+          values_from = "value"
+        ) |>
+        dplyr::select(
+          "logger",
+          "date",
+          "cluster"
+        ) |>
+        unique()
+
+      df_scales <- dplyr::left_join(
+        df_scales,
+        clusters,
+        by = c("logger","date")
+      ) |>
+        dplyr::group_by(.data$cluster) |>
+        dplyr::mutate(
+          scale = median(.data$scale)
+        ) |>
+        dplyr::ungroup()
+    }
+
     return(df_scales)
+
   } else {
 
     # set ranges
@@ -138,7 +163,6 @@ stk_calibrate <- function(
       # set upper to 10 (default max of skylight)
       # if < 10
       upper <- 10
-
     }
 
     # feedback
